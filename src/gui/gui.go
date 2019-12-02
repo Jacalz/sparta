@@ -6,6 +6,7 @@ import (
 	"fyne.io/fyne/app"
 	"fyne.io/fyne/dialog"
 	"fyne.io/fyne/layout"
+	"fyne.io/fyne/theme"
 	"fyne.io/fyne/widget"
 )
 
@@ -40,7 +41,16 @@ func Init(appName string) {
 			return
 		}
 
+		// Calculate the sha256 hash of the username and password.
 		PasswordKey = sha256.Sum256([]byte(userName.Text + userPassword.Text))
+
+		newExercise := widget.NewButtonWithIcon("Add new exercise", theme.ContentAddIcon(), func() {
+		})
+
+		// Adapt the window size for the new content.
+		window.Resize(fyne.NewSize(400, 150))
+
+		window.SetContent(widget.NewVBox(newExercise))
 	})
 
 	// Make a container that houses all of our widgets in a one wide grid.
