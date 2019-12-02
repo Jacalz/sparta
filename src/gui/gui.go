@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"fyne.io/fyne"
 	"fyne.io/fyne/app"
+	"fyne.io/fyne/dialog"
 	"fyne.io/fyne/layout"
 	"fyne.io/fyne/widget"
 )
@@ -24,29 +25,32 @@ func Init(appName string) {
 
 	// Initialize the login form that we are to be using.
 	userName := widget.NewEntry()
-	userName.SetPlaceHolder("Användarnamn")
+	userName.SetPlaceHolder("Username")
 
 	// Initialize the password input box that we are to be using.
 	userPassword := widget.NewPasswordEntry()
-	userPassword.SetPlaceHolder("Lösenord")
+	userPassword.SetPlaceHolder("Password")
 
 	// Create the login button that will calculate the 32bit long sha256 hash.
 	loginButton := widget.NewButton("Login", func() {
+		// Check that a username and password was provided. Without it we show an informative dialog and return.
+		if userName.Text == "" || userPassword.Text == "" {
+			message := dialog.NewInformation("Missing username/password", "Please type both username and password.", window)
+			message.Show()
+			return
+		}
+
 		PasswordKey = sha256.Sum256([]byte(userName.Text + userPassword.Text))
 	})
 
 	// Make a container that houses all of our widgets in a one wide grid.
-	container := fyne.NewContainerWithLayout(layout.NewGridLayout(1),
-		userName,
-		userPassword,
-		loginButton,
-	)
+	loginScreenContainer := fyne.NewContainerWithLayout(layout.NewGridLayout(1), userName, userPassword, loginButton)
 
 	// Set the conatiner as what is being displayed.
-	window.SetContent(container)
+	window.SetContent(loginScreenContainer)
 
 	// Set a sane default for the window size.
-	window.Resize(fyne.NewSize(200, 100))
+	window.Resize(fyne.NewSize(400, 150))
 
 	// Show all of our set content and run the gui.
 	window.ShowAndRun()
