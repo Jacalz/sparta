@@ -29,6 +29,9 @@ type Exercise struct {
 // XMLData contains the data from the xml file.
 var XMLData *Data
 
+// Empty specifies if a file is empty.
+var Empty bool
+
 // CheckDataFile does relevant checks around our data file.
 func CheckDataFile() {
 
@@ -52,6 +55,10 @@ func ReadDataFromXML(filename string) {
 	file, err := os.Open(filename)
 	if err != nil {
 		log.Fatal("Could not find the file.", err)
+	}
+
+	if data, _ := ioutil.ReadFile(filename); string(data) == "" {
+		Empty = true
 	}
 
 	// Make sure to close it also.
