@@ -26,30 +26,37 @@ type Exercise struct {
 	Comment  string  `xml:"comment"`
 }
 
-// XMLData contains the data from the xml file.
-var XMLData *Data
-
-// Empty specifies if a file is empty.
-var Empty bool
-
-// CheckDataFile does relevant checks around our data file.
-func CheckDataFile() {
+// CheckData does relevant checks around our data file.
+func CheckData() (exercises *Data, empty bool) {
 
 	configDir, _ := os.UserConfigDir()
 	file := filepath.Join(configDir, "sparta", "exercises.xml")
 
-	// Check if the user has a data file.
-	if _, err := os.Stat(file); err == nil { // The file does exist.
-		ReadDataFromXML(file)
+	// Check if the user has a data file directory.
+	if _, err := os.Stat(file); err == nil { // The folder does exist.
+		exercises, empty = ReadData(file)
 	} else if os.IsNotExist(err) { // The file doesn't exist, we should create it.
-		CreateFile(file)
 
-		// Now read the data
+		// Check if the directory exists. If now, we create it.
+		if _, err := os.Stat(file); os.IsNotExist(err) {
+			os.Mkdir(filepath.Join(configDir, "sparta"), os.ModePerm)
+		}
+
+		// We then create the file.
+		_, err := os.Create(file)
+		if err != nil {
+			panic(err)
+		}
+
+		// Specify that teh file is empty.
+		empty = true
 	}
+
+	return exercises, empty
 }
 
-// ReadDataFromXML reads data from an xml file, couldn't be simpler.
-func ReadDataFromXML(filename string) {
+// ReadData reads data from an xml file, couldn't be simpler.
+func ReadData(filename string) (XMLData *Data, empty bool) {
 
 	// Open up the xml file that already exists.
 	file, err := os.Open(filename)
@@ -58,7 +65,7 @@ func ReadDataFromXML(filename string) {
 	}
 
 	if data, _ := ioutil.ReadFile(filename); string(data) == "" {
-		Empty = true
+		return nil, true
 	}
 
 	// Make sure to close it also.
@@ -69,14 +76,8 @@ func ReadDataFromXML(filename string) {
 
 	// Unmarshal the xml data in to our Data struct.
 	xml.Unmarshal(byteValue, &XMLData)
+
+	return XMLData, false
 }
 
-// CreateFile uses os.Create to make a file.
-func CreateFile(filename string) *os.File {
-	file, err := os.Create(filename)
-	if err != nil {
-		panic(err)
-	}
-
-	return file
-}
+// WriteData writes new exercieses to the data file.
