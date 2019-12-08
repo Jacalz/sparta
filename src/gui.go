@@ -9,6 +9,7 @@ import (
 	"fyne.io/fyne/layout"
 	"fyne.io/fyne/theme"
 	"fyne.io/fyne/widget"
+	"sparta/file"
 )
 
 // PasswordKey contains the key taken from the username and password.
@@ -46,7 +47,7 @@ func Init(appName string) {
 		PasswordKey = sha256.Sum256([]byte(userName.Text + userPassword.Text))
 
 		// Check for the file where we store the data.
-		XMLData, empty := CheckData()
+		XMLData, empty := file.Check()
 
 		// The button for creating a new exercise.
 		newExercise := widget.NewButtonWithIcon("Add new exercise", theme.ContentAddIcon(), func() {
