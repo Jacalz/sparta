@@ -18,12 +18,12 @@ type Data struct {
 type Exercise struct {
 	Date     string  `xml:"date"`
 	Clock    string  `xml:"clock"`
-	Distance float64 `xml:"distance"`
-	Length   float64 `xml:"length"`
 	Activity string  `xml:"activity"`
-	Reps     int     `xml:"reps"`
-	Sets     int     `xml:"sets"`
-	Comment  string  `xml:"comment"`
+	Distance float64 `xml:"distance"`
+	Time     float64 `xml:"time"`
+	//Reps     int     `xml:"reps"`
+	//Sets     int     `xml:"sets"`
+	//Comment string `xml:"comment"`
 }
 
 var configDir, _ = os.UserConfigDir()
@@ -92,4 +92,11 @@ func Write(exercises *Data) {
 
 	// Write to the file.
 	_ = ioutil.WriteFile(DataFile, file, 0644)
+
+	file2, err := xml.MarshalIndent(exercises, "  ", "    ")
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(file2)
 }
