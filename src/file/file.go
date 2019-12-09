@@ -10,7 +10,8 @@ import (
 
 // Data has the xml data for the initial data tag and then incorporates the Exercise struct.
 type Data struct {
-	XMLName  xml.Name   `xml:"data"`
+	XMLName xml.Name `xml:"data"`
+	// Add a filed for when the file was last updated.
 	Exercise []Exercise `xml:"exercise"`
 }
 
@@ -32,7 +33,7 @@ var configDir, _ = os.UserConfigDir()
 var DataFile string = filepath.Join(configDir, "sparta", "exercises.xml")
 
 // Check does relevant checks around our data file.
-func Check() (exercises *Data, empty bool) {
+func Check() (exercises Data, empty bool) {
 
 	// Check if the user has a data file directory.
 	if _, err := os.Stat(DataFile); err == nil { // The folder does exist.
@@ -58,7 +59,7 @@ func Check() (exercises *Data, empty bool) {
 }
 
 // ReadData reads data from an xml file, couldn't be simpler. Unexported.
-func readData() (XMLData *Data, empty bool) {
+func readData() (XMLData Data, empty bool) {
 
 	// Open up the xml file that already exists.
 	file, err := os.Open(DataFile)
@@ -67,7 +68,7 @@ func readData() (XMLData *Data, empty bool) {
 	}
 
 	if data, _ := ioutil.ReadFile(DataFile); string(data) == "" {
-		return nil, true
+		return XMLData, true
 	}
 
 	// Make sure to close it also.
@@ -83,7 +84,7 @@ func readData() (XMLData *Data, empty bool) {
 }
 
 // Write writes new exercieses to the data file.
-func Write(exercises *Data) {
+func Write(exercises Data) {
 	//Marchal the xml content in to a file variable.
 	file, err := xml.Marshal(exercises)
 	if err != nil {
@@ -93,10 +94,11 @@ func Write(exercises *Data) {
 	// Write to the file.
 	_ = ioutil.WriteFile(DataFile, file, 0644)
 
+	// Just some casual debuging thrown in to the mix:
 	file2, err := xml.MarshalIndent(exercises, "  ", "    ")
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println(file2)
+	fmt.Println(string(file2))
 }
