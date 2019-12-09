@@ -3,18 +3,29 @@ package main
 import (
 	"crypto/sha256"
 	"fmt"
+	"sparta/file"
+	"strconv"
+
 	"fyne.io/fyne"
 	"fyne.io/fyne/app"
 	"fyne.io/fyne/dialog"
 	"fyne.io/fyne/layout"
 	"fyne.io/fyne/theme"
 	"fyne.io/fyne/widget"
-	"sparta/file"
-	"strconv"
 )
 
 // PasswordKey contains the key taken from the username and password.
 var PasswordKey [32]byte
+
+// ParseFloat is a wrapper around strconv.ParseFloat to avoid the error when used inline.
+func ParseFloat(input string) float64 {
+	output, err := strconv.ParseFloat(input, 32)
+	if err != nil {
+		fmt.Print(err)
+	}
+
+	return output
+}
 
 // Init will start up our graphical user interface.
 func Init(appName string) {
@@ -70,17 +81,15 @@ func Init(appName string) {
 			// Forth row of form data.
 			distanceEntry := widget.NewEntry()
 			distanceEntry.SetPlaceHolder("kilometers")
-			distance, _ := strconv.ParseFloat(distanceEntry.Text, 64)
 
 			// Fifth row in the form.
 			timeEntry := widget.NewEntry()
 			timeEntry.SetPlaceHolder("minutes")
-			time, _ := strconv.ParseFloat(timeEntry.Text, 64)
 
 			// Create the form for displaying.
 			form := &widget.Form{
 				OnSubmit: func() {
-					XMLData.Exercise = append(XMLData.Exercise, file.Exercise{Date: dateEntry.Text, Clock: clockEntry.Text, Activity: activityEntry.Text, Distance: distance, Time: time})
+					XMLData.Exercise = append(XMLData.Exercise, file.Exercise{Date: dateEntry.Text, Clock: clockEntry.Text, Activity: activityEntry.Text, Distance: ParseFloat(distanceEntry.Text), Time: ParseFloat(timeEntry.Text)})
 					file.Write(XMLData)
 				},
 			}
@@ -106,8 +115,8 @@ func Init(appName string) {
 		if !empty {
 			// Add a new label for each exercise and so in a new goroutine to not block the current one.
 			go func() {
-				for i := range XMLData.Exercise {
-					vbox.Append(widget.NewLabel(fmt.Sprintf("At %s on %s, you trained %s. The distance was %v and the exercise lasted for %v minutes, resulting in an average speed of %v.",
+				for i := range XMLData.Exercise { // Note to self: make this range reversed so new entries come on top.
+					vbox.Append(widget.NewLabel(fmt.Sprintf("At %s on %s, you trained %s. The distance was %v kilometers and the exercise lasted for %v minutes, resulting in an average speed of %.3f km/min.",
 						XMLData.Exercise[i].Clock, XMLData.Exercise[i].Date, XMLData.Exercise[i].Activity, XMLData.Exercise[i].Distance,
 						XMLData.Exercise[i].Time, XMLData.Exercise[i].Distance/XMLData.Exercise[i].Time)))
 				}
