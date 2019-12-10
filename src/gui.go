@@ -17,7 +17,7 @@ import (
 // PasswordKey contains the key taken from the username and password.
 var PasswordKey [32]byte
 
-// ParseFloat is a wrapper around strconv.ParseFloat to avoid the error when used inline.
+// ParseFloat is a wrapper around strconv.ParseFloat that handles the error to make the function usable inline.
 func ParseFloat(input string) float64 {
 	output, err := strconv.ParseFloat(input, 32)
 	if err != nil {
@@ -50,8 +50,7 @@ func Init(appName string) {
 	loginButton := widget.NewButton("Login", func() {
 		// Check that a username and password was provided. Without it we show an informative dialog and return.
 		if userName.Text == "" || userPassword.Text == "" {
-			message := dialog.NewInformation("Missing username/password", "Please type both username and password.", window)
-			message.Show()
+			dialog.ShowInformation("Missing username/password", "Please type both username and password.", window)
 			return
 		}
 
@@ -76,7 +75,6 @@ func Init(appName string) {
 
 			// Third row of the form.
 			activityEntry := widget.NewEntry()
-			activityEntry.SetPlaceHolder("Anything")
 
 			// Forth row of form data.
 			distanceEntry := widget.NewEntry()
@@ -89,6 +87,7 @@ func Init(appName string) {
 			// Create the form for displaying.
 			form := &widget.Form{
 				OnSubmit: func() {
+					// Save exercise data on submit.
 					XMLData.Exercise = append(XMLData.Exercise, file.Exercise{Date: dateEntry.Text, Clock: clockEntry.Text, Activity: activityEntry.Text, Distance: ParseFloat(distanceEntry.Text), Time: ParseFloat(timeEntry.Text)})
 					file.Write(XMLData)
 				},
@@ -96,7 +95,7 @@ func Init(appName string) {
 
 			// Append all the rows separately in to the form.
 			form.Append("Date", dateEntry)
-			form.Append("Clock", clockEntry)
+			form.Append("Start time", clockEntry)
 			form.Append("Activity", activityEntry)
 			form.Append("Distance", distanceEntry)
 			form.Append("Time", timeEntry)
@@ -116,7 +115,7 @@ func Init(appName string) {
 			// Add a new label for each exercise and so in a new goroutine to not block the current one.
 			go func() {
 				for i := range XMLData.Exercise { // Note to self: make this range reversed so new entries come on top.
-					vbox.Append(widget.NewLabel(fmt.Sprintf("At %s on %s, you trained %s. The distance was %v kilometers and the exercise lasted for %v minutes, resulting in an average speed of %.3f km/min.",
+					vbox.Append(widget.NewLabel(fmt.Sprintf("At %s on %s, you trained %s. The distance was %v kilometers and the exercise lasted for %v minutes.\nThis resulted in an average speed of %.3f km/min.",
 						XMLData.Exercise[i].Clock, XMLData.Exercise[i].Date, XMLData.Exercise[i].Activity, XMLData.Exercise[i].Distance,
 						XMLData.Exercise[i].Time, XMLData.Exercise[i].Distance/XMLData.Exercise[i].Time)))
 				}
