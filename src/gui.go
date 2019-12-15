@@ -1,10 +1,8 @@
 package main
 
 import (
-	"crypto/sha256"
-	"fmt"
 	"sparta/file"
-	"strconv"
+	"sparta/file/encrypt"
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/app"
@@ -17,20 +15,10 @@ import (
 // PasswordKey contains the key taken from the username and password.
 var PasswordKey [32]byte
 
-// ParseFloat is a wrapper around strconv.ParseFloat that handles the error to make the function usable inline.
-func ParseFloat(input string) float64 {
-	output, err := strconv.ParseFloat(input, 32)
-	if err != nil {
-		fmt.Print(err)
-	}
-
-	return output
-}
-
 // Init will start up our graphical user interface.
 func Init(appName string) {
 	// Initialize our new fyne interface application.
-	app := app.New()
+	app := app.NewWithID("com.github.sparta")
 
 	// Set the application icon for our program.
 	//app.SetIcon(icon)
@@ -50,7 +38,7 @@ func Init(appName string) {
 	loginButton := widget.NewButton("Login", func() {
 		// Check that a username and password was provided. Without it we show an informative dialog and return.
 		if userName.Text == "" || userPassword.Text == "" {
-			dialog.ShowInformation("Missing username/password", "Please type both username and password.", window)
+			dialog.ShowInformation("Missing username/password", "Please provide both username and password.", window)
 			return
 		}
 
@@ -58,7 +46,10 @@ func Init(appName string) {
 		window.Resize(fyne.NewSize(600, 400))
 
 		// Calculate the sha256 hash of the username and password.
-		PasswordKey = sha256.Sum256([]byte(userName.Text + userPassword.Text))
+		PasswordKey = encrypt.EncryptionKey(userName.Text, userPassword.Text)
+
+		// Create a channel for sending activity data through. Let's us avoid reading the file every time we add a new activity.
+		newAddedExercise := make(chan string)
 
 		// Check for the file where we store the data.
 		XMLData, empty := file.Check()
@@ -87,9 +78,14 @@ func Init(appName string) {
 			// Create the form for displaying.
 			form := &widget.Form{
 				OnSubmit: func() {
-					// Save exercise data on submit.
-					XMLData.Exercise = append(XMLData.Exercise, file.Exercise{Date: dateEntry.Text, Clock: clockEntry.Text, Activity: activityEntry.Text, Distance: ParseFloat(distanceEntry.Text), Time: ParseFloat(timeEntry.Text)})
-					file.Write(XMLData)
+					// Append new values to a new index.
+					XMLData.Exercise = append(XMLData.Exercise, file.Exercise{Date: dateEntry.Text, Clock: clockEntry.Text, Activity: activityEntry.Text, Distance: file.ParseFloat(distanceEntry.Text), Time: file.ParseFloat(timeEntry.Text)})
+
+					// Write the data to the file.
+					XMLData.Write()
+
+					// Send the formated string from the highest index of the Exercise slice.
+					newAddedExercise <- XMLData.Format(len(XMLData.Exercise) - 1)
 				},
 			}
 
@@ -107,17 +103,18 @@ func Init(appName string) {
 		// Create a label for displaing some info for the user. Default to showing nothing.
 		label := widget.NewLabel("")
 
-		// Append the button and label initially to a vertical box.
-		vbox := widget.NewVBox(newExercise, label)
-
-		// Start up procedure if the data fiel is empty.
+		// Start up procedure if the data field is empty.
 		if !empty {
 			// Add a new label for each exercise and so in a new goroutine to not block the current one.
 			go func() {
-				for i := range XMLData.Exercise { // Note to self: make this range reversed so new entries come on top.
-					vbox.Append(widget.NewLabel(fmt.Sprintf("At %s on %s, you trained %s. The distance was %v kilometers and the exercise lasted for %v minutes.\nThis resulted in an average speed of %.3f km/min.",
-						XMLData.Exercise[i].Clock, XMLData.Exercise[i].Date, XMLData.Exercise[i].Activity, XMLData.Exercise[i].Distance,
-						XMLData.Exercise[i].Time, XMLData.Exercise[i].Distance/XMLData.Exercise[i].Time)))
+				// First we loop through the imported file and add the formated info before the previous info (new information comes out on top).
+				for i := range XMLData.Exercise {
+					label.SetText(XMLData.Format(i) + label.Text)
+				}
+
+				// We then block the channel while waiting for an update on the channel.
+				for {
+					label.SetText(<-newAddedExercise + label.Text)
 				}
 			}()
 		} else {
@@ -126,14 +123,11 @@ func Init(appName string) {
 		}
 
 		// Set the content to show and do so in a scroll container for the exercieses to show correctly.
-		window.SetContent(widget.NewScrollContainer(vbox))
+		window.SetContent(widget.NewScrollContainer(fyne.NewContainerWithLayout(layout.NewVBoxLayout(), widget.NewVBox(newExercise), label)))
 	})
 
-	// Make a container that houses all of our widgets in a one wide grid.
-	loginScreenContainer := fyne.NewContainerWithLayout(layout.NewGridLayout(1), userName, userPassword, loginButton)
-
-	// Set the conatiner as what is being displayed.
-	window.SetContent(loginScreenContainer)
+	// Set the content to be displayed. It is the userName, userPassword fields and the login button inside a layout.
+	window.SetContent(fyne.NewContainerWithLayout(layout.NewGridLayout(1), userName, userPassword, loginButton))
 
 	// Set a sane default for the window size on login.
 	window.Resize(fyne.NewSize(400, 150))
