@@ -6,12 +6,13 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strconv"
 )
 
 // Data has the xml data for the initial data tag and then incorporates the Exercise struct.
 type Data struct {
 	XMLName xml.Name `xml:"data"`
-	// Add a filed for when the file was last updated.
+	// Add a fieled for specifying when the file was last updated.
 	Exercise []Exercise `xml:"exercise"`
 }
 
@@ -84,21 +85,30 @@ func readData() (XMLData Data, empty bool) {
 }
 
 // Write writes new exercieses to the data file.
-func Write(exercises Data) {
+func (d *Data) Write() {
 	//Marchal the xml content in to a file variable.
-	file, err := xml.Marshal(exercises)
+	file, err := xml.Marshal(d)
 	if err != nil {
 		fmt.Print("Could not marchal the data.", err)
 	}
 
 	// Write to the file.
 	_ = ioutil.WriteFile(DataFile, file, 0644)
+}
 
-	// Just some casual debuging thrown in to the mix:
-	file2, err := xml.MarshalIndent(exercises, "  ", "    ")
+// ParseFloat is a wrapper around strconv.ParseFloat that handles the error to make the function usable inline.
+func ParseFloat(input string) float64 {
+	output, err := strconv.ParseFloat(input, 32)
 	if err != nil {
-		panic(err)
+		fmt.Print(err)
 	}
 
-	fmt.Println(string(file2))
+	return output
+}
+
+// Format formats the latest updated data in the Data struct to display information.
+func (d *Data) Format(i int) string {
+	return fmt.Sprintf("\nAt %s on %s, you trained %s. The distance was %v kilometers and the exercise lasted for %v minutes.\nThis resulted in an average speed of %.3f km/min.\n",
+		d.Exercise[i].Clock, d.Exercise[i].Date, d.Exercise[i].Activity, d.Exercise[i].Distance,
+		d.Exercise[i].Time, d.Exercise[i].Distance/d.Exercise[i].Time)
 }
