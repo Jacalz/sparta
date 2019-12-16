@@ -7,13 +7,14 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"time"
 )
 
 // Data has the xml data for the initial data tag and then incorporates the Exercise struct.
 type Data struct {
-	XMLName xml.Name `xml:"data"`
-	// Add a fieled for specifying when the file was last updated.
-	Exercise []Exercise `xml:"exercise"`
+	XMLName     xml.Name   `xml:"data"`
+	LastUpdated time.Time  `xml:"updated"`
+	Exercise    []Exercise `xml:"exercise"`
 }
 
 // Exercise keeps track of the data for each exercise that the user has done.
@@ -52,7 +53,7 @@ func Check() (exercises Data, empty bool) {
 			fmt.Print("Could not create the file.", err)
 		}
 
-		// Specify that teh file is empty.
+		// Specify that the file is empty if not proven otherwise.
 		empty = true
 	}
 
@@ -76,7 +77,10 @@ func readData() (XMLData Data, empty bool) {
 	defer file.Close()
 
 	// Read the data from the opened file.
-	byteValue, _ := ioutil.ReadAll(file)
+	byteValue, err := ioutil.ReadAll(file)
+	if err != nil {
+		fmt.Print("Could not read the data from the file.", err)
+	}
 
 	// Unmarshal the xml data in to our Data struct.
 	xml.Unmarshal(byteValue, &XMLData)
@@ -86,6 +90,9 @@ func readData() (XMLData Data, empty bool) {
 
 // Write writes new exercieses to the data file.
 func (d *Data) Write() {
+	// Update the section containing the time that our file was last updated.
+	d.LastUpdated = time.Now()
+
 	//Marchal the xml content in to a file variable.
 	file, err := xml.Marshal(d)
 	if err != nil {
@@ -93,7 +100,7 @@ func (d *Data) Write() {
 	}
 
 	// Write to the file.
-	_ = ioutil.WriteFile(DataFile, file, 0644)
+	ioutil.WriteFile(DataFile, file, 0644)
 }
 
 // ParseFloat is a wrapper around strconv.ParseFloat that handles the error to make the function usable inline.
