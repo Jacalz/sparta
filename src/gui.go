@@ -15,16 +15,16 @@ import (
 // PasswordKey contains the key taken from the username and password.
 var PasswordKey [32]byte
 
-// Init will start up our graphical user interface.
-func Init(appName string) {
+// InitGUI will start up our graphical user interface.
+func InitGUI() {
 	// Initialize our new fyne interface application.
-	app := app.NewWithID("com.github.sparta")
+	app := app.NewWithID("com.github.jacalz.sparta")
 
 	// Set the application icon for our program.
 	//app.SetIcon(icon)
 
 	// Create the window for our user interface.
-	window := app.NewWindow(appName)
+	window := app.NewWindow("Sparta")
 
 	// Initialize the login form that we are to be using.
 	userName := widget.NewEntry()
