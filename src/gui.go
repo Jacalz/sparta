@@ -1,8 +1,8 @@
 package main
 
 import (
-	"sparta/file"
-	"sparta/file/encrypt"
+	"sparta/src/file"
+	"sparta/src/file/encrypt"
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/app"
