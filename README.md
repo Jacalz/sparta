@@ -1,6 +1,6 @@
 <h1 align="center">
   <a href="https://github.com/jacalz/sparta">
-    <img alt="sparta" src="https://raw.githubusercontent.com/Jacalz/sparta/master/assets/github-readme-logo.png?token=AGCJOINVCAZMRPEDXLVSR7C57ZXCI" width="256">
+    <img alt="sparta" src="https://raw.githubusercontent.com/Jacalz/sparta/master/assets/github-readme-logo.png?token=AGCJOIPFVBNZMOPAIYHCA3K57Z452" width="256">
   </a>
   <br> Sparta <br>
 </h1>
