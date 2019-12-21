@@ -53,7 +53,7 @@ func InitGUI() {
 		newAddedExercise := make(chan string)
 
 		// Check for the file where we store the data.
-		XMLData, empty := file.Check()
+		XMLData, empty := file.Check(&PasswordKey)
 
 		// The button for creating a new exercise.
 		newExercise := widget.NewButtonWithIcon("Add new exercise", theme.ContentAddIcon(), func() {
@@ -79,14 +79,16 @@ func InitGUI() {
 			// Create the form for displaying.
 			form := &widget.Form{
 				OnSubmit: func() {
-					// Append new values to a new index.
-					XMLData.Exercise = append(XMLData.Exercise, file.Exercise{Date: dateEntry.Text, Clock: clockEntry.Text, Activity: activityEntry.Text, Distance: file.ParseFloat(distanceEntry.Text), Time: file.ParseFloat(timeEntry.Text)})
+					go func() {
+						// Append new values to a new index.
+						XMLData.Exercise = append(XMLData.Exercise, file.Exercise{Date: dateEntry.Text, Clock: clockEntry.Text, Activity: activityEntry.Text, Distance: file.ParseFloat(distanceEntry.Text), Time: file.ParseFloat(timeEntry.Text)})
 
-					// Write the data to the file.
-					XMLData.Write()
+						// Encrypt and write the data to the configuration file. Do so on another goroutine.
+						go XMLData.Write(&PasswordKey)
 
-					// Send the formated string from the highest index of the Exercise slice.
-					newAddedExercise <- XMLData.Format(len(XMLData.Exercise) - 1)
+						// Send the formated string from the highest index of the Exercise slice.
+						newAddedExercise <- XMLData.Format(len(XMLData.Exercise) - 1)
+					}()
 				},
 			}
 

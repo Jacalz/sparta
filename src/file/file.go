@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"sparta/src/file/encrypt"
 	"strconv"
 	"time"
 )
@@ -35,14 +36,14 @@ var configDir, _ = os.UserConfigDir()
 var DataFile string = filepath.Join(configDir, "sparta", "exercises.xml")
 
 // Check does relevant checks around our data file.
-func Check() (exercises Data, empty bool) {
+func Check(key *[32]byte) (exercises Data, empty bool) {
 
 	// Check if the user has a data file directory.
 	if _, err := os.Stat(DataFile); err == nil { // The folder does exist.
-		exercises, empty = readData()
+		exercises, empty = readData(key)
 	} else if os.IsNotExist(err) { // The file doesn't exist, we should create it.
 
-		// Check if the directory exists. If now, we create it.
+		// Check if the directory exists. If not, we create it.
 		if _, err := os.Stat(DataFile); os.IsNotExist(err) {
 			os.Mkdir(filepath.Join(configDir, "sparta"), os.ModePerm)
 		}
@@ -61,35 +62,36 @@ func Check() (exercises Data, empty bool) {
 }
 
 // ReadData reads data from an xml file, couldn't be simpler. Unexported.
-func readData() (XMLData Data, empty bool) {
+func readData(key *[32]byte) (XMLData Data, empty bool) {
 
 	// Open up the xml file that already exists.
 	file, err := os.Open(DataFile)
 	if err != nil {
-		fmt.Print("Could not find the file.", err)
+		fmt.Print(err)
 	}
 
-	if data, _ := ioutil.ReadFile(DataFile); string(data) == "" {
+	// Read the data from the opened file and then check if it is empty.
+	encrypted, err := ioutil.ReadAll(file)
+	if string(encrypted) == "" {
 		return XMLData, true
+	} else if err != nil {
+		fmt.Print(err)
 	}
 
-	// Make sure to close it also.
-	defer file.Close()
+	// Close the loading of the file now that it has served is perpous.
+	go file.Close()
 
-	// Read the data from the opened file.
-	byteValue, err := ioutil.ReadAll(file)
-	if err != nil {
-		fmt.Print("Could not read the data from the file.", err)
-	}
+	// Unencrypt the data to the content variable.
+	content := encrypt.Decrypt(key, encrypted)
 
 	// Unmarshal the xml data in to our Data struct.
-	xml.Unmarshal(byteValue, &XMLData)
+	xml.Unmarshal(content, &XMLData)
 
 	return XMLData, false
 }
 
 // Write writes new exercieses to the data file.
-func (d *Data) Write() {
+func (d *Data) Write(key *[32]byte) {
 	// Update the section containing the time that our file was last updated.
 	d.LastUpdated = time.Now()
 
@@ -100,7 +102,7 @@ func (d *Data) Write() {
 	}
 
 	// Write to the file.
-	ioutil.WriteFile(DataFile, file, 0644)
+	ioutil.WriteFile(DataFile, encrypt.Encrypt(key, file), 0644)
 }
 
 // ParseFloat is a wrapper around strconv.ParseFloat that handles the error to make the function usable inline.

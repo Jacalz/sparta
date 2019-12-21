@@ -32,9 +32,9 @@ func commonCipher(key [32]byte) cipher.AEAD {
 }
 
 // Encrypt is the initial encryption function.
-func Encrypt(key [32]byte, content []byte) []byte {
+func Encrypt(key *[32]byte, content []byte) []byte {
 	// Make use of common code in encryption and decryption.
-	gcm := commonCipher(key)
+	gcm := commonCipher(*key)
 
 	// Create a byte slice with the size of the nonce.
 	nonce := make([]byte, gcm.NonceSize())
@@ -49,9 +49,9 @@ func Encrypt(key [32]byte, content []byte) []byte {
 }
 
 // Decrypt is the initial decryption function.
-func Decrypt(key [32]byte, encrypted []byte) []byte {
+func Decrypt(key *[32]byte, encrypted []byte) []byte {
 	// Make use of common code in encryption and decryption.
-	gcm := commonCipher(key)
+	gcm := commonCipher(*key)
 
 	// Make sure that the nonceSize is bigger than the content.
 	nonceSize := gcm.NonceSize()
@@ -65,7 +65,7 @@ func Decrypt(key [32]byte, encrypted []byte) []byte {
 	// Unencrypt the content in to plaintext.
 	plaintext, err := gcm.Open(nil, nonce, encrypted, nil)
 	if err != nil {
-		fmt.Print(err)
+		fmt.Println(err)
 	}
 
 	return plaintext
