@@ -1,4 +1,4 @@
-package main
+package gui
 
 import (
 	"sparta/src/bundled"
@@ -16,8 +16,8 @@ import (
 // PasswordKey contains the key taken from the username and password.
 var PasswordKey [32]byte
 
-// InitGUI will start up our graphical user interface.
-func InitGUI() {
+// Init will start up our graphical user interface.
+func Init() {
 	// Initialize our new fyne interface application.
 	app := app.NewWithID("com.github.jacalz.sparta")
 
