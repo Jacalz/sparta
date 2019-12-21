@@ -1,6 +1,7 @@
 package main
 
 import (
+	"sparta/src/bundled"
 	"sparta/src/file"
 	"sparta/src/file/encrypt"
 
@@ -21,7 +22,7 @@ func InitGUI() {
 	app := app.NewWithID("com.github.jacalz.sparta")
 
 	// Set the application icon for our program.
-	//app.SetIcon(icon)
+	app.SetIcon(bundled.MainIcon)
 
 	// Create the window for our user interface.
 	window := app.NewWindow("Sparta")
