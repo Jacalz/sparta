@@ -1,9 +1,12 @@
-<h1 align="center">
-  <a href="https://github.com/jacalz/sparta">
-    <img alt="sparta" src="https://raw.githubusercontent.com/Jacalz/sparta/master/assets/github-readme-logo.png?token=AGCJOIPI7LWPKZ4J7S6QONC57Z6OW" width="256">
-  </a>
-  <br> Sparta <br>
-</h1>
+<p align="center">
+  <br /><img
+    width="256"
+    src="assets/github-readme-logo.png"
+    alt="Sparta – Sport and Rehearsal Tracking Application"
+  />
+</p>
+
+# Sparta
 
 Sparta, a Sport and Rehearsal Tracking Application with a focus for privacy and security.
 The application uses encryption and locally stored files to keep your activities private and hidden from spying eyes.
