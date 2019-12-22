@@ -30,10 +30,18 @@ type Exercise struct {
 	//Comment string `xml:"comment"`
 }
 
-var configDir, _ = os.UserConfigDir()
+// Config returns the config directory and handles the error accordingly.
+func config() string {
+	directory, err := os.UserConfigDir()
+	if err != nil {
+		fmt.Print(err)
+	}
+
+	return directory
+}
 
 // DataFile specifies the loacation of our data file.
-var DataFile string = filepath.Join(configDir, "sparta", "exercises.xml")
+var DataFile string = filepath.Join(config(), "sparta", "exercises.xml")
 
 // Check does relevant checks around our data file.
 func Check(key *[32]byte) (exercises Data, empty bool) {
@@ -45,7 +53,7 @@ func Check(key *[32]byte) (exercises Data, empty bool) {
 
 		// Check if the directory exists. If not, we create it.
 		if _, err := os.Stat(DataFile); os.IsNotExist(err) {
-			os.Mkdir(filepath.Join(configDir, "sparta"), os.ModePerm)
+			os.Mkdir(filepath.Join(config(), "sparta"), os.ModePerm)
 		}
 
 		// We then create the file.
