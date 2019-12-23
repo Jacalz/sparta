@@ -4,6 +4,8 @@
 *.dll
 *.so
 *.dylib
+
+# Produced by a regular go build inside src.
 src/src
 
 # Test binary, build with `go test -c`
@@ -11,3 +13,11 @@ src/src
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+
+# Files created and used when using fyne-cross
+fyne.syso
+*.tar.gz
+*.tar.xz
+*.app
+src/usr
+build

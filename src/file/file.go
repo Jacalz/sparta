@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"runtime"
 	"sparta/src/file/encrypt"
 	"strconv"
 	"time"
@@ -32,12 +33,36 @@ type Exercise struct {
 
 // Config returns the config directory and handles the error accordingly.
 func config() string {
-	directory, err := os.UserConfigDir()
-	if err != nil {
-		fmt.Print(err)
+	var dir string
+
+	// Workaround golang 1.12 in the cross compiling tool.
+	switch runtime.GOOS {
+	case "windows":
+		dir = os.Getenv("AppData")
+
+	case "darwin":
+		dir = os.Getenv("HOME")
+		dir += "/Library/Preferences"
+
+	default: // Unix
+		dir = os.Getenv("XDG_CONFIG_HOME")
+		if dir == "" {
+			dir = os.Getenv("HOME")
+			dir += "/.config"
+		}
 	}
 
-	return directory
+	return dir
+
+	/*
+		directory, err := os.UserConfigDir()
+		if err != nil {
+			fmt.Print(err)
+		}
+
+
+		return directory
+	*/
 }
 
 // DataFile specifies the loacation of our data file.
