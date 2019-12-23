@@ -115,11 +115,11 @@ func Init() {
 
 				// Then wait for more data to come running down the pipe.
 				label.SetText(<-newAddedExercise)
-			}
-
-			// First we loop through the imported file and add the formated info before the previous info (new information comes out on top).
-			for i := range XMLData.Exercise {
-				label.SetText(XMLData.Format(i) + label.Text)
+			} else {
+				// We loop through the imported file and add the formated info before the previous info (new information comes out on top).
+				for i := range XMLData.Exercise {
+					label.SetText(XMLData.Format(i) + label.Text)
+				}
 			}
 
 			// We then block the channel while waiting for an update on the channel.
