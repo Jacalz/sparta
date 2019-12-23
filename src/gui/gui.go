@@ -106,24 +106,27 @@ func Init() {
 		// Create a label for displaing some info for the user. Default to showing nothing.
 		label := widget.NewLabel("")
 
-		// Start up procedure if the data field is empty.
-		if !empty {
-			// Add a new label for each exercise and so in a new goroutine to not block the current one.
-			go func() {
-				// First we loop through the imported file and add the formated info before the previous info (new information comes out on top).
-				for i := range XMLData.Exercise {
-					label.SetText(XMLData.Format(i) + label.Text)
-				}
+		go func() {
 
-				// We then block the channel while waiting for an update on the channel.
-				for {
-					label.SetText(<-newAddedExercise + label.Text)
-				}
-			}()
-		} else {
-			// Inform about no exercies being avaliable.
-			label.SetText("No exercieses have been created yet.")
-		}
+			// Handle an empty data file.
+			if empty {
+				// Start by inorming  the user that no data is avaliable.
+				label.SetText("No exercieses have been created yet.")
+
+				// Then wait for more data to come running down the pipe.
+				label.SetText(<-newAddedExercise)
+			}
+
+			// First we loop through the imported file and add the formated info before the previous info (new information comes out on top).
+			for i := range XMLData.Exercise {
+				label.SetText(XMLData.Format(i) + label.Text)
+			}
+
+			// We then block the channel while waiting for an update on the channel.
+			for {
+				label.SetText(<-newAddedExercise + label.Text)
+			}
+		}()
 
 		// Set the content to show and do so in a scroll container for the exercieses to show correctly.
 		window.SetContent(widget.NewScrollContainer(fyne.NewContainerWithLayout(layout.NewVBoxLayout(), widget.NewVBox(newExercise), label)))
