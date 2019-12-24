@@ -41,6 +41,12 @@ func Init() {
 		if userName.Text == "" || userPassword.Text == "" {
 			dialog.ShowInformation("Missing username/password", "Please provide both username and password.", window)
 			return
+		} else if userName.Text == userPassword.Text {
+			dialog.ShowInformation("Identical username and password", "Please do not use identical username and password.", window)
+			return
+		} else if len(userPassword.Text) < 8 {
+			dialog.ShowInformation("Too short password", "Please use a password that is eight characters or longer.", window)
+			return
 		}
 
 		// Adapt the window to a good size.
