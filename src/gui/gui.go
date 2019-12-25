@@ -45,7 +45,7 @@ func Init() {
 			dialog.ShowInformation("Identical username and password", "Please do not use identical username and password.", window)
 			return
 		} else if len(userPassword.Text) < 8 {
-			dialog.ShowInformation("Too short password", "Please use a password that is eight characters or longer.", window)
+			dialog.ShowInformation("Too short password", "The password should be eight characters or longer.", window)
 			return
 		}
 
@@ -142,7 +142,7 @@ func Init() {
 	window.SetContent(fyne.NewContainerWithLayout(layout.NewGridLayout(1), userName, userPassword, loginButton))
 
 	// Set a sane default for the window size on login.
-	window.Resize(fyne.NewSize(400, 150))
+	window.Resize(fyne.NewSize(450, 150))
 
 	// Show all of our set content and run the gui.
 	window.ShowAndRun()
