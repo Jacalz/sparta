@@ -159,7 +159,7 @@ func Init() {
 		}()
 
 		// Set the content to show and do so in a scroll container for the exercieses to show correctly.
-		window.SetContent(widget.NewScrollContainer(fyne.NewContainerWithLayout(layout.NewVBoxLayout(), widget.NewVBox(newExercise), label)))
+		window.SetContent(widget.NewScrollContainer(fyne.NewContainerWithLayout(layout.NewVBoxLayout(), newExercise, label)))
 	})
 
 	// Add the Action component to make actions work inside the struct. Thhis is used to press the loginButton on pressing enter/return ton the keyboard.
