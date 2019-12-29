@@ -13,6 +13,27 @@ import (
 	"fyne.io/fyne/widget"
 )
 
+// ExtendedEntry is used to make an entry that reacts to key presses.
+type ExtendedEntry struct {
+	widget.Entry
+	*Action
+}
+
+// Action handles the Button press action.
+type Action struct {
+	widget.Button
+}
+
+// TypedKey handles the key presses inside our UsernameEntry and uses Action to press the linked button.
+func (e *ExtendedEntry) TypedKey(ev *fyne.KeyEvent) {
+	switch ev.Name {
+	case fyne.KeyReturn:
+		e.Action.Button.OnTapped()
+	default:
+		e.Entry.TypedKey(ev)
+	}
+}
+
 // PasswordKey contains the key taken from the username and password.
 var PasswordKey [32]byte
 
@@ -28,12 +49,15 @@ func Init() {
 	window := app.NewWindow("Sparta")
 
 	// Initialize the login form that we are to be using.
-	userName := widget.NewEntry()
+	userName := &ExtendedEntry{}
+	userName.ExtendBaseWidget(userName)
 	userName.SetPlaceHolder("Username")
 
 	// Initialize the password input box that we are to be using.
-	userPassword := widget.NewPasswordEntry()
+	userPassword := &ExtendedEntry{}
+	userPassword.ExtendBaseWidget(userPassword)
 	userPassword.SetPlaceHolder("Password")
+	userPassword.Password = true
 
 	// Create the login button that will calculate the 32bit long sha256 hash.
 	loginButton := widget.NewButton("Login", func() {
@@ -137,6 +161,9 @@ func Init() {
 		// Set the content to show and do so in a scroll container for the exercieses to show correctly.
 		window.SetContent(widget.NewScrollContainer(fyne.NewContainerWithLayout(layout.NewVBoxLayout(), widget.NewVBox(newExercise), label)))
 	})
+
+	// Add the Action component to make actions work inside the struct. Thhis is used to press the loginButton on pressing enter/return ton the keyboard.
+	userName.Action, userPassword.Action = &Action{*loginButton}, &Action{*loginButton}
 
 	// Set the content to be displayed. It is the userName, userPassword fields and the login button inside a layout.
 	window.SetContent(fyne.NewContainerWithLayout(layout.NewGridLayout(1), userName, userPassword, loginButton))
