@@ -13,42 +13,6 @@ import (
 	"fyne.io/fyne/widget"
 )
 
-// ExtendedEntry is used to make an entry that reacts to key presses.
-type ExtendedEntry struct {
-	widget.Entry
-	*Action
-}
-
-// Action handles the Button press action.
-type Action struct {
-	widget.Button
-}
-
-// TypedKey handles the key presses inside our UsernameEntry and uses Action to press the linked button.
-func (e *ExtendedEntry) TypedKey(ev *fyne.KeyEvent) {
-	switch ev.Name {
-	case fyne.KeyReturn:
-		e.Action.Button.OnTapped()
-	default:
-		e.Entry.TypedKey(ev)
-	}
-}
-
-// NewExtendedEntry creates an ExtendedEntry button.
-func NewExtendedEntry(password bool) *ExtendedEntry {
-	entry := &ExtendedEntry{}
-
-	// Extend the base widget.
-	entry.ExtendBaseWidget(entry)
-
-	// Check if we are creating a password entry.
-	if password {
-		entry.Password = true
-	}
-
-	return entry
-}
-
 // PasswordKey contains the key taken from the username and password.
 var PasswordKey [32]byte
 
@@ -85,8 +49,9 @@ func Init() {
 			return
 		}
 
-		// Adapt the window to a good size.
-		window.Resize(fyne.NewSize(600, 400))
+		// Adapt the window to a good size and make it resizable again.
+		window.SetFixedSize(false)
+		window.Resize(fyne.NewSize(800, 500))
 
 		// Calculate the sha256 hash of the username and password.
 		PasswordKey = encrypt.EncryptionKey(userName.Text, userPassword.Text)
@@ -99,31 +64,23 @@ func Init() {
 
 		// The button for creating a new exercise.
 		newExercise := widget.NewButtonWithIcon("Add new exercise", theme.ContentAddIcon(), func() {
-			// Form information for the first row.
-			dateEntry := widget.NewEntry()
-			dateEntry.SetPlaceHolder("YYYY-MM-DD")
 
-			// Second row of form information.
-			clockEntry := widget.NewEntry()
-			clockEntry.SetPlaceHolder("HH:MM")
-
-			// Third row of the form.
-			activityEntry := widget.NewEntry()
-
-			// Forth row of form data.
-			distanceEntry := widget.NewEntry()
-			distanceEntry.SetPlaceHolder("kilometers")
-
-			// Fifth row in the form.
-			timeEntry := widget.NewEntry()
-			timeEntry.SetPlaceHolder("minutes")
+			// Variables for the entry variables used in the form.
+			dateEntry := NewEntryWithPlaceholder("YYYY-MM-DD")
+			clockEntry := NewEntryWithPlaceholder("HH:MM")
+			activityEntry := NewEntryWithPlaceholder("Name of activity")
+			distanceEntry := NewEntryWithPlaceholder("Kilometers")
+			timeEntry := NewEntryWithPlaceholder("Minutes")
+			repsEntry := NewEntryWithPlaceholder("Number of reps")
+			setsEntry := NewEntryWithPlaceholder("Number of sets")
+			commentEntry := widget.NewMultiLineEntry()
 
 			// Create the form for displaying.
 			form := &widget.Form{
 				OnSubmit: func() {
 					go func() {
 						// Append new values to a new index.
-						XMLData.Exercise = append(XMLData.Exercise, file.Exercise{Date: dateEntry.Text, Clock: clockEntry.Text, Activity: activityEntry.Text, Distance: file.ParseFloat(distanceEntry.Text), Time: file.ParseFloat(timeEntry.Text)})
+						XMLData.Exercise = append(XMLData.Exercise, file.Exercise{Date: dateEntry.Text, Clock: clockEntry.Text, Activity: activityEntry.Text, Distance: file.ParseFloat(distanceEntry.Text), Time: file.ParseFloat(timeEntry.Text), Reps: file.ParseInt(repsEntry.Text), Sets: file.ParseInt(setsEntry.Text), Comment: commentEntry.Text})
 
 						// Encrypt and write the data to the configuration file. Do so on another goroutine.
 						go XMLData.Write(&PasswordKey)
@@ -140,6 +97,9 @@ func Init() {
 			form.Append("Activity", activityEntry)
 			form.Append("Distance", distanceEntry)
 			form.Append("Time", timeEntry)
+			form.Append("Reps", repsEntry)
+			form.Append("Sets", setsEntry)
+			form.Append("Comment", commentEntry)
 
 			// Show the popup dialog.
 			dialog.ShowCustom("Add activity", "Done", form, window)
@@ -174,14 +134,15 @@ func Init() {
 		window.SetContent(widget.NewScrollContainer(fyne.NewContainerWithLayout(layout.NewVBoxLayout(), newExercise, label)))
 	})
 
-	// Add the Action component to make actions work inside the struct. Thhis is used to press the loginButton on pressing enter/return ton the keyboard.
+	// Add the Action component to make actions work inside the struct. This is used to press the loginButton on pressing enter/return ton the keyboard.
 	userName.Action, userPassword.Action = &Action{*loginButton}, &Action{*loginButton}
 
 	// Set the content to be displayed. It is the userName, userPassword fields and the login button inside a layout.
-	window.SetContent(fyne.NewContainerWithLayout(layout.NewGridLayout(1), userName, userPassword, loginButton))
+	window.SetContent(fyne.NewContainerWithLayout(layout.NewVBoxLayout(), userName, userPassword, loginButton))
 
-	// Set a sane default for the window size on login.
-	window.Resize(fyne.NewSize(450, 150))
+	// Set a sane default for the window size on login and make sure that it isn't resizable.
+	window.Resize(fyne.NewSize(400, 100))
+	window.SetFixedSize(true)
 
 	// Show all of our set content and run the gui.
 	window.ShowAndRun()

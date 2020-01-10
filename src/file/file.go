@@ -26,9 +26,9 @@ type Exercise struct {
 	Activity string  `xml:"activity"`
 	Distance float64 `xml:"distance"`
 	Time     float64 `xml:"time"`
-	//Reps     int     `xml:"reps"`
-	//Sets     int     `xml:"sets"`
-	//Comment string `xml:"comment"`
+	Reps     int     `xml:"reps"`
+	Sets     int     `xml:"sets"`
+	Comment  string  `xml:"comment"`
 }
 
 // Config returns the config directory and handles the error accordingly.
@@ -140,7 +140,25 @@ func (d *Data) Write(key *[32]byte) {
 
 // ParseFloat is a wrapper around strconv.ParseFloat that handles the error to make the function usable inline.
 func ParseFloat(input string) float64 {
+	if input == "" {
+		return 0
+	}
+
 	output, err := strconv.ParseFloat(input, 32)
+	if err != nil {
+		fmt.Print(err)
+	}
+
+	return output
+}
+
+// ParseInt is just a wrapper around strconv.Atoi().
+func ParseInt(input string) int {
+	if input == "" {
+		return 0
+	}
+
+	output, err := strconv.Atoi(input)
 	if err != nil {
 		fmt.Print(err)
 	}
@@ -150,7 +168,23 @@ func ParseFloat(input string) float64 {
 
 // Format formats the latest updated data in the Data struct to display information.
 func (d *Data) Format(i int) string {
-	return fmt.Sprintf("\nAt %s on %s, you trained %s. The distance was %v kilometers and the exercise lasted for %v minutes.\nThis resulted in an average speed of %.3f km/min.\n",
-		d.Exercise[i].Clock, d.Exercise[i].Date, d.Exercise[i].Activity, d.Exercise[i].Distance,
-		d.Exercise[i].Time, d.Exercise[i].Distance/d.Exercise[i].Time)
+	if d.Exercise[i].Reps == 0 && d.Exercise[i].Sets == 0 && d.Exercise[i].Comment == "" {
+		return fmt.Sprintf("\nAt %s on %s, you trained %s. The distance was %v kilometers and the exercise lasted for %v minutes.\nThis resulted in an average speed of %.3f km/min.\n",
+			d.Exercise[i].Clock, d.Exercise[i].Date, d.Exercise[i].Activity, d.Exercise[i].Distance,
+			d.Exercise[i].Time, d.Exercise[i].Distance/d.Exercise[i].Time)
+	} else if d.Exercise[i].Reps == 0 && d.Exercise[i].Sets == 0 {
+		return fmt.Sprintf("\nAt %s on %s, you trained %s. The distance was %v kilometers and the exercise lasted for %v minutes.\nThis resulted in an average speed of %.3f km/min.\nComment: %s\n",
+			d.Exercise[i].Clock, d.Exercise[i].Date, d.Exercise[i].Activity, d.Exercise[i].Distance,
+			d.Exercise[i].Time, d.Exercise[i].Distance/d.Exercise[i].Time, d.Exercise[i].Comment)
+	} else if d.Exercise[i].Distance == 0 && d.Exercise[i].Comment == "" {
+		return fmt.Sprintf("\nAt %s on %s, you trained %s for %v minutes. You did %v sets with %v reps each.\n",
+			d.Exercise[i].Clock, d.Exercise[i].Date, d.Exercise[i].Activity, d.Exercise[i].Time, d.Exercise[i].Sets, d.Exercise[i].Reps)
+	} else if d.Exercise[i].Distance == 0 {
+		return fmt.Sprintf("\nAt %s on %s, you trained %s for %v minutes. You did %v sets with %v reps each.\nComment: %s\n",
+			d.Exercise[i].Clock, d.Exercise[i].Date, d.Exercise[i].Activity, d.Exercise[i].Time, d.Exercise[i].Sets, d.Exercise[i].Reps, d.Exercise[i].Comment)
+	}
+
+	// If none of the above cases are true, we return all data even if some might be empty.
+	return fmt.Sprintf("\nAt %s on %s, you trained %s for %v minutes. The distance was %v kilometers and you did %v sets with %v reps each.\nComment: %s\n",
+		d.Exercise[i].Clock, d.Exercise[i].Date, d.Exercise[i].Activity, d.Exercise[i].Time, d.Exercise[i].Distance, d.Exercise[i].Sets, d.Exercise[i].Reps, d.Exercise[i].Comment)
 }
