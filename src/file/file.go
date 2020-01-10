@@ -167,24 +167,21 @@ func ParseInt(input string) int {
 }
 
 // Format formats the latest updated data in the Data struct to display information.
-func (d *Data) Format(i int) string {
-	if d.Exercise[i].Reps == 0 && d.Exercise[i].Sets == 0 && d.Exercise[i].Comment == "" {
-		return fmt.Sprintf("\nAt %s on %s, you trained %s. The distance was %v kilometers and the exercise lasted for %v minutes.\nThis resulted in an average speed of %.3f km/min.\n",
-			d.Exercise[i].Clock, d.Exercise[i].Date, d.Exercise[i].Activity, d.Exercise[i].Distance,
-			d.Exercise[i].Time, d.Exercise[i].Distance/d.Exercise[i].Time)
-	} else if d.Exercise[i].Reps == 0 && d.Exercise[i].Sets == 0 {
-		return fmt.Sprintf("\nAt %s on %s, you trained %s. The distance was %v kilometers and the exercise lasted for %v minutes.\nThis resulted in an average speed of %.3f km/min.\nComment: %s\n",
-			d.Exercise[i].Clock, d.Exercise[i].Date, d.Exercise[i].Activity, d.Exercise[i].Distance,
-			d.Exercise[i].Time, d.Exercise[i].Distance/d.Exercise[i].Time, d.Exercise[i].Comment)
-	} else if d.Exercise[i].Distance == 0 && d.Exercise[i].Comment == "" {
-		return fmt.Sprintf("\nAt %s on %s, you trained %s for %v minutes. You did %v sets with %v reps each.\n",
-			d.Exercise[i].Clock, d.Exercise[i].Date, d.Exercise[i].Activity, d.Exercise[i].Time, d.Exercise[i].Sets, d.Exercise[i].Reps)
+func (d *Data) Format(i int) (output string) {
+	if d.Exercise[i].Reps == 0 && d.Exercise[i].Sets == 0 {
+		output = fmt.Sprintf("\nAt %s on %s, you trained %s. The distance was %v kilometers and the exercise lasted for %v minutes.\nThis resulted in an average speed of %.3f km/min.\n",
+			d.Exercise[i].Clock, d.Exercise[i].Date, d.Exercise[i].Activity, d.Exercise[i].Distance, d.Exercise[i].Time, d.Exercise[i].Distance/d.Exercise[i].Time)
 	} else if d.Exercise[i].Distance == 0 {
-		return fmt.Sprintf("\nAt %s on %s, you trained %s for %v minutes. You did %v sets with %v reps each.\nComment: %s\n",
-			d.Exercise[i].Clock, d.Exercise[i].Date, d.Exercise[i].Activity, d.Exercise[i].Time, d.Exercise[i].Sets, d.Exercise[i].Reps, d.Exercise[i].Comment)
+		output = fmt.Sprintf("\nAt %s on %s, you trained %s for %v minutes. You did %v sets with %v reps each.\n",
+			d.Exercise[i].Clock, d.Exercise[i].Date, d.Exercise[i].Activity, d.Exercise[i].Time, d.Exercise[i].Sets, d.Exercise[i].Reps)
+	} else {
+		output = fmt.Sprintf("\nAt %s on %s, you trained %s for %v minutes. The distance was %v kilometers and you did %v sets with %v reps each.\n",
+			d.Exercise[i].Clock, d.Exercise[i].Date, d.Exercise[i].Activity, d.Exercise[i].Time, d.Exercise[i].Distance, d.Exercise[i].Sets, d.Exercise[i].Reps)
 	}
 
-	// If none of the above cases are true, we return all data even if some might be empty.
-	return fmt.Sprintf("\nAt %s on %s, you trained %s for %v minutes. The distance was %v kilometers and you did %v sets with %v reps each.\nComment: %s\n",
-		d.Exercise[i].Clock, d.Exercise[i].Date, d.Exercise[i].Activity, d.Exercise[i].Time, d.Exercise[i].Distance, d.Exercise[i].Sets, d.Exercise[i].Reps, d.Exercise[i].Comment)
+	if d.Exercise[i].Comment != "" {
+		output += fmt.Sprintf("Comment: %s\n", d.Exercise[i].Comment)
+	}
+
+	return output
 }
