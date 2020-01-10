@@ -34,6 +34,21 @@ func (e *ExtendedEntry) TypedKey(ev *fyne.KeyEvent) {
 	}
 }
 
+// NewExtendedEntry creates an ExtendedEntry button.
+func NewExtendedEntry(password bool) *ExtendedEntry {
+	entry := &ExtendedEntry{}
+
+	// Extend the base widget.
+	entry.ExtendBaseWidget(entry)
+
+	// Check if we are creating a password entry.
+	if password {
+		entry.Password = true
+	}
+
+	return entry
+}
+
 // PasswordKey contains the key taken from the username and password.
 var PasswordKey [32]byte
 
@@ -49,15 +64,12 @@ func Init() {
 	window := app.NewWindow("Sparta")
 
 	// Initialize the login form that we are to be using.
-	userName := &ExtendedEntry{}
-	userName.ExtendBaseWidget(userName)
+	userName := NewExtendedEntry(false)
 	userName.SetPlaceHolder("Username")
 
 	// Initialize the password input box that we are to be using.
-	userPassword := &ExtendedEntry{}
-	userPassword.ExtendBaseWidget(userPassword)
+	userPassword := NewExtendedEntry(true)
 	userPassword.SetPlaceHolder("Password")
-	userPassword.Password = true
 
 	// Create the login button that will calculate the 32bit long sha256 hash.
 	loginButton := widget.NewButton("Login", func() {
