@@ -27,11 +27,14 @@ func (e *ExtendedEntry) TypedKey(ev *fyne.KeyEvent) {
 }
 
 // NewExtendedEntry creates an ExtendedEntry button.
-func NewExtendedEntry(password bool) *ExtendedEntry {
+func NewExtendedEntry(placeholder string, password bool) *ExtendedEntry {
 	entry := &ExtendedEntry{}
 
 	// Extend the base widget.
 	entry.ExtendBaseWidget(entry)
+
+	// Set placeholder for the entry.
+	entry.SetPlaceHolder(placeholder)
 
 	// Check if we are creating a password entry.
 	if password {

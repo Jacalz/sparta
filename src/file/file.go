@@ -31,6 +31,13 @@ type Exercise struct {
 	Comment  string  `xml:"comment"`
 }
 
+var fileStatusEmpty bool
+
+// Empty returns if we have a config file or not.
+func Empty() bool {
+	return fileStatusEmpty
+}
+
 // Config returns the config directory and handles the error accordingly.
 func config() string {
 	var dir string
@@ -69,11 +76,11 @@ func config() string {
 var DataFile string = filepath.Join(config(), "sparta", "exercises.xml")
 
 // Check does relevant checks around our data file.
-func Check(key *[32]byte) (exercises Data, empty bool) {
+func Check(key *[32]byte) (exercises Data) {
 
 	// Check if the user has a data file directory.
 	if _, err := os.Stat(DataFile); err == nil { // The folder does exist.
-		exercises, empty = readData(key)
+		exercises = readData(key)
 	} else if os.IsNotExist(err) { // The file doesn't exist, we should create it.
 
 		// Check if the directory exists. If not, we create it.
@@ -88,14 +95,14 @@ func Check(key *[32]byte) (exercises Data, empty bool) {
 		}
 
 		// Specify that the file is empty if not proven otherwise.
-		empty = true
+		fileStatusEmpty = true
 	}
 
-	return exercises, empty
+	return exercises
 }
 
 // ReadData reads data from an xml file, couldn't be simpler. Unexported.
-func readData(key *[32]byte) (XMLData Data, empty bool) {
+func readData(key *[32]byte) (XMLData Data) {
 
 	// Open up the xml file that already exists.
 	file, err := os.Open(DataFile)
@@ -106,7 +113,8 @@ func readData(key *[32]byte) (XMLData Data, empty bool) {
 	// Read the data from the opened file and then check if it is empty.
 	encrypted, err := ioutil.ReadAll(file)
 	if string(encrypted) == "" {
-		return XMLData, true
+		fileStatusEmpty = true
+		return XMLData
 	} else if err != nil {
 		fmt.Print(err)
 	}
@@ -120,7 +128,8 @@ func readData(key *[32]byte) (XMLData Data, empty bool) {
 	// Unmarshal the xml data in to our Data struct.
 	xml.Unmarshal(content, &XMLData)
 
-	return XMLData, false
+	fileStatusEmpty = false
+	return XMLData
 }
 
 // Write writes new exercieses to the data file.
