@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"fmt"
 	"sparta/src/file"
 
 	"fyne.io/fyne"
@@ -24,8 +23,6 @@ func SettingsView(window fyne.Window, XMLData *file.Data, dataLabel *widget.Labe
 			if remove {
 				// Run the delete function.
 				XMLData.Delete()
-
-				fmt.Print("We are removing :(")
 
 				// Clear all the data inside the data label.
 				dataLabel.SetText("No exercieses have been created yet.")
