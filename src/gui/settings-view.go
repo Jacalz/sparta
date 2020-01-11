@@ -17,6 +17,8 @@ func SettingsView(window fyne.Window, XMLData *file.Data, dataLabel *widget.Labe
 
 	// TODO: Add setting for changing language.
 
+	// TODO: Add switching between light and dark themes.
+	
 	// TODO: Change password for the encrypted file.
 
 	// Create a button for clearing the data of a given profile.
