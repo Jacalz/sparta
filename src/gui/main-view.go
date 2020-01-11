@@ -43,7 +43,7 @@ func ShowMainDataView(window fyne.Window, XMLData *file.Data, newAddedExercise c
 	tabs := widget.NewTabContainer(
 		widget.NewTabItemWithIcon("Activities", theme.HomeIcon(), dataPage),
 		widget.NewTabItemWithIcon("Add activity", theme.ContentAddIcon(), ActivityView(window, XMLData, newAddedExercise)),
-		widget.NewTabItemWithIcon("Settings", theme.SettingsIcon(), SettingsView(XMLData, dataLabel)),
+		widget.NewTabItemWithIcon("Settings", theme.SettingsIcon(), SettingsView(window, XMLData, dataLabel)),
 	)
 
 	// Set the tabs to be on top of the page.
