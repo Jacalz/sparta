@@ -10,10 +10,14 @@ import (
 	"fyne.io/fyne/widget"
 )
 
+// TODO: Multi user support by labling the data file exercises-user.xml
+
 // SettingsView contains the gui information for the settings screen.
 func SettingsView(window fyne.Window, XMLData *file.Data, dataLabel *widget.Label) fyne.CanvasObject {
 
 	// TODO: Add setting for changing language.
+
+	// TODO: Change password for the encrypted file.
 
 	// Create a button for clearing the data of a given profile.
 	deleteButton := widget.NewButtonWithIcon("Remove all activities", theme.DeleteIcon(), func() {
