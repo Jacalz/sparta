@@ -8,7 +8,7 @@ import (
 )
 
 // ActivityView shows the opoup for adding a new activity.
-func ActivityView(XMLData *file.Data, newAddedExercise chan string) fyne.CanvasObject {
+func ActivityView(window fyne.Window, XMLData *file.Data, newAddedExercise chan string) fyne.CanvasObject {
 	// Variables for the entry variables used in the form.
 	dateEntry := NewEntryWithPlaceholder("YYYY-MM-DD")
 	clockEntry := NewEntryWithPlaceholder("HH:MM")
@@ -26,6 +26,16 @@ func ActivityView(XMLData *file.Data, newAddedExercise chan string) fyne.CanvasO
 			go func() {
 				// Append new values to a new index.
 				XMLData.Exercise = append(XMLData.Exercise, file.Exercise{Date: dateEntry.Text, Clock: clockEntry.Text, Activity: activityEntry.Text, Distance: file.ParseFloat(distanceEntry.Text), Time: file.ParseFloat(timeEntry.Text), Reps: file.ParseInt(repsEntry.Text), Sets: file.ParseInt(setsEntry.Text), Comment: commentEntry.Text})
+
+				// Make sure to clean out the text for all the entry widgets.
+				dateEntry.SetText("")
+				clockEntry.SetText("")
+				activityEntry.SetText("")
+				distanceEntry.SetText("")
+				timeEntry.SetText("")
+				setsEntry.SetText("")
+				repsEntry.SetText("")
+				commentEntry.SetText("")
 
 				// Encrypt and write the data to the configuration file. Do so on another goroutine.
 				go XMLData.Write(&PasswordKey)

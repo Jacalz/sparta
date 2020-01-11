@@ -42,7 +42,7 @@ func ShowMainDataView(window fyne.Window, XMLData *file.Data, newAddedExercise c
 	// Create tabs with data.
 	tabs := widget.NewTabContainer(
 		widget.NewTabItemWithIcon("Activities", theme.HomeIcon(), dataPage),
-		widget.NewTabItemWithIcon("Add activity", theme.ContentAddIcon(), ActivityView(XMLData, newAddedExercise)),
+		widget.NewTabItemWithIcon("Add activity", theme.ContentAddIcon(), ActivityView(window, XMLData, newAddedExercise)),
 		widget.NewTabItemWithIcon("Settings", theme.SettingsIcon(), SettingsView(XMLData, dataLabel)),
 	)
 
