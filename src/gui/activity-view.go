@@ -44,6 +44,17 @@ func ActivityView(window fyne.Window, XMLData *file.Data, newAddedExercise chan 
 				newAddedExercise <- XMLData.Format(len(XMLData.Exercise) - 1)
 			}()
 		},
+		OnCancel: func() {
+			// Make sure to clean out the text for all the entry widgets.
+			dateEntry.SetText("")
+			clockEntry.SetText("")
+			activityEntry.SetText("")
+			distanceEntry.SetText("")
+			timeEntry.SetText("")
+			setsEntry.SetText("")
+			repsEntry.SetText("")
+			commentEntry.SetText("")
+		},
 	}
 
 	// Append all the rows separately in to the form.
