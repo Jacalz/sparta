@@ -194,3 +194,17 @@ func (d *Data) Format(i int) (output string) {
 
 	return output
 }
+
+// Delete removes all content in the case of a user wanting to start fresh.
+func (d *Data) Delete() {
+	// Set the XMLData variable to be empty.
+	d = &Data{}
+
+	// Remove the file concurrently to not be slowed down by disk io.
+	go func() {
+		err := os.Remove(DataFile)
+		if err != nil {
+			fmt.Print(err)
+		}
+	}()
+}
