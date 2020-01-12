@@ -1,7 +1,7 @@
 <p align="center">
   <br /><img
     width="256"
-    src="assets/sparta-optimized.svg"
+    src="assets/sparta-256.png"
     alt="Sparta – Sport and Rehearsal Tracking Application"
   />
 </p>
