@@ -1,12 +1,13 @@
 package settings
 
 import (
+	"sparta/src/file"
+
 	"encoding/xml"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"sparta/src/file"
 )
 
 // TODO: Clean up duplicate code between file and settings packages. Remove duplicate directory checks.

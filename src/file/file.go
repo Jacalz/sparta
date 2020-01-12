@@ -1,14 +1,14 @@
 package file
 
 import (
+	"sparta/src/file/encrypt"
+
 	"encoding/xml"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
-	"sparta/src/file/encrypt"
-	"strconv"
 	"time"
 )
 
