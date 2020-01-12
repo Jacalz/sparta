@@ -11,11 +11,11 @@ sudo ~/go/bin/fyne-cross --targets=windows/amd64,darwin/amd64,linux/amd64 --outp
 (cd build && sudo chmod 666 sparta-linux-amd64 sparta-darwin-amd64 sparta-windows-amd64.exe)
 
 # Prepare the windows executable to be packaged with the icon.
-(cd src && ~/go/bin/fyne package -icon ../assets/sparta-bundled.png -executable ../build/sparta-windows-amd64.exe -os windows -name Sparta)
+(cd src && ~/go/bin/fyne package -icon ../assets/sparta-128.png -executable ../build/sparta-windows-amd64.exe -os windows -name Sparta)
 cp build/fyne.syso src/fyne.syso
 
 # Package the darwin executable as an application.
-(cd src && ~/go/bin/fyne package -icon ../assets/sparta-bundled.png -executable ../build/sparta-darwin-amd64 -os darwin -name Sparta)
+(cd src && ~/go/bin/fyne package -icon ../assets/sparta-128.png -executable ../build/sparta-darwin-amd64 -os darwin -name Sparta)
 
 # Build the windows binary again to incorporate the logo.
 sudo ~/go/bin/fyne-cross --targets=windows/amd64 --output=sparta ./src/
