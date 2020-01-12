@@ -14,11 +14,7 @@
    viewBox="0 0 128 128"
    version="1.1"
    id="SVGRoot"
-   sodipodi:docname="sparta-logo.svg"
-   inkscape:version="0.92.4 5da689c313, 2019-01-14"
-   inkscape:export-filename="/home/jacob/go/src/sparta/assets/github-readme-logo.png"
-   inkscape:export-xdpi="192"
-   inkscape:export-ydpi="192">
+   sodipodi:docname="sparta-original-logo.svg">
   <defs
      id="defs815" />
   <sodipodi:namedview
@@ -28,26 +24,20 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="4"
-     inkscape:cx="-19.149974"
-     inkscape:cy="77.177271"
+     inkscape:zoom="2.8284271"
+     inkscape:cx="171.4831"
+     inkscape:cy="47.08841"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1920"
-     inkscape:window-height="1007"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
-     inkscape:window-maximized="1"
+     inkscape:window-width="768"
+     inkscape:window-height="450"
+     inkscape:window-x="557"
+     inkscape:window-y="207"
+     inkscape:window-maximized="0"
      inkscape:grid-bbox="true"
      showguides="true"
-     inkscape:guide-bbox="true">
-    <sodipodi:guide
-       position="191.25,-16.75"
-       orientation="0,1"
-       id="guide1580"
-       inkscape:locked="false" />
-  </sodipodi:namedview>
+     inkscape:guide-bbox="true" />
   <metadata
      id="metadata818">
     <rdf:RDF>
@@ -56,9 +46,9 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
         <cc:license
-           rdf:resource="https://creativecommons.org/licenses/by-nc-sa/4.0/" />
+           rdf:resource="http://creativecommons.org/licenses/by-nc-sa/4.0/" />
       </cc:Work>
       <cc:License
          rdf:about="http://creativecommons.org/licenses/by-nc-sa/4.0/">
@@ -83,6 +73,12 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1">
+    <circle
+       style="fill:#ffffff;stroke-width:1.20000005"
+       id="path14"
+       cx="64"
+       cy="64"
+       r="60" />
     <g
        id="g1558">
       <path
