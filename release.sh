@@ -28,11 +28,14 @@ mv src/Sparta.app build/Sparta.app
 rm -f build/sparta-darwin-amd64 build/fyne.syso
 sudo chmod 666 build/sparta-windows-amd64.exe
 
+# Change directory to the build folder.
+cd build/
+
 # Lastly we want to compress all the binaries.
-tar -cJf build/sparta-linux-amd64.tar.gz build/sparta-linux-amd64
-tar -cJf build/sparta-darwin-amd64.tar.gz build/Sparta.app
-(cd build && zip sparta-windows-amd64.zip sparta-windows-amd64.exe)
+tar -cJf sparta-linux-amd64.tar.gz sparta-linux-amd64
+tar -cJf sparta-darwin-amd64.tar.gz Sparta.app
+zip sparta-windows-amd64.zip sparta-windows-amd64.exe
 
 # Final cleanup in the build folder.
-rm -rf build/Sparta.app build/sparta-linux-amd64 build/sparta-windows-amd64.exe
+rm -rf Sparta.app sparta-linux-amd64 sparta-windows-amd64.exe
 
