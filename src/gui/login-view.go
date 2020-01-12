@@ -52,6 +52,9 @@ func ShowLoginPage(app fyne.App, window fyne.Window) {
 		// Calculate the sha256 hash of the username and password.
 		PasswordKey = encrypt.EncryptionKey(username.Text, password.Text)
 
+		// Clear out the text for the original password and set UserName to username.Text.
+		password.Text = ""
+
 		// Create a channel for sending activity data through. Let's us avoid reading the file every time we add a new activity.
 		newAddedExercise := make(chan string)
 
