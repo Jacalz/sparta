@@ -39,7 +39,7 @@ func Empty() bool {
 }
 
 // Config returns the config directory and handles the error accordingly.
-func config() string {
+func Config() string {
 	var dir string
 
 	// Workaround golang 1.12 in the cross compiling tool.
@@ -72,23 +72,20 @@ func config() string {
 	*/
 }
 
+// DataPath is the path for the sparta config directory.
+var DataPath string = filepath.Join(Config(), "sparta")
+
 // DataFile specifies the loacation of our data file.
-var DataFile string = filepath.Join(config(), "sparta", "exercises.xml")
+var DataFile string = filepath.Join(DataPath, "exercises.xml")
 
 // Check does relevant checks around our data file.
 func Check(key *[32]byte) (exercises Data) {
 
 	// Check if the user has a data file directory.
-	if _, err := os.Stat(DataFile); err == nil { // The folder does exist.
+	if _, err := os.Stat(DataFile); err == nil { // The file does exist.
 		exercises = readData(key)
-	} else if os.IsNotExist(err) { // The file doesn't exist, we should create it.
-
-		// Check if the directory exists. If not, we create it.
-		if _, err := os.Stat(DataFile); os.IsNotExist(err) {
-			os.Mkdir(filepath.Join(config(), "sparta"), os.ModePerm)
-		}
-
-		// We then create the file.
+	} else if os.IsNotExist(err) { // The file doesn't exist.
+		// Since the file didn't exist, we create it.
 		_, err := os.Create(DataFile)
 		if err != nil {
 			fmt.Print("Could not create the file.", err)
@@ -145,34 +142,6 @@ func (d *Data) Write(key *[32]byte) {
 
 	// Write to the file.
 	ioutil.WriteFile(DataFile, encrypt.Encrypt(key, file), 0644)
-}
-
-// ParseFloat is a wrapper around strconv.ParseFloat that handles the error to make the function usable inline.
-func ParseFloat(input string) float64 {
-	if input == "" {
-		return 0
-	}
-
-	output, err := strconv.ParseFloat(input, 32)
-	if err != nil {
-		fmt.Print(err)
-	}
-
-	return output
-}
-
-// ParseInt is just a wrapper around strconv.Atoi().
-func ParseInt(input string) int {
-	if input == "" {
-		return 0
-	}
-
-	output, err := strconv.Atoi(input)
-	if err != nil {
-		fmt.Print(err)
-	}
-
-	return output
 }
 
 // Format formats the latest updated data in the Data struct to display information.

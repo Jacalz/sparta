@@ -2,6 +2,7 @@ package gui
 
 import (
 	"sparta/src/file"
+	"sparta/src/file/parse"
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/widget"
@@ -25,7 +26,7 @@ func ActivityView(window fyne.Window, XMLData *file.Data, newAddedExercise chan 
 		OnSubmit: func() {
 			go func() {
 				// Append new values to a new index.
-				XMLData.Exercise = append(XMLData.Exercise, file.Exercise{Date: dateEntry.Text, Clock: clockEntry.Text, Activity: activityEntry.Text, Distance: file.ParseFloat(distanceEntry.Text), Time: file.ParseFloat(timeEntry.Text), Reps: file.ParseInt(repsEntry.Text), Sets: file.ParseInt(setsEntry.Text), Comment: commentEntry.Text})
+				XMLData.Exercise = append(XMLData.Exercise, file.Exercise{Date: dateEntry.Text, Clock: clockEntry.Text, Activity: activityEntry.Text, Distance: parse.Float(distanceEntry.Text), Time: parse.Float(timeEntry.Text), Reps: parse.Int(repsEntry.Text), Sets: parse.Int(setsEntry.Text), Comment: commentEntry.Text})
 
 				// Make sure to clean out the text for all the entry widgets.
 				dateEntry.SetText("")

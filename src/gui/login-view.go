@@ -30,7 +30,7 @@ func CheckValidInput(username, password string, window fyne.Window) (valid bool)
 }
 
 // ShowLoginPage shows the login page that handles the inertaface for logging in.
-func ShowLoginPage(window fyne.Window) {
+func ShowLoginPage(app fyne.App, window fyne.Window) {
 	// Initialize the login form that we are to be using.
 	username := NewExtendedEntry("Username", false)
 
@@ -58,7 +58,7 @@ func ShowLoginPage(window fyne.Window) {
 		// Check for the file where we store the data.
 		XMLData := file.Check(&PasswordKey)
 
-		ShowMainDataView(window, &XMLData, newAddedExercise)
+		ShowMainDataView(window, app, &XMLData, newAddedExercise)
 	})
 
 	// Add the Action component to make actions work inside the struct. This is used to press the loginButton on pressing enter/return ton the keyboard.
