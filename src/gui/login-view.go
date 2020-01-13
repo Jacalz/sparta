@@ -17,16 +17,15 @@ var PasswordKey [32]byte
 func CheckValidInput(username, password string, window fyne.Window) (valid bool) {
 	if username == "" || password == "" {
 		dialog.ShowInformation("Missing username/password", "Please provide both username and password.", window)
-		valid = false
 	} else if username == password {
-		dialog.ShowInformation("Identical username and password", "Please do not use identical username and password.", window)
-		valid = false
+		dialog.ShowInformation("Identical username and password", "Use separate usernames and passwords.", window)
 	} else if len(password) < 8 {
 		dialog.ShowInformation("Too short password", "The password should be eight characters or longer.", window)
-		valid = false
+	} else {
+		valid = true
 	}
 
-	return true
+	return valid
 }
 
 // ShowLoginPage shows the login page that handles the inertaface for logging in.
