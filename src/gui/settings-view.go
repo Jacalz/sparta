@@ -2,6 +2,7 @@ package gui
 
 import (
 	"sparta/src/file"
+	"sparta/src/file/encrypt"
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/dialog"
@@ -40,7 +41,23 @@ func SettingsView(window fyne.Window, app fyne.App, XMLData *file.Data, dataLabe
 	// Add the theme switcher next to a label.
 	themeSettings := fyne.NewContainerWithLayout(layout.NewGridLayout(2), widget.NewLabel("Change theme"), themeSwitcher)
 
-	// TODO: Change password for the encrypted file.
+	// Create the entry for updating the password.
+	passwordEntry := widget.NewPasswordEntry()
+	passwordEntry.SetPlaceHolder("New password")
+
+	// Create the button used for actually changing the password.
+	passwordButton := widget.NewButtonWithIcon("Change password", theme.ConfirmIcon(), func() {
+		// Ask the user to confirm what we are about to do.
+		dialog.ShowConfirm("Are you sure that you want to continue?", "The action will permanently change your password.", func(change bool) {
+			if change {
+				// Calculate the new PasswordKey.
+				PasswordKey = encrypt.EncryptionKey(UserName, passwordEntry.Text)
+
+				// Write the data encrypted using the new key and do so concurrently.
+				go XMLData.Write(&PasswordKey)
+			}
+		}, window)
+	})
 
 	// Create a button for clearing the data of a given profile.
 	deleteButton := widget.NewButtonWithIcon("Remove all activities", theme.DeleteIcon(), func() {
@@ -57,5 +74,5 @@ func SettingsView(window fyne.Window, app fyne.App, XMLData *file.Data, dataLabe
 		}, window)
 	})
 
-	return fyne.NewContainerWithLayout(layout.NewVBoxLayout(), themeSettings, layout.NewSpacer(), deleteButton)
+	return fyne.NewContainerWithLayout(layout.NewVBoxLayout(), themeSettings, layout.NewSpacer(), fyne.NewContainerWithLayout(layout.NewGridLayout(2), passwordEntry, passwordButton), layout.NewSpacer(), deleteButton)
 }

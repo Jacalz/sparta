@@ -13,6 +13,9 @@ import (
 // PasswordKey contains the key taken from the username and password.
 var PasswordKey [32]byte
 
+// UserName holds the username for use later in settings.
+var UserName string
+
 // CheckValidInput checks if the inputed username and passwords are valid adn creates a message if they are not.
 func CheckValidInput(username, password string, window fyne.Window) (valid bool) {
 	if username == "" || password == "" {
@@ -53,6 +56,7 @@ func ShowLoginPage(app fyne.App, window fyne.Window) {
 
 		// Clear out the text for the original password and set UserName to username.Text.
 		password.Text = ""
+		UserName = username.Text
 
 		// Create a channel for sending activity data through. Let's us avoid reading the file every time we add a new activity.
 		newAddedExercise := make(chan string)
