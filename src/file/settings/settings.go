@@ -15,19 +15,19 @@ import (
 // SettingsFile is a global variable for storing the path of the settings file.
 var SettingsFile = filepath.Join(file.DataPath, "settings.xml")
 
-// Settings holds all settings for the user.
-type Settings struct {
+// Config holds all settings for the user.
+type Config struct {
 	Theme string `xml:"theme"`
 }
 
 // NewSettings initializes a new settings file with default values.
-func NewSettings() Settings {
-	return Settings{Theme: "Dark"}
+func NewSettings() Config {
+	return Config{Theme: "Dark"}
 }
 
-func (s Settings) Write() {
+func (c Config) Write() {
 	//Marchal the xml content in to a file variable.
-	file, err := xml.Marshal(s)
+	file, err := xml.Marshal(c)
 	if err != nil {
 		fmt.Print("Could not marchal the data.", err)
 	}
@@ -36,7 +36,7 @@ func (s Settings) Write() {
 	ioutil.WriteFile(SettingsFile, file, 0644)
 }
 
-func readData() (settings Settings) {
+func readData() (config Config) {
 	// Open up the xml file that already exists.
 	file, err := os.Open(SettingsFile)
 	if err != nil {
@@ -50,16 +50,16 @@ func readData() (settings Settings) {
 	}
 
 	// Unmarshal the xml data in to our Settings struct.
-	xml.Unmarshal(content, &settings)
+	xml.Unmarshal(content, &config)
 
-	return settings
+	return config
 }
 
 // Check makes relevant checks around finding the stetings file.
-func Check() (settings Settings) {
+func Check() (config Config) {
 	// Check if the user has a data file directory.
 	if _, err := os.Stat(SettingsFile); err == nil { // The file does exist.
-		settings = readData()
+		config = readData()
 	} else if os.IsNotExist(err) { // The file doesn't exist, we should create it.
 
 		// Check if the directory exists. If not, we create it.
@@ -74,11 +74,11 @@ func Check() (settings Settings) {
 		}
 
 		// Create new data for the settings.
-		settings = NewSettings()
+		config = NewSettings()
 
 		// Write the changes and do so concurrently.
-		go settings.Write()
+		go config.Write()
 	}
 
-	return settings
+	return config
 }

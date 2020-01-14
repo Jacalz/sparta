@@ -8,7 +8,7 @@ import (
 	"fyne.io/fyne/theme"
 )
 
-var config settings.Settings
+var config settings.Config
 
 // Init will start up our graphical user interface.
 func Init() {
