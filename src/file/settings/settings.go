@@ -10,8 +10,6 @@ import (
 	"path/filepath"
 )
 
-// TODO: Clean up duplicate code between file and settings packages. Remove duplicate directory checks.
-
 // SettingsFile is a global variable for storing the path of the settings file.
 var SettingsFile = filepath.Join(file.DataPath, "settings.xml")
 

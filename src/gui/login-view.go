@@ -31,6 +31,8 @@ func CheckValidInput(username, password string, window fyne.Window) (valid bool)
 	return valid
 }
 
+// TODO: Logout support
+
 // ShowLoginPage shows the login page that handles the inertaface for logging in.
 func ShowLoginPage(app fyne.App, window fyne.Window) {
 	// Initialize the login form that we are to be using.
@@ -46,10 +48,6 @@ func ShowLoginPage(app fyne.App, window fyne.Window) {
 		if !valid {
 			return
 		}
-
-		// Adapt the window to a good size and make it resizable again.
-		window.SetFixedSize(false)
-		window.Resize(fyne.NewSize(800, 500))
 
 		// Calculate the sha256 hash of the username and password.
 		PasswordKey = encrypt.EncryptionKey(username.Text, password.Text)

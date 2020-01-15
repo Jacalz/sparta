@@ -50,6 +50,10 @@ func ShowMainDataView(window fyne.Window, app fyne.App, XMLData *file.Data, newA
 	// Set the tabs to be on top of the page.
 	tabs.SetTabLocation(widget.TabLocationTop)
 
+	// Adapt the window to a good size and make it resizable again.
+	window.SetFixedSize(false)
+	window.Resize(fyne.NewSize(800, 500))
+
 	// Set the content to show and do so in a scroll container for the exercieses to show correctly.
 	window.SetContent(tabs)
 }

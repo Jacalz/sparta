@@ -75,7 +75,7 @@ func Config() string {
 // DataPath is the path for the sparta config directory.
 var DataPath string = filepath.Join(Config(), "sparta")
 
-// DataFile specifies the loacation of our data file.
+// DataFile specifies the location of our data file.
 var DataFile string = filepath.Join(DataPath, "exercises.xml")
 
 // Check does relevant checks around our data file.
