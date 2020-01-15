@@ -49,7 +49,7 @@ func Encrypt(key *[32]byte, content []byte) []byte {
 }
 
 // Decrypt is the initial decryption function.
-func Decrypt(key *[32]byte, encrypted []byte) []byte {
+func Decrypt(key *[32]byte, encrypted []byte) ([]byte, error) {
 	// Make use of common code in encryption and decryption.
 	gcm := commonCipher(*key)
 
@@ -65,8 +65,8 @@ func Decrypt(key *[32]byte, encrypted []byte) []byte {
 	// Unencrypt the content in to plaintext.
 	plaintext, err := gcm.Open(nil, nonce, encrypted, nil)
 	if err != nil {
-		fmt.Println(err)
+		return []byte(""), err
 	}
 
-	return plaintext
+	return plaintext, nil
 }

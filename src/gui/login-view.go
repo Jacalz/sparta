@@ -31,7 +31,7 @@ func CheckValidInput(username, password string, window fyne.Window) (valid bool)
 	return valid
 }
 
-// TODO: Logout support
+// TODO: Logout support and fix weirdly cut dialog boxes.
 
 // ShowLoginPage shows the login page that handles the inertaface for logging in.
 func ShowLoginPage(app fyne.App, window fyne.Window) {
@@ -59,8 +59,12 @@ func ShowLoginPage(app fyne.App, window fyne.Window) {
 		// Create a channel for sending activity data through. Let's us avoid reading the file every time we add a new activity.
 		newAddedExercise := make(chan string)
 
-		// Check for the file where we store the data.
-		XMLData := file.Check(&PasswordKey)
+		// Check for the file where we store the data. The user inputed the wrong password if we get an error.
+		XMLData, err := file.Check(&PasswordKey)
+		if err != nil {
+			dialog.ShowInformation("Wrong password or username", "The login credentials are incorrect, please try again.", window)
+			return
+		}
 
 		ShowMainDataView(window, app, &XMLData, newAddedExercise)
 	})

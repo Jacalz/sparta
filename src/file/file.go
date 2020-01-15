@@ -79,12 +79,17 @@ var DataPath string = filepath.Join(Config(), "sparta")
 var DataFile string = filepath.Join(DataPath, "exercises.xml")
 
 // Check does relevant checks around our data file.
-func Check(key *[32]byte) (exercises Data) {
+func Check(key *[32]byte) (exercises Data, err error) {
 
 	// Check if the user has a data file directory.
-	if _, err := os.Stat(DataFile); err == nil { // The file does exist.
-		exercises = readData(key)
-	} else if os.IsNotExist(err) { // The file doesn't exist.
+	if _, err := os.Stat(DataFile); err == nil {
+		// The file exists and we read the data. Return error if decryption failed (wrong password).
+		exercises, err = readData(key)
+		if err != nil {
+			return exercises, err
+		}
+
+	} else if os.IsNotExist(err) {
 		// Since the file didn't exist, we create it.
 		_, err := os.Create(DataFile)
 		if err != nil {
@@ -95,11 +100,11 @@ func Check(key *[32]byte) (exercises Data) {
 		fileStatusEmpty = true
 	}
 
-	return exercises
+	return exercises, nil
 }
 
 // ReadData reads data from an xml file, couldn't be simpler. Unexported.
-func readData(key *[32]byte) (XMLData Data) {
+func readData(key *[32]byte) (XMLData Data, err error) {
 
 	// Open up the xml file that already exists.
 	file, err := os.Open(DataFile)
@@ -111,7 +116,7 @@ func readData(key *[32]byte) (XMLData Data) {
 	encrypted, err := ioutil.ReadAll(file)
 	if string(encrypted) == "" {
 		fileStatusEmpty = true
-		return XMLData
+		return XMLData, nil
 	} else if err != nil {
 		fmt.Print(err)
 	}
@@ -120,13 +125,16 @@ func readData(key *[32]byte) (XMLData Data) {
 	go file.Close()
 
 	// Unencrypt the data to the content variable.
-	content := encrypt.Decrypt(key, encrypted)
+	content, err := encrypt.Decrypt(key, encrypted)
+	if err != nil {
+		return XMLData, err
+	}
 
 	// Unmarshal the xml data in to our Data struct.
 	xml.Unmarshal(content, &XMLData)
 
 	fileStatusEmpty = false
-	return XMLData
+	return XMLData, nil
 }
 
 // Write writes new exercieses to the data file.
