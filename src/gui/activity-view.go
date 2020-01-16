@@ -8,6 +8,8 @@ import (
 	"fyne.io/fyne/widget"
 )
 
+// TODO: Handle invalid inputs and empty fields.
+
 // ActivityView shows the opoup for adding a new activity.
 func ActivityView(window fyne.Window, XMLData *file.Data, newAddedExercise chan string) fyne.CanvasObject {
 	// Variables for the entry variables used in the form.

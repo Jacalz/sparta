@@ -149,19 +149,22 @@ func (d *Data) Write(key *[32]byte) {
 	}
 
 	// Write to the file.
-	ioutil.WriteFile(DataFile, encrypt.Encrypt(key, file), 0644)
+	err = ioutil.WriteFile(DataFile, encrypt.Encrypt(key, file), 0644)
+	if err != nil {
+		fmt.Print(err)
+	}
 }
 
 // Format formats the latest updated data in the Data struct to display information.
 func (d *Data) Format(i int) (output string) {
 	if d.Exercise[i].Reps == 0 && d.Exercise[i].Sets == 0 {
-		output = fmt.Sprintf("\nAt %s on %s, you trained %s. The distance was %v kilometers and the exercise lasted for %v minutes.\nThis resulted in an average speed of %.3f km/min.\n",
-			d.Exercise[i].Clock, d.Exercise[i].Date, d.Exercise[i].Activity, d.Exercise[i].Distance, d.Exercise[i].Time, d.Exercise[i].Distance/d.Exercise[i].Time)
+		output = fmt.Sprintf("\nAt %s on %s, you trained %s. The distance was %.2f kilometers and the exercise lasted for %v minutes.\nThis resulted in an average speed of %.3f km/h.\n",
+			d.Exercise[i].Clock, d.Exercise[i].Date, d.Exercise[i].Activity, d.Exercise[i].Distance, d.Exercise[i].Time, (d.Exercise[i].Distance/d.Exercise[i].Time)*60)
 	} else if d.Exercise[i].Distance == 0 {
 		output = fmt.Sprintf("\nAt %s on %s, you trained %s for %v minutes. You did %v sets with %v reps each.\n",
 			d.Exercise[i].Clock, d.Exercise[i].Date, d.Exercise[i].Activity, d.Exercise[i].Time, d.Exercise[i].Sets, d.Exercise[i].Reps)
 	} else {
-		output = fmt.Sprintf("\nAt %s on %s, you trained %s for %v minutes. The distance was %v kilometers and you did %v sets with %v reps each.\n",
+		output = fmt.Sprintf("\nAt %s on %s, you trained %s for %v minutes. The distance was %.2f kilometers and you did %v sets with %v reps each.\n",
 			d.Exercise[i].Clock, d.Exercise[i].Date, d.Exercise[i].Activity, d.Exercise[i].Time, d.Exercise[i].Distance, d.Exercise[i].Sets, d.Exercise[i].Reps)
 	}
 

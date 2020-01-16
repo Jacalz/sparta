@@ -11,7 +11,7 @@ func Float(input string) float64 {
 		return 0
 	}
 
-	output, err := strconv.ParseFloat(input, 32)
+	output, err := strconv.ParseFloat(input, 64)
 	if err != nil {
 		fmt.Print(err)
 	}
