@@ -106,25 +106,14 @@ func Check(key *[32]byte) (exercises Data, err error) {
 // ReadData reads data from an xml file, couldn't be simpler. Unexported.
 func readData(key *[32]byte) (XMLData Data, err error) {
 
-	// Open up the xml file that already exists.
-	file, err := os.Open(DataFile)
-	if err != nil {
-		fmt.Print(err)
-	}
-
 	// Read the data from the opened file and then check if it is empty.
-	encrypted, err := ioutil.ReadAll(file)
+	encrypted := OpenFile(DataFile)
 	if string(encrypted) == "" {
 		fileStatusEmpty = true
 		return XMLData, nil
-	} else if err != nil {
-		fmt.Print(err)
 	}
 
-	// Close the loading of the file now that it has served is perpous.
-	go file.Close()
-
-	// Unencrypt the data to the content variable.
+	// Decrypt the data to the content variable.
 	content, err := encrypt.Decrypt(key, encrypted)
 	if err != nil {
 		return XMLData, err
@@ -145,7 +134,7 @@ func (d *Data) Write(key *[32]byte) {
 	//Marchal the xml content in to a file variable.
 	file, err := xml.Marshal(d)
 	if err != nil {
-		fmt.Print("Could not marchal the data.", err)
+		fmt.Print(err)
 	}
 
 	// Write to the file.

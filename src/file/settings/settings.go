@@ -35,20 +35,8 @@ func (c Config) Write() {
 }
 
 func readData() (config Config) {
-	// Open up the xml file that already exists.
-	file, err := os.Open(SettingsFile)
-	if err != nil {
-		fmt.Print(err)
-	}
-
-	// Read the content of the file.
-	content, err := ioutil.ReadAll(file)
-	if err != nil {
-		fmt.Print(err)
-	}
-
 	// Unmarshal the xml data in to our Settings struct.
-	xml.Unmarshal(content, &config)
+	xml.Unmarshal(file.OpenFile(SettingsFile), &config)
 
 	return config
 }
