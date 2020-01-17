@@ -42,7 +42,7 @@ func ShowMainDataView(window fyne.Window, app fyne.App, XMLData *file.Data, newA
 	// Create tabs with data.
 	tabs := widget.NewTabContainer(
 		widget.NewTabItemWithIcon("Activities", theme.HomeIcon(), dataPage),
-		widget.NewTabItemWithIcon("Add activity", theme.ContentAddIcon(), ActivityView(window, XMLData, newAddedExercise)),
+		widget.NewTabItemWithIcon("Add activity", theme.ContentAddIcon(), ActivityView(window, XMLData, dataLabel, newAddedExercise)),
 		widget.NewTabItemWithIcon("Settings", theme.SettingsIcon(), SettingsView(window, app, XMLData, dataLabel)),
 		// TODO: Add an about page with logo, name and version number.
 	)
