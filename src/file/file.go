@@ -31,7 +31,11 @@ type Exercise struct {
 	Comment  string  `xml:"comment"`
 }
 
+// fileStatusEmpty defines if the file is empty or not.
 var fileStatusEmpty bool
+
+// zeroData is a variable containing an empty Data struct.
+var zeroData = &Data{}
 
 // Empty returns if we have a config file or not.
 func Empty() bool {
@@ -166,14 +170,13 @@ func (d *Data) Format(i int) (output string) {
 
 // Delete removes all content in the case of a user wanting to start fresh.
 func (d *Data) Delete() {
-	// Set the XMLData variable to be empty.
-	d = &Data{}
+	// Clear the data by directing the pointer to point at the zeroData pointer.
+	*d = *zeroData
 
-	// Remove the file concurrently to not be slowed down by disk io.
-	go func() {
-		err := os.Remove(DataFile)
-		if err != nil {
-			fmt.Print(err)
-		}
-	}()
+	err := os.Remove(DataFile)
+	if err != nil {
+		fmt.Print(err)
+	}
+
 }
+
