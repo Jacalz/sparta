@@ -42,6 +42,11 @@ func Empty() bool {
 	return fileStatusEmpty
 }
 
+// SetNonEmpty tells us that the file is not empty anymore.
+func SetNonEmpty() {
+	fileStatusEmpty = false
+}
+
 // Config returns the config directory and handles the error accordingly.
 func Config() string {
 	var dir string
@@ -173,10 +178,12 @@ func (d *Data) Delete() {
 	// Clear the data by directing the pointer to point at the zeroData pointer.
 	*d = *zeroData
 
+	// Set the file status to be empty.
+	fileStatusEmpty = true
+
+	// Remove the file to clear it.
 	err := os.Remove(DataFile)
 	if err != nil {
 		fmt.Print(err)
 	}
-
 }
-

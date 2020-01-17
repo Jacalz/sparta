@@ -44,10 +44,15 @@ func ActivityView(window fyne.Window, XMLData *file.Data, dataLabel *widget.Labe
 				go XMLData.Write(&PasswordKey)
 
 				// Workaround bug that happens after creating a new activity after removing the file.
-				dataLabel.Text = ""
-				
+				if file.Empty() {
+					dataLabel.Text = ""
+				}
+
 				// Send the formated string from the highest index of the Exercise slice.
 				newAddedExercise <- XMLData.Format(len(XMLData.Exercise) - 1)
+
+				// Now set the status to not be empty.
+				file.SetNonEmpty()
 			}()
 		},
 		OnCancel: func() {
