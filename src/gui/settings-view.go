@@ -65,10 +65,10 @@ func SettingsView(window fyne.Window, app fyne.App, XMLData *file.Data, dataLabe
 		// Ask the user to confirm what we are about to do.
 		dialog.ShowConfirm("Are you sure that you want to continue?", "Deleting your data will remove all of your exercises and activities.", func(remove bool) {
 			if remove {
-				// Run the delete function.
-				XMLData.Delete()
+				// Run the delete function and do it concurrently to avoid stalling the thread with file io.
+				go XMLData.Delete()
 
-				// Clear all the data inside the data label.
+				// Clear all the data inside the data label so we don't display the old data.
 				dataLabel.SetText("No exercieses have been created yet.")
 			}
 		}, window)
