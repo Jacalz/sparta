@@ -11,7 +11,7 @@ import (
 // TODO: Handle invalid inputs and empty fields.
 
 // ActivityView shows the opoup for adding a new activity.
-func ActivityView(window fyne.Window, XMLData *file.Data, newAddedExercise chan string) fyne.CanvasObject {
+func ActivityView(window fyne.Window, XMLData *file.Data, dataLabel *widget.Label, newAddedExercise chan string) fyne.CanvasObject {
 	// Variables for the entry variables used in the form.
 	dateEntry := NewEntryWithPlaceholder("YYYY-MM-DD")
 	clockEntry := NewEntryWithPlaceholder("HH:MM")
@@ -43,6 +43,9 @@ func ActivityView(window fyne.Window, XMLData *file.Data, newAddedExercise chan 
 				// Encrypt and write the data to the configuration file. Do so on another goroutine.
 				go XMLData.Write(&PasswordKey)
 
+				// Workaround bug that happens after creating a new activity after removing the file.
+				dataLabel.Text = ""
+				
 				// Send the formated string from the highest index of the Exercise slice.
 				newAddedExercise <- XMLData.Format(len(XMLData.Exercise) - 1)
 			}()
