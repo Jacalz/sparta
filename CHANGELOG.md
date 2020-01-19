@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.3.0 - First beta
+- Major UI rework for better design visuals and more options by using tabs.
+- Added a settings page to give the user more control over the application.
+ - Added support for changing between ligth and dark themes.
+ - Added support for changing the password in settings.
+ - Added support for deleteing all activity data.
+- Added a button to cancel the form input and clear all data inside the form.
+- Clean the text in the form on submit.
+- Packaged icons are generlla in higher definition.
+- Delete the password value from memory after it has been used.
+- Added support for showing error and preventing login if entered password is incorrect.
+- Big code cleanups and lots of code refactoring. 
+
 ## 0.2.0 - Forth alpha
 - Insecure passwords now print an error when the length is lower than 8 characters.
 - The Fyne toolkit was updated from 1.2.0 to in development version of 1.2.2 for bug fixes to enable new features.
