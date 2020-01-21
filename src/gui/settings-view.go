@@ -58,6 +58,9 @@ func SettingsView(window fyne.Window, app fyne.App, XMLData *file.Data, dataLabe
 			if change {
 				// Calculate the new PasswordKey.
 				PasswordKey = encrypt.EncryptionKey(UserName, passwordEntry.Text)
+				
+				// Clear out the text inside the label.
+				passwordEntry.SetText("")
 
 				// Write the data encrypted using the new key and do so concurrently.
 				go XMLData.Write(&PasswordKey)
