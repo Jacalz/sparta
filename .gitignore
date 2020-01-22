@@ -14,6 +14,9 @@ src/src
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
+# Files produced when building for Android
+*.apk
+
 # Files created and used when using fyne-cross
 fyne.syso
 *.tar.gz
