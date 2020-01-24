@@ -26,6 +26,9 @@ rm -rf usr fyne.syso
 rm -f build/sparta-darwin-amd64 build/fyne.syso
 sudo chmod 666 build/sparta-windows-amd64.exe
 
+# Export the variable to where the ndk is located.
+export ANDROID_NDK_HOME=~/Android/Sdk/ndk/21.0.6113669/
+
 # Build the Android apk using the Android SDK.
 ~/go/bin/fyne package -os android -appID com.github.jacalz.sparta -name Sparta -icon assets/icon-512.png
 mv sparta.apk build/sparta.apk
