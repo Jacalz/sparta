@@ -15,18 +15,20 @@ sudo ~/go/bin/fyne-cross --targets=windows/amd64,darwin/amd64,linux/amd64 --outp
 cp build/fyne.syso fyne.syso
 
 # Package the darwin executable as an application.
-~/go/bin/fyne package -icon assets/icon-1024.png -executable build/sparta-darwin-amd64 -os darwin -name Sparta
+~/go/bin/fyne package -os darwin -appID com.github.jacalz.sparta -name Sparta -icon assets/icon-1024.png -executable build/sparta-darwin-amd64
+mv Sparta.app build/Sparta.app
 
 # Build the windows binary again to incorporate the logo.
 sudo ~/go/bin/fyne-cross --targets=windows/amd64 --output=sparta
-
-# Clean up some stuff.
 rm -rf usr fyne.syso
-mv Sparta.app build/Sparta.app
 
 # Clean up in the build folder (Sparta.app is the one to use).
 rm -f build/sparta-darwin-amd64 build/fyne.syso
 sudo chmod 666 build/sparta-windows-amd64.exe
+
+# Build the Android apk using the Android SDK.
+~/go/bin/fyne package -os android -appID com.github.jacalz.sparta -name Sparta -icon assets/icon-512.png
+mv sparta.apk build/sparta.apk
 
 # Change directory to the build folder.
 cd build/
