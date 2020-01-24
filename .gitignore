@@ -5,8 +5,8 @@
 *.so
 *.dylib
 
-# Produced by a regular go build inside src.
-src/src
+# Produced by a regular go build.
+sparta
 
 # Test binary, build with `go test -c`
 *.test
@@ -22,5 +22,5 @@ fyne.syso
 *.tar.gz
 *.tar.xz
 *.app
-src/usr
+usr
 build

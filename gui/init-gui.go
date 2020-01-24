@@ -1,8 +1,8 @@
 package gui
 
 import (
-	"sparta/src/bundled"
-	"sparta/src/file/settings"
+	"sparta/assets"
+	"sparta/file/settings"
 
 	"fyne.io/fyne/app"
 	"fyne.io/fyne/theme"
@@ -16,7 +16,7 @@ func Init() {
 	app := app.NewWithID("com.github.jacalz.sparta")
 
 	// Set the application icon for our program.
-	app.SetIcon(bundled.AppIcon)
+	app.SetIcon(assets.AppIcon)
 
 	// Create the window for our user interface.
 	window := app.NewWindow("Sparta")

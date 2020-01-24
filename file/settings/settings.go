@@ -1,7 +1,7 @@
 package settings
 
 import (
-	"sparta/src/file"
+	"sparta/file"
 
 	"encoding/xml"
 	"fmt"

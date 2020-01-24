@@ -1,7 +1,7 @@
 package file
 
 import (
-	"sparta/src/file/encrypt"
+	"sparta/file/encrypt"
 
 	"encoding/xml"
 	"fmt"

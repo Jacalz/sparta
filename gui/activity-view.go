@@ -1,8 +1,8 @@
 package gui
 
 import (
-	"sparta/src/file"
-	"sparta/src/file/parse"
+	"sparta/file"
+	"sparta/file/parse"
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/widget"

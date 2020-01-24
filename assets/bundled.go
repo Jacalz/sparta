@@ -1,4 +1,4 @@
-package bundled
+package assets
 
 import "fyne.io/fyne"
 

@@ -1,8 +1,8 @@
 package gui
 
 import (
-	"sparta/src/file"
-	"sparta/src/file/encrypt"
+	"sparta/file"
+	"sparta/file/encrypt"
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/dialog"

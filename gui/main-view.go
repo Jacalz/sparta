@@ -1,7 +1,7 @@
 package gui
 
 import (
-	"sparta/src/file"
+	"sparta/file"
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/layout"
