@@ -52,13 +52,13 @@ func SettingsView(window fyne.Window, app fyne.App, XMLData *file.Data, dataLabe
 			dialog.ShowInformation("Please enter a valid password", "Passwords need to be at least eight characters long.", window)
 			return
 		}
-		
+
 		// Ask the user to confirm what we are about to do.
 		dialog.ShowConfirm("Are you sure that you want to continue?", "The action will permanently change your password.", func(change bool) {
 			if change {
 				// Calculate the new PasswordKey.
 				PasswordKey = encrypt.EncryptionKey(UserName, passwordEntry.Text)
-				
+
 				// Clear out the text inside the label.
 				passwordEntry.SetText("")
 

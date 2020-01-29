@@ -26,9 +26,13 @@ func ShowMainDataView(window fyne.Window, app fyne.App, XMLData *file.Data, newA
 		} else {
 			// We loop through the imported file and add the formated info before the previous info (new information comes out on top).
 			for i := range XMLData.Exercise {
-				dataLabel.SetText(XMLData.Format(i) + dataLabel.Text)
-				// TODO: When #607 is fixed in fyne we can optimize this by just setting the text and refreshing the widget when we are done.
+
+				// Run through and update all the text inside the label without refreshing yet to avoid calling a lot of refresh calls.
+				dataLabel.Text = XMLData.Format(i) + dataLabel.Text
 			}
+
+			// Refresh the widget to show the updated text.
+			dataLabel.SetText(dataLabel.Text)
 		}
 
 		// We then block the channel while waiting for an update on the channel.
