@@ -31,12 +31,18 @@ func (c Config) Write() {
 	}
 
 	// Write to the file.
-	ioutil.WriteFile(SettingsFile, file, 0644)
+	err = ioutil.WriteFile(SettingsFile, file, 0644)
+	if err != nil {
+		fmt.Print(err)
+	}
 }
 
 func readData() (config Config) {
 	// Unmarshal the xml data in to our Settings struct.
-	xml.Unmarshal(file.OpenFile(SettingsFile), &config)
+	err := xml.Unmarshal(file.OpenFile(SettingsFile), &config)
+	if err != nil {
+		fmt.Print(err)
+	}
 
 	return config
 }
@@ -50,7 +56,10 @@ func Check() (config Config) {
 
 		// Check if the directory exists. If not, we create it.
 		if _, err := os.Stat(SettingsFile); os.IsNotExist(err) {
-			os.Mkdir(filepath.Join(file.Config(), "sparta"), os.ModePerm)
+			err := os.Mkdir(filepath.Join(file.Config(), "sparta"), os.ModePerm)
+			if err != nil {
+				fmt.Print(err)
+			}
 		}
 
 		// We then create the file.

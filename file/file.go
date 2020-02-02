@@ -129,7 +129,10 @@ func readData(key *[32]byte) (XMLData Data, err error) {
 	}
 
 	// Unmarshal the xml data in to our Data struct.
-	xml.Unmarshal(content, &XMLData)
+	err = xml.Unmarshal(content, &XMLData)
+	if err != nil {
+		fmt.Print(err)
+	}
 
 	fileStatusEmpty = false
 	return XMLData, nil
