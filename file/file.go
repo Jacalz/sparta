@@ -48,18 +48,14 @@ func SetNonEmpty() {
 }
 
 // Config returns the config directory and handles the error accordingly.
-func Config() string {
-	var dir string
-
-	// Workaround golang 1.12 in the cross compiling tool.
+func Config() (dir string) {
+	// Workaround having golang 1.12.x in the cross compiling tool.
 	switch runtime.GOOS {
 	case "windows":
 		dir = os.Getenv("AppData")
-
 	case "darwin":
 		dir = os.Getenv("HOME")
 		dir += "/Library/Preferences"
-
 	default: // Unix
 		dir = os.Getenv("XDG_CONFIG_HOME")
 		if dir == "" {
@@ -69,29 +65,13 @@ func Config() string {
 	}
 
 	return dir
-
-	/*
-		directory, err := os.UserConfigDir()
-		if err != nil {
-			fmt.Print(err)
-		}
-
-
-		return directory
-	*/
 }
-
-// DataPath is the path for the sparta config directory.
-var DataPath string = filepath.Join(Config(), "sparta")
-
-// DataFile specifies the location of our data file.
-var DataFile string = filepath.Join(DataPath, "exercises.xml")
 
 // Check does relevant checks around our data file.
 func Check(key *[32]byte) (exercises Data, err error) {
 
-	// Check if the user has a data file directory.
-	if _, err := os.Stat(DataFile); err == nil {
+	// Check if the user has a data file.
+	if _, err := os.Stat(filepath.Join(Config(), "sparta", "exercises.xml")); err == nil {
 		// The file exists and we read the data. Return error if decryption failed (wrong password).
 		exercises, err = readData(key)
 		if err != nil {
@@ -100,7 +80,7 @@ func Check(key *[32]byte) (exercises Data, err error) {
 
 	} else if os.IsNotExist(err) {
 		// Since the file didn't exist, we create it.
-		_, err := os.Create(DataFile)
+		_, err := os.Create(filepath.Join(Config(), "sparta", "exercises.xml"))
 		if err != nil {
 			fmt.Print("Could not create the file.", err)
 		}
@@ -114,13 +94,23 @@ func Check(key *[32]byte) (exercises Data, err error) {
 
 // ReadData reads data from an xml file, couldn't be simpler. Unexported.
 func readData(key *[32]byte) (XMLData Data, err error) {
+	// Open up the file and it's content.
+	data, err := os.Open(filepath.Join(Config(), "sparta", "exercises.xml"))
+	if err != nil {
+		fmt.Print(err)
+	}
 
-	// Read the data from the opened file and then check if it is empty.
-	encrypted := OpenFile(DataFile)
-	if string(encrypted) == "" {
+	// Read the data to extract the encrypted content.
+	encrypted, err := ioutil.ReadAll(data)
+	if err != nil {
+		fmt.Print(err)
+	} else if string(encrypted) == "" {
 		fileStatusEmpty = true
 		return XMLData, nil
 	}
+
+	// Close the file opening.
+	go data.Close()
 
 	// Decrypt the data to the content variable.
 	content, err := encrypt.Decrypt(key, encrypted)
@@ -150,7 +140,7 @@ func (d *Data) Write(key *[32]byte) {
 	}
 
 	// Write to the file.
-	err = ioutil.WriteFile(DataFile, encrypt.Encrypt(key, file), 0644)
+	err = ioutil.WriteFile(filepath.Join(Config(), "sparta", "exercises.xml"), encrypt.Encrypt(key, file), 0644)
 	if err != nil {
 		fmt.Print(err)
 	}
@@ -185,7 +175,7 @@ func (d *Data) Delete() {
 	fileStatusEmpty = true
 
 	// Remove the file to clear it.
-	err := os.Remove(DataFile)
+	err := os.Remove(filepath.Join(Config(), "sparta", "exercises.xml"))
 	if err != nil {
 		fmt.Print(err)
 	}

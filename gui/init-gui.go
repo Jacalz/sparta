@@ -30,6 +30,9 @@ func Init() {
 		app.Settings().SetTheme(theme.DarkTheme())
 	case "Light":
 		app.Settings().SetTheme(theme.LightTheme())
+	default:
+		config.Theme = "Dark"
+		config.Write()
 	}
 
 	// Show the login page and all content after that.
