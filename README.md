@@ -21,13 +21,12 @@ Please visit the [release page](https://github.com/Jacalz/sparta/releases) for t
 
 ## Folder structure:
 - **assets/ :** Storage of icons and other assets used in the project.
-- **src/ :** The location where all application code is placed and the home of the simple main.go file.
-  - **src/bundled :** Images bundled in to the source code.
-  - **src/file :** Common code for file handling in the application and home of the file package.
-    - **src/file/encrypt :** Cryptographic functions used for encryption etc.
-    - **src/file/parse :** Contains adapted versions of parse functions from `strconv` for extracting numbers from strings.
-    - **src/file/settings :** The code that handles saving of application settings.
-  - **src/gui :** Contains all the files containg the code used for creating and running the graphical user interface.
+- **bundled/ :** Images bundled in to the source code.
+- **file/ :** Common code for file handling in the application and home of the file package.
+- **file/encrypt :** Cryptographic functions used for encryption etc.
+- **file/parse :** Contains adapted versions of parse functions from `strconv` for extracting numbers from strings.
+- **file/settings :** The code that handles saving of application settings.
+- **gui :** Contains all the files containg the code used for creating and running the graphical user interface.
   
 ## License
 - Sparta is licensed under `GNU AFFERO GENERAL PUBLIC LICENSE Version 3` and created by [Jacalz](https://github.com/jacalz).
