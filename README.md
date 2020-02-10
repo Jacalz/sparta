@@ -9,6 +9,12 @@
 
 Sparta is a Sport and Rehearsal Tracking Application for logging all your sport activities safely and privately on the computer. No tracking and no collection of user data, we just save your activities for you. Sparta utilizes Military Grade Encryption to keep all your data and sport activities away from spying eyes.
 
+## Requirements
+
+Sparta depends on the following packages.
+
+- Fyne (version 1.2.2 or later)
+
 ## Downloads
 
 Please visit the [release page](https://github.com/Jacalz/sparta/releases) for the downloading the latest release.
