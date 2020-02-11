@@ -39,7 +39,7 @@ func SettingsView(window fyne.Window, app fyne.App, XMLData *file.Data, dataLabe
 	themeSwitcher.Refresh()
 
 	// Add the theme switcher next to a label.
-	themeSettings := fyne.NewContainerWithLayout(layout.NewGridLayout(2), widget.NewLabel("Change theme"), themeSwitcher)
+	themeChanger := fyne.NewContainerWithLayout(layout.NewGridLayout(2), widget.NewLabel("Change theme"), themeSwitcher)
 
 	// Create the entry for updating the password.
 	passwordEntry := widget.NewPasswordEntry()
@@ -67,6 +67,9 @@ func SettingsView(window fyne.Window, app fyne.App, XMLData *file.Data, dataLabe
 		}
 	})
 
+	// passwordChanger holds the widgets for the password changer.
+	passwordChanger := fyne.NewContainerWithLayout(layout.NewGridLayout(2), passwordEntry, passwordButton)
+
 	// Create a button for clearing the data of a given profile.
 	deleteButton := widget.NewButtonWithIcon("Remove all activities", theme.DeleteIcon(), func() {
 
@@ -82,5 +85,14 @@ func SettingsView(window fyne.Window, app fyne.App, XMLData *file.Data, dataLabe
 		}, window)
 	})
 
-	return fyne.NewContainerWithLayout(layout.NewVBoxLayout(), themeSettings, layout.NewSpacer(), fyne.NewContainerWithLayout(layout.NewGridLayout(2), passwordEntry, passwordButton), layout.NewSpacer(), deleteButton)
+	// userInterfaceSettings is a group holding widgets related to user interface settings such as theme.
+	userInterfaceSettings := widget.NewGroup("User Interface Settings", themeChanger)
+
+	// accountPasswordSettings groups together all settings related to usernames and passwords.
+	accountPasswordSettings := widget.NewGroup("Account and Password Settings", passwordChanger)
+
+	// advancedSettings is a group holding widgets related to advanced settings.
+	advancedSettings := widget.NewGroup("Advanced Settings", deleteButton)
+
+	return fyne.NewContainerWithLayout(layout.NewVBoxLayout(), userInterfaceSettings, layout.NewSpacer(), accountPasswordSettings, layout.NewSpacer(), advancedSettings)
 }
