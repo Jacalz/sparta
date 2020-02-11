@@ -15,6 +15,9 @@ type Config struct {
 	Theme string `xml:"theme"`
 }
 
+// DefaultConfig holds an empty Config to clear it to default values.
+var DefaultConfig = &Config{Theme: "Dark"}
+
 func (c Config) Write() {
 	//Marchal the xml content in to a file variable.
 	data, err := xml.Marshal(c)

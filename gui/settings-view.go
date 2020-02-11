@@ -3,6 +3,7 @@ package gui
 import (
 	"sparta/file"
 	"sparta/file/encrypt"
+	"sparta/file/settings"
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/dialog"
@@ -70,8 +71,26 @@ func SettingsView(window fyne.Window, app fyne.App, XMLData *file.Data, dataLabe
 	// passwordChanger holds the widgets for the password changer.
 	passwordChanger := fyne.NewContainerWithLayout(layout.NewGridLayout(2), passwordEntry, passwordButton)
 
+	// revertToDefaultSettings reverts all settings to their default values.
+	revertToDefaultSettings := widget.NewButtonWithIcon("Reset settings to default values", theme.ViewRefreshIcon(), func() {
+		// Make sure to set the themeSwitcher to Dark if it isn't already.
+		if config.Theme != "Dark" {
+			// Ste the widget placeholder to dark.
+			themeSwitcher.PlaceHolder = "Dark"
+			themeSwitcher.Refresh()
+
+			// Set the visable theme to dark.
+			app.Settings().SetTheme(theme.DarkTheme())
+		}
+
+		// Set the config file to the default values.
+		config = *settings.DefaultConfig
+
+		// Write the changes to the config file.
+		go config.Write()
+	})
 	// Create a button for clearing the data of a given profile.
-	deleteButton := widget.NewButtonWithIcon("Remove all activities", theme.DeleteIcon(), func() {
+	deleteButton := widget.NewButtonWithIcon("Delete all saved activities", theme.DeleteIcon(), func() {
 
 		// Ask the user to confirm what we are about to do.
 		dialog.ShowConfirm("Are you sure that you want to continue?", "Deleting your data will remove all of your exercises and activities.", func(remove bool) {
@@ -92,7 +111,7 @@ func SettingsView(window fyne.Window, app fyne.App, XMLData *file.Data, dataLabe
 	accountPasswordSettings := widget.NewGroup("Account and Password Settings", passwordChanger)
 
 	// advancedSettings is a group holding widgets related to advanced settings.
-	advancedSettings := widget.NewGroup("Advanced Settings", deleteButton)
+	advancedSettings := widget.NewGroup("Advanced Settings", revertToDefaultSettings, widget.NewLabel(""), deleteButton)
 
 	return fyne.NewContainerWithLayout(layout.NewVBoxLayout(), userInterfaceSettings, layout.NewSpacer(), accountPasswordSettings, layout.NewSpacer(), advancedSettings)
 }
