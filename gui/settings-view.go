@@ -114,7 +114,7 @@ func SettingsView(window fyne.Window, app fyne.App, XMLData *file.Data, dataLabe
 	advancedSettings := widget.NewGroup("Advanced Settings", revertToDefaultSettings, widget.NewLabel(""), deleteButton)
 
 	// settingsContentView holds all widget groups and content for the settings page.
-	settingsContentView := fyne.NewContainerWithLayout(layout.NewVBoxLayout(), userInterfaceSettings, layout.NewSpacer(), accountPasswordSettings, layout.NewSpacer(), advancedSettings, widget.NewMultiLineEntry())
+	settingsContentView := fyne.NewContainerWithLayout(layout.NewVBoxLayout(), userInterfaceSettings, layout.NewSpacer(), accountPasswordSettings, layout.NewSpacer(), advancedSettings)
 
 	return widget.NewScrollContainer(settingsContentView)
 }
