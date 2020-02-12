@@ -12,7 +12,7 @@ import (
 
 // Config holds all settings for the user.
 type Config struct {
-	Theme string `xml:"theme"`
+	Theme string `json:"theme"`
 }
 
 // DefaultConfig holds an empty Config to clear it to default values.
