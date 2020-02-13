@@ -143,8 +143,6 @@ func (d *Data) Write(key *[32]byte) {
 	if err != nil {
 		fmt.Print(err)
 	}
-
-	fmt.Printf("%s\n", file)
 }
 
 // Format formats the latest updated data in the Data struct to display information.
