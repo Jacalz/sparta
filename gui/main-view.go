@@ -10,7 +10,7 @@ import (
 )
 
 // ShowMainDataView shows the main view after we are logged in.
-func ShowMainDataView(window fyne.Window, app fyne.App, XMLData *file.Data, newAddedExercise chan string) {
+func ShowMainDataView(window fyne.Window, app fyne.App, exercises *file.Data, newAddedExercise chan string) {
 	// Create a label for displaing some info for the user. Default to showing nothing.
 	dataLabel := widget.NewLabel("")
 
@@ -25,10 +25,10 @@ func ShowMainDataView(window fyne.Window, app fyne.App, XMLData *file.Data, newA
 			dataLabel.SetText(<-newAddedExercise)
 		} else {
 			// We loop through the imported file and add the formated info before the previous info (new information comes out on top).
-			for i := range XMLData.Exercise {
+			for i := range exercises.Exercise {
 
 				// Run through and update all the text inside the label without refreshing yet to avoid calling a lot of refresh calls.
-				dataLabel.Text = XMLData.Format(i) + dataLabel.Text
+				dataLabel.Text = exercises.Format(i) + dataLabel.Text
 			}
 
 			// Refresh the widget to show the updated text.
@@ -47,8 +47,8 @@ func ShowMainDataView(window fyne.Window, app fyne.App, XMLData *file.Data, newA
 	// Create tabs with data.
 	tabs := widget.NewTabContainer(
 		widget.NewTabItemWithIcon("Activities", theme.HomeIcon(), dataPage),
-		widget.NewTabItemWithIcon("Add activity", theme.ContentAddIcon(), ActivityView(window, XMLData, dataLabel, newAddedExercise)),
-		widget.NewTabItemWithIcon("Settings", theme.SettingsIcon(), SettingsView(window, app, XMLData, dataLabel)),
+		widget.NewTabItemWithIcon("Add Activity", theme.ContentAddIcon(), ActivityView(window, exercises, dataLabel, newAddedExercise)),
+		widget.NewTabItemWithIcon("Settings", theme.SettingsIcon(), SettingsView(window, app, exercises, dataLabel)),
 		// TODO: Add an about page with logo, name and version number.
 	)
 

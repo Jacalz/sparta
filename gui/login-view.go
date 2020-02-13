@@ -60,13 +60,13 @@ func ShowLoginPage(app fyne.App, window fyne.Window) {
 		newAddedExercise := make(chan string)
 
 		// Check for the file where we store the data. The user inputed the wrong password if we get an error.
-		XMLData, err := file.Check(&PasswordKey)
+		exercises, err := file.Check(&PasswordKey)
 		if err != nil {
 			dialog.ShowInformation("Wrong password or username", "The login credentials are incorrect, please try again.", window)
 			return
 		}
 
-		ShowMainDataView(window, app, &XMLData, newAddedExercise)
+		ShowMainDataView(window, app, &exercises, newAddedExercise)
 	})
 
 	// Add the Action component to make actions work inside the struct. This is used to press the loginButton on pressing enter/return ton the keyboard.

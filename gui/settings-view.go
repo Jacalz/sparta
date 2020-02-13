@@ -15,7 +15,7 @@ import (
 // TODO: Multi user support by labling the data file exercises-user.xml
 
 // SettingsView contains the gui information for the settings screen.
-func SettingsView(window fyne.Window, app fyne.App, XMLData *file.Data, dataLabel *widget.Label) fyne.CanvasObject {
+func SettingsView(window fyne.Window, app fyne.App, exercises *file.Data, dataLabel *widget.Label) fyne.CanvasObject {
 
 	// TODO: Add setting for changing language.
 
@@ -62,7 +62,7 @@ func SettingsView(window fyne.Window, app fyne.App, XMLData *file.Data, dataLabe
 					passwordEntry.SetText("")
 
 					// Write the data encrypted using the new key and do so concurrently.
-					go XMLData.Write(&PasswordKey)
+					go exercises.Write(&PasswordKey)
 				}
 			}, window)
 		}
@@ -96,7 +96,7 @@ func SettingsView(window fyne.Window, app fyne.App, XMLData *file.Data, dataLabe
 		dialog.ShowConfirm("Are you sure that you want to continue?", "Deleting your data will remove all of your exercises and activities.", func(remove bool) {
 			if remove {
 				// Run the delete function and do it concurrently to avoid stalling the thread with file io.
-				go XMLData.Delete()
+				go exercises.Delete()
 
 				// Clear all the data inside the data label so we don't display the old data.
 				dataLabel.SetText("No exercieses have been created yet.")

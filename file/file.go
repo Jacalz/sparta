@@ -3,7 +3,7 @@ package file
 import (
 	"sparta/file/encrypt"
 
-	"encoding/xml"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -14,21 +14,20 @@ import (
 
 // Data has the xml data for the initial data tag and then incorporates the Exercise struct.
 type Data struct {
-	XMLName     xml.Name   `xml:"data"`
-	LastUpdated time.Time  `xml:"updated"`
-	Exercise    []Exercise `xml:"exercise"`
+	LastUpdated time.Time  `json:"updated"`
+	Exercise    []Exercise `json:"exercise"`
 }
 
 // Exercise keeps track of the data for each exercise that the user has done.
 type Exercise struct {
-	Date     string  `xml:"date"`
-	Clock    string  `xml:"clock"`
-	Activity string  `xml:"activity"`
-	Distance float64 `xml:"distance"`
-	Time     float64 `xml:"time"`
-	Reps     int     `xml:"reps"`
-	Sets     int     `xml:"sets"`
-	Comment  string  `xml:"comment"`
+	Date     string  `json:"date"`
+	Clock    string  `json:"clock"`
+	Activity string  `json:"activity"`
+	Distance float64 `json:"distance"`
+	Time     float64 `json:"time"`
+	Reps     int     `json:"reps"`
+	Sets     int     `json:"sets"`
+	Comment  string  `json:"comment"`
 }
 
 // fileStatusEmpty defines if the file is empty or not.
@@ -71,7 +70,7 @@ func Config() (dir string) {
 func Check(key *[32]byte) (exercises Data, err error) {
 
 	// Check if the user has a data file.
-	if _, err := os.Stat(filepath.Join(Config(), "sparta", "exercises.xml")); err == nil {
+	if _, err := os.Stat(filepath.Join(Config(), "sparta", "exercises.json")); err == nil {
 		// The file exists and we read the data. Return error if decryption failed (wrong password).
 		exercises, err = readData(key)
 		if err != nil {
@@ -80,7 +79,7 @@ func Check(key *[32]byte) (exercises Data, err error) {
 
 	} else if os.IsNotExist(err) {
 		// Since the file didn't exist, we create it.
-		_, err := os.Create(filepath.Join(Config(), "sparta", "exercises.xml"))
+		_, err := os.Create(filepath.Join(Config(), "sparta", "exercises.json"))
 		if err != nil {
 			fmt.Print("Could not create the file.", err)
 		}
@@ -93,9 +92,9 @@ func Check(key *[32]byte) (exercises Data, err error) {
 }
 
 // ReadData reads data from an xml file, couldn't be simpler. Unexported.
-func readData(key *[32]byte) (XMLData Data, err error) {
+func readData(key *[32]byte) (exercises Data, err error) {
 	// Open up the file and it's content.
-	data, err := os.Open(filepath.Join(Config(), "sparta", "exercises.xml"))
+	data, err := os.Open(filepath.Join(Config(), "sparta", "exercises.json"))
 	if err != nil {
 		fmt.Print(err)
 	}
@@ -106,7 +105,7 @@ func readData(key *[32]byte) (XMLData Data, err error) {
 		fmt.Print(err)
 	} else if string(encrypted) == "" {
 		fileStatusEmpty = true
-		return XMLData, nil
+		return exercises, nil
 	}
 
 	// Close the file opening.
@@ -115,17 +114,17 @@ func readData(key *[32]byte) (XMLData Data, err error) {
 	// Decrypt the data to the content variable.
 	content, err := encrypt.Decrypt(key, encrypted)
 	if err != nil {
-		return XMLData, err
+		return exercises, err
 	}
 
 	// Unmarshal the xml data in to our Data struct.
-	err = xml.Unmarshal(content, &XMLData)
+	err = json.Unmarshal(content, &exercises)
 	if err != nil {
 		fmt.Print(err)
 	}
 
 	fileStatusEmpty = false
-	return XMLData, nil
+	return exercises, nil
 }
 
 // Write writes new exercieses to the data file.
@@ -134,16 +133,18 @@ func (d *Data) Write(key *[32]byte) {
 	d.LastUpdated = time.Now()
 
 	//Marchal the xml content in to a file variable.
-	file, err := xml.Marshal(d)
+	file, err := json.Marshal(d)
 	if err != nil {
 		fmt.Print(err)
 	}
 
 	// Write to the file.
-	err = ioutil.WriteFile(filepath.Join(Config(), "sparta", "exercises.xml"), encrypt.Encrypt(key, file), 0644)
+	err = ioutil.WriteFile(filepath.Join(Config(), "sparta", "exercises.json"), encrypt.Encrypt(key, file), 0644)
 	if err != nil {
 		fmt.Print(err)
 	}
+
+	fmt.Printf("%s\n", file)
 }
 
 // Format formats the latest updated data in the Data struct to display information.
@@ -175,7 +176,7 @@ func (d *Data) Delete() {
 	fileStatusEmpty = true
 
 	// Remove the file to clear it.
-	err := os.Remove(filepath.Join(Config(), "sparta", "exercises.xml"))
+	err := os.Remove(filepath.Join(Config(), "sparta", "exercises.json"))
 	if err != nil {
 		fmt.Print(err)
 	}

@@ -11,7 +11,7 @@ import (
 // TODO: Handle invalid inputs and empty fields.
 
 // ActivityView shows the opoup for adding a new activity.
-func ActivityView(window fyne.Window, XMLData *file.Data, dataLabel *widget.Label, newAddedExercise chan string) fyne.CanvasObject {
+func ActivityView(window fyne.Window, exercises *file.Data, dataLabel *widget.Label, newAddedExercise chan string) fyne.CanvasObject {
 	// Variables for the entry variables used in the form.
 	dateEntry := NewEntryWithPlaceholder("YYYY-MM-DD")
 	clockEntry := NewEntryWithPlaceholder("HH:MM")
@@ -28,7 +28,7 @@ func ActivityView(window fyne.Window, XMLData *file.Data, dataLabel *widget.Labe
 		OnSubmit: func() {
 			go func() {
 				// Append new values to a new index.
-				XMLData.Exercise = append(XMLData.Exercise, file.Exercise{Date: dateEntry.Text, Clock: clockEntry.Text, Activity: activityEntry.Text, Distance: parse.Float(distanceEntry.Text), Time: parse.Float(timeEntry.Text), Reps: parse.Int(repsEntry.Text), Sets: parse.Int(setsEntry.Text), Comment: commentEntry.Text})
+				exercises.Exercise = append(exercises.Exercise, file.Exercise{Date: dateEntry.Text, Clock: clockEntry.Text, Activity: activityEntry.Text, Distance: parse.Float(distanceEntry.Text), Time: parse.Float(timeEntry.Text), Reps: parse.Int(repsEntry.Text), Sets: parse.Int(setsEntry.Text), Comment: commentEntry.Text})
 
 				// Make sure to clean out the text for all the entry widgets.
 				dateEntry.SetText("")
@@ -41,7 +41,7 @@ func ActivityView(window fyne.Window, XMLData *file.Data, dataLabel *widget.Labe
 				commentEntry.SetText("")
 
 				// Encrypt and write the data to the configuration file. Do so on another goroutine.
-				go XMLData.Write(&PasswordKey)
+				go exercises.Write(&PasswordKey)
 
 				// Workaround bug that happens after creating a new activity after removing the file.
 				if file.Empty() {
@@ -49,7 +49,7 @@ func ActivityView(window fyne.Window, XMLData *file.Data, dataLabel *widget.Labe
 				}
 
 				// Send the formated string from the highest index of the Exercise slice.
-				newAddedExercise <- XMLData.Format(len(XMLData.Exercise) - 1)
+				newAddedExercise <- exercises.Format(len(exercises.Exercise) - 1)
 
 				// Now set the status to not be empty.
 				file.SetNonEmpty()
