@@ -2,7 +2,7 @@ package gui
 
 import (
 	"fmt"
-    "regexp"
+	"regexp"
 	"sparta/file"
 	"sparta/file/parse"
 
