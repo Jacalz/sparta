@@ -92,7 +92,7 @@ func ActivityView(window fyne.Window, exercises *file.Data, dataLabel *widget.La
 				defer form.OnCancel()
 
 				// Append new values to a new index.
-				exercises.Exercise = append(exercises.Exercise, file.Exercise{Date: dateEntry.Text, Clock: clockEntry.Text, Activity: activityEntry.Text, Distance: parse.Float(distanceEntry.Text), Time: parse.Float(timeEntry.Text), Reps: parse.Int(repsEntry.Text), Sets: parse.Int(setsEntry.Text), Comment: commentEntry.Text})
+				exercises.Exercise = append(exercises.Exercise, file.Exercise{Date: dateEntry.Text, Clock: clockEntry.Text, Activity: activityEntry.Text, Distance: parse.Float(distanceEntry.Text), Time: parse.Float(timeEntry.Text), Reps: parse.Uint(repsEntry.Text), Sets: parse.Uint(setsEntry.Text), Comment: commentEntry.Text})
 
 				// Encrypt and write the data to the configuration file. Do it on another goroutine.
 				go exercises.Write(&PasswordKey)

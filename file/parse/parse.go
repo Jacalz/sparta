@@ -19,8 +19,8 @@ func Float(input string) float64 {
 	return output
 }
 
-// Int is just a wrapper around strconv.Atoi().
-func Int(input string) int {
+// Uint is just a wrapper around strconv.Atoi() returning a uint and handling the error.
+func Uint(input string) uint {
 	if input == "" {
 		return 0
 	}
@@ -30,5 +30,5 @@ func Int(input string) int {
 		fmt.Print(err)
 	}
 
-	return output
+	return uint(output)
 }
