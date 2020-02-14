@@ -2,7 +2,7 @@ package gui
 
 import (
 	"fmt"
-	"path/filepath"
+    "regexp"
 	"sparta/file"
 	"sparta/file/parse"
 
@@ -39,6 +39,30 @@ func ActivityView(window fyne.Window, exercises *file.Data, dataLabel *widget.La
 		},
 	}
 
+	// Compile regular expressions for checking numeric input with optional decimals..
+	numericFloat, err := regexp.Compile(`^(\d*\.)?\d+$`)
+	if err != nil {
+		fmt.Print(err)
+	}
+
+	// Compile regular expressions for checking numeric input without decimals..
+	numericUint, err := regexp.Compile(`^[0-9]*$`)
+	if err != nil {
+		fmt.Print(err)
+	}
+
+	// Compile regular expressions for checking date input.
+	date, err := regexp.Compile(`^(\d{1,4})-(\d{1,2})-(\d{1,2})$`)
+	if err != nil {
+		fmt.Print(err)
+	}
+
+	// Compile regular expressions for checking clock input.
+	clock, err := regexp.Compile(`^(\d{1,2}):(\d{1,2})$`)
+	if err != nil {
+		fmt.Print(err)
+	}
+
 	// Create the form for displaying.
 	form.OnSubmit = func() {
 		// Bool variable for checking non numeric inputs (default to false).
@@ -46,33 +70,21 @@ func ActivityView(window fyne.Window, exercises *file.Data, dataLabel *widget.La
 
 		// Check that input is numeric in given fields.
 		switch {
-		case distanceEntry.Text != "" && !parse.IsNumeric(distanceEntry.Text):
+		case distanceEntry.Text != "" && !numericFloat.Match([]byte(distanceEntry.Text)):
 			nonNumericInput = true
 			fallthrough
-		case timeEntry.Text != "" && !parse.IsNumeric(timeEntry.Text):
+		case timeEntry.Text != "" && !numericFloat.Match([]byte(timeEntry.Text)):
 			nonNumericInput = true
 			fallthrough
-		case setsEntry.Text != "" && !parse.IsNumeric(setsEntry.Text):
+		case setsEntry.Text != "" && !numericUint.Match([]byte(setsEntry.Text)):
 			nonNumericInput = true
 			fallthrough
-		case repsEntry.Text != "" && !parse.IsNumeric(repsEntry.Text):
+		case repsEntry.Text != "" && !numericUint.Match([]byte(repsEntry.Text)):
 			nonNumericInput = true
-		}
-
-		// Check that clock input matches the given format.
-		correctClockFormat, err := filepath.Match("*:*", clockEntry.Text)
-		if err != nil {
-			fmt.Print(err)
-		}
-
-		// Check that date input matches the given format.
-		correctDateFormat, err := filepath.Match("*-*-*", dateEntry.Text)
-		if err != nil {
-			fmt.Print(err)
 		}
 
 		// Show and error if any fields does not match the correct input patterns.
-		if nonNumericInput || !correctClockFormat || !correctDateFormat {
+		if nonNumericInput || !clock.Match([]byte(clockEntry.Text)) || !date.Match([]byte(dateEntry.Text)) {
 			dialog.ShowInformation("Non numeric input or invald formats in fields", "Please make sure that inputed date and start time use the correct data formating.\nPlease also make sure that distance, time, sets and reps all contain numeric data if non empty.", window)
 		} else {
 			go func() {

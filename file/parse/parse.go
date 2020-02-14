@@ -32,9 +32,3 @@ func Int(input string) int {
 
 	return output
 }
-
-// IsNumeric checks if the input data is numeric or not.
-func IsNumeric(s string) bool {
-	_, err := strconv.ParseFloat(s, 64)
-	return err == nil
-}
