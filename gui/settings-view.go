@@ -3,7 +3,6 @@ package gui
 import (
 	"sparta/file"
 	"sparta/file/encrypt"
-	"sparta/file/settings"
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/dialog"
@@ -28,19 +27,16 @@ func SettingsView(window fyne.Window, app fyne.App, exercises *file.Data, dataLa
 			app.Settings().SetTheme(theme.LightTheme())
 		}
 
-		// Set the theme to the selected one.
-		config.Theme = selected
-
-		// Write the theme update to the file and do it concurrently to not stop the thread.
-		go config.Write()
+		// Set the theme to the selected one and save it using the preferences api in fyne.
+		app.Preferences().SetString("Theme", selected)
 	})
 
 	// Default theme is dark and thus we set the placeholder to that and then refresh it (without a refresh, it doesn't show until hovering on to widget).
-	themeSwitcher.PlaceHolder = config.Theme
+	themeSwitcher.PlaceHolder = app.Preferences().StringWithFallback("Theme", "Dark")
 	themeSwitcher.Refresh()
 
 	// Add the theme switcher next to a label.
-	themeChanger := fyne.NewContainerWithLayout(layout.NewGridLayout(2), widget.NewLabel("Change theme"), themeSwitcher)
+	themeChanger := fyne.NewContainerWithLayout(layout.NewGridLayout(2), widget.NewLabel("Application Theme"), themeSwitcher)
 
 	// Create the entry for updating the password.
 	passwordEntry := widget.NewPasswordEntry()
@@ -74,20 +70,17 @@ func SettingsView(window fyne.Window, app fyne.App, exercises *file.Data, dataLa
 	// revertToDefaultSettings reverts all settings to their default values.
 	revertToDefaultSettings := widget.NewButtonWithIcon("Reset settings to default values", theme.ViewRefreshIcon(), func() {
 		// Make sure to set the themeSwitcher to Dark if it isn't already.
-		if config.Theme != "Dark" {
-			// Ste the widget placeholder to dark.
+		if app.Preferences().String("Theme") != "Dark" {
+			// Set the widget placeholder to dark.
 			themeSwitcher.PlaceHolder = "Dark"
 			themeSwitcher.Refresh()
 
 			// Set the visable theme to dark.
 			app.Settings().SetTheme(theme.DarkTheme())
+
+			// Set the saved theme to dark.
+			app.Preferences().SetString("Theme", "Dark")
 		}
-
-		// Set the config file to the default values.
-		config = *settings.DefaultConfig
-
-		// Write the changes to the config file.
-		go config.Write()
 	})
 	// Create a button for clearing the data of a given profile.
 	deleteButton := widget.NewButtonWithIcon("Delete all saved activities", theme.DeleteIcon(), func() {
