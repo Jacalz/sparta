@@ -38,7 +38,7 @@ cd build/
 
 # Lastly we want to compress all the binaries.
 tar -cJf sparta-linux-amd64.tar.gz sparta-linux-amd64
-tar -cJf sparta-darwin-amd64.tar.gz Sparta.app
+zip sparta-darwin-amd64.zip Sparta.app
 zip sparta-windows-amd64.zip sparta-windows-amd64.exe
 
 # Final cleanup in the build folder.
