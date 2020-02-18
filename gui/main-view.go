@@ -48,6 +48,7 @@ func ShowMainDataView(window fyne.Window, app fyne.App, exercises *file.Data, ne
 	tabs := widget.NewTabContainer(
 		widget.NewTabItemWithIcon("Activities", theme.HomeIcon(), dataPage),
 		widget.NewTabItemWithIcon("Add Activity", theme.ContentAddIcon(), ActivityView(window, exercises, dataLabel, newAddedExercise)),
+		widget.NewTabItemWithIcon("Share", theme.MailSendIcon(), ShareView(exercises, newAddedExercise, &PasswordKey)),
 		widget.NewTabItemWithIcon("Settings", theme.SettingsIcon(), SettingsView(window, app, exercises, dataLabel)),
 		// TODO: Add an about page with logo, name and version number.
 	)
