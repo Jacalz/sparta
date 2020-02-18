@@ -27,6 +27,7 @@ Please visit the [release page](https://github.com/Jacalz/sparta/releases) for t
   - **file/parse :** Contains adapted versions of parse functions from `strconv` for extracting numbers from strings.
   - **file/settings :** The code that handles saving of application settings.
 - **gui :** Contains all the files containg the code used for creating and running the graphical user interface.
+- **share :** All specific file sharing code for updaing saved exercises across multiple devices.
   
 ## License
 - Sparta is licensed under `GNU AFFERO GENERAL PUBLIC LICENSE Version 3` and created by [Jacalz](https://github.com/jacalz).

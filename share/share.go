@@ -1,73 +1,74 @@
 package share
 
 import (
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
 	"sparta/file"
 	"sparta/file/encrypt"
 
 	"context"
-	"net/http"
-	"path/filepath"
-	"time"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"os"
+	"path"
+
+	"github.com/psanford/wormhole-william/wormhole"
 )
 
-// StartServer starts up the server on the local network and returns it so we can call shutdown.
-func StartServer(shutdown chan bool) {
-	// Start up the handling of the encrypted exercises on the network.
-	http.HandleFunc("/shared-data/encrypted-exercises", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, filepath.Join(file.Config(), "sparta", "exercises.json"))
-	})
+// StartSharing starts up the server on the local network and returns it so we can call shutdown.
+func StartSharing(sharecode chan string, finished chan struct{}) {
+	// Create the wormhole client.
+	var c wormhole.Client
 
-	// Set up the server with an adress port.
-	srv := &http.Server{Addr: ": 6230"}
-
-	// Set up a separate goroutine to handle out server shutdown.
-	go func() {
-		<-shutdown
-
-		// Set up a context to make sure that the server has time to shut down gracefully.
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-		defer cancel()
-
-		// Tell the server to not keep connections alive.
-		srv.SetKeepAlivesEnabled(false)
-
-		// Call the shutdown function with the given context.
-		if err := srv.Shutdown(ctx); err != nil {
-			fmt.Printf("Could not gracefully shutdown the server: %v\n", err)
-		}
-	}()
-
-	// Start listening and serving the file using ther server.
-	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-		fmt.Printf("Listening returned: %s\n", err)
+	// Open up the file.
+	f, err := os.Open(path.Join(file.Config(), "sparta", "exercises.json"))
+	if err != nil {
+		fmt.Printf("Opening file: %s\n", err)
 		return
+	}
+
+	// Defer the closing of the file.
+	defer f.Close()
+
+	// Send the file in the background.
+	code, status, err := c.SendFile(context.Background(), path.Join(file.Config(), "sparta", "exercises.json"), f)
+	if err != nil {
+		fmt.Printf("Could not share file: %s\n", err)
+		return
+	}
+
+	// Send the code down the drain so it can be shown inside the ui.
+	sharecode <- code
+
+	// Handle the status of the sharing.
+	if s := <-status; s.Error != nil {
+		fmt.Printf("Sharing returned an error: %s\n", s.Error)
+		return
+	} else if s.OK {
+		close(finished)
 	}
 }
 
 // Retrieve starts the retrieving process for fetching a shared file.
-func Retrieve(storedData *file.Data, newAddedExercise chan string, key *[32]byte) {
-	// Start by trying to download the data over http.
-	resp, err := http.Get("http://localhost:6230/shared-data/encrypted-exercises")
+func Retrieve(stored *file.Data, newAddedExercise chan string, key *[32]byte, code string) {
+	// Create the wormhole client.
+	var c wormhole.Client
+
+	// Recieve the data from wormhole sharing.
+	data, err := c.Receive(context.Background(), code)
 	if err != nil {
-		fmt.Printf("Fetching of shared data returned: %s\n", err)
+		fmt.Printf("Recieving contenjt returned: %s\n", err)
 		return
 	}
 
-	// Defer the closing of the response body.
-	defer resp.Body.Close()
-
 	// Read the data from the http response.
-	encrypted, err := ioutil.ReadAll(resp.Body)
+	encrypted, err := ioutil.ReadAll(data)
 	if err != nil {
 		fmt.Printf("Could not read from file: %s\n", err)
 		return
 	}
 
-	// fetchedData will store all fetched data.
-	fetchedData := file.Data{}
+	// recieved will store all fetched data.
+	recieved := file.Data{}
 
 	// Decrypt the content usign the decrypt function.
 	content, err := encrypt.Decrypt(key, encrypted)
@@ -77,7 +78,7 @@ func Retrieve(storedData *file.Data, newAddedExercise chan string, key *[32]byte
 	}
 
 	// unamrchal the content to get the json data from it.
-	err = json.Unmarshal(content, &fetchedData)
+	err = json.Unmarshal(content, &recieved)
 	if err != nil {
 		fmt.Printf("Could not unmarshal json: %s\n", err)
 		return
@@ -87,13 +88,13 @@ func Retrieve(storedData *file.Data, newAddedExercise chan string, key *[32]byte
 	exists := false
 
 	// Compare the two sets of data and add any non existing data.
-	for _, fetched := range fetchedData.Exercise {
+	for _, fetched := range recieved.Exercise {
 
 		// Make an asumption that it does not exist.
 		exists = false
 
 		// For each fetched item, we loop through and see if it can be found inside the stuff we already have.
-		for _, stored := range storedData.Exercise {
+		for _, stored := range stored.Exercise {
 			if fetched == stored {
 				exists = true
 				break
@@ -102,11 +103,11 @@ func Retrieve(storedData *file.Data, newAddedExercise chan string, key *[32]byte
 
 		// If the fetched item does not exist, we make sure to add it.
 		if !exists {
-			storedData.Exercise = append(storedData.Exercise, fetched)
-			newAddedExercise <- storedData.Format(len(storedData.Exercise) - 1)
+			stored.Exercise = append(stored.Exercise, fetched)
+			newAddedExercise <- stored.Format(len(stored.Exercise) - 1)
 		}
 	}
 
 	// Write the updated data to our data file.
-	go storedData.Write(key)
+	go stored.Write(key)
 }
