@@ -31,8 +31,8 @@ func SettingsView(window fyne.Window, app fyne.App, exercises *file.Data, dataLa
 		app.Preferences().SetString("Theme", selected)
 	})
 
-	// Default theme is dark and thus we set the placeholder to that and then refresh it (without a refresh, it doesn't show until hovering on to widget).
-	themeSwitcher.PlaceHolder = app.Preferences().StringWithFallback("Theme", "Dark")
+	// Default theme is light and thus we set the placeholder to that and then refresh it (without a refresh, it doesn't show until hovering on to widget).
+	themeSwitcher.PlaceHolder = app.Preferences().StringWithFallback("Theme", "Light")
 	themeSwitcher.Refresh()
 
 	// Add the theme switcher next to a label.

@@ -19,7 +19,7 @@ func Init() {
 	window := app.NewWindow("Sparta")
 
 	// Check that we are using the right theme.
-	switch app.Preferences().StringWithFallback("Theme", "Dark") {
+	switch app.Preferences().StringWithFallback("Theme", "Light") {
 	case "Dark":
 		app.Settings().SetTheme(theme.DarkTheme())
 	case "Light":
