@@ -2,6 +2,7 @@ package assets
 
 import "fyne.io/fyne"
 
+// AppIcon holds the bundled icon data for the sparta logo.
 var AppIcon = &fyne.StaticResource{
 	StaticName: "icon-256.png",
 	StaticContent: []byte{
