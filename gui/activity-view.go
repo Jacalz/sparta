@@ -40,13 +40,13 @@ func ActivityView(window fyne.Window, exercises *file.Data, dataLabel *widget.La
 	}
 
 	// Compile regular expressions for checking numeric input with optional decimals..
-	numericFloat, err := regexp.Compile(`^(\d*\.)?\d+$`)
+	numericFloat, err := regexp.Compile(`^$|(\d*\.)?\d+$`)
 	if err != nil {
 		fmt.Print(err)
 	}
 
 	// Compile regular expressions for checking numeric input without decimals..
-	numericUint, err := regexp.Compile(`^[0-9]*$`)
+	numericUint, err := regexp.Compile(`^$|^[0-9]*$`)
 	if err != nil {
 		fmt.Print(err)
 	}
@@ -70,22 +70,19 @@ func ActivityView(window fyne.Window, exercises *file.Data, dataLabel *widget.La
 
 		// Check that input is numeric in given fields.
 		switch {
-		case distanceEntry.Text != "" && !numericFloat.Match([]byte(distanceEntry.Text)):
+		case !numericFloat.Match([]byte(distanceEntry.Text)):
 			nonNumericInput = true
-			fallthrough
-		case timeEntry.Text != "" && !numericFloat.Match([]byte(timeEntry.Text)):
+		case !numericFloat.Match([]byte(timeEntry.Text)):
 			nonNumericInput = true
-			fallthrough
-		case setsEntry.Text != "" && !numericUint.Match([]byte(setsEntry.Text)):
+		case !numericUint.Match([]byte(setsEntry.Text)):
 			nonNumericInput = true
-			fallthrough
-		case repsEntry.Text != "" && !numericUint.Match([]byte(repsEntry.Text)):
+		case !numericUint.Match([]byte(repsEntry.Text)):
 			nonNumericInput = true
 		}
 
 		// Show and error if any fields does not match the correct input patterns.
-		if nonNumericInput || !clock.Match([]byte(clockEntry.Text)) || !date.Match([]byte(dateEntry.Text)) {
-			dialog.ShowInformation("Non numeric input or invald formats in fields", "Please make sure that inputed date and start time use the correct data formating.\nPlease also make sure that distance, time, sets and reps all contain numeric data if non empty.", window)
+		if nonNumericInput || activityEntry.Text == "" || !clock.Match([]byte(clockEntry.Text)) || !date.Match([]byte(dateEntry.Text)) {
+			dialog.ShowInformation("Non numeric input or invald formats in fields", "The date and the start time need correct data formating and the activity can not be empty.\nDistance, time, sets and reps can all be empty, however they do need to contain numeric data if non empty.", window)
 		} else {
 			go func() {
 				// Defer the entry fields to be cleaned out last.
