@@ -11,9 +11,10 @@ Sparta is a Sport and Rehearsal Tracking Application for logging all your sport 
 
 ## Requirements
 
-Sparta depends on the following packages.
+Sparta is built using the following Go packages:
 
-- Fyne (version 1.2.2 or later)
+- fyne (version 1.2.2 or later)
+- wormhole-william (version 1.0.1 or later)
 
 ## Downloads
 
