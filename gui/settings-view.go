@@ -75,7 +75,7 @@ func SettingsView(window fyne.Window, app fyne.App, exercises *file.Data, dataLa
 			themeSwitcher.PlaceHolder = "Dark"
 			themeSwitcher.Refresh()
 
-			// Set the visable theme to dark.
+			// Set the visible theme to dark.
 			app.Settings().SetTheme(theme.DarkTheme())
 
 			// Set the saved theme to dark.

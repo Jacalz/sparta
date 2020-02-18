@@ -16,7 +16,7 @@ var PasswordKey [32]byte
 // UserName holds the username for use later in settings.
 var UserName string
 
-// CheckValidInput checks if the inputed username and passwords are valid adn creates a message if they are not.
+// CheckValidInput checks if the inputed username and passwords are valid and creates a message if they are not.
 func CheckValidInput(username, password string, window fyne.Window) (valid bool) {
 	if username == "" || password == "" {
 		dialog.ShowInformation("Missing username/password", "Please provide both username and password.", window)

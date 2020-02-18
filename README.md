@@ -26,7 +26,7 @@ Please visit the [release page](https://github.com/Jacalz/sparta/releases) for t
 - **file/ :** Common code for file handling in the application and home of the file package.
   - **file/encrypt :** Cryptographic functions used for encryption etc.
   - **file/parse :** Contains adapted versions of parse functions from `strconv` for extracting numbers from strings.
-- **gui :** Contains all the files containg the code used for creating and running the graphical user interface.
+- **gui :** Contains all the files containing the code used for creating and running the graphical user interface.
 - **share :** All specific file sharing code for updaing saved exercises across multiple devices.
   
 ## License

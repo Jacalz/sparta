@@ -18,7 +18,7 @@ func ShowMainDataView(window fyne.Window, app fyne.App, exercises *file.Data, ne
 
 		// Handle an empty data file.
 		if file.Empty() {
-			// Start by inorming  the user that no data is avaliable.
+			// Start by inorming  the user that no data is available.
 			dataLabel.SetText("No exercieses have been created yet.")
 
 			// Then wait for more data to come running down the pipe.

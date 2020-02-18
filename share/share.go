@@ -53,10 +53,10 @@ func Retrieve(stored *file.Data, newAddedExercise chan string, key *[32]byte, co
 	// Create the wormhole client.
 	var c wormhole.Client
 
-	// Recieve the data from wormhole sharing.
+	// Receive the data from wormhole sharing.
 	data, err := c.Receive(context.Background(), code)
 	if err != nil {
-		fmt.Printf("Recieving contenjt returned: %s\n", err)
+		fmt.Printf("Receiving content returned: %s\n", err)
 		return
 	}
 
@@ -67,8 +67,8 @@ func Retrieve(stored *file.Data, newAddedExercise chan string, key *[32]byte, co
 		return
 	}
 
-	// recieved will store all fetched data.
-	recieved := file.Data{}
+	// received will store all fetched data.
+	received := file.Data{}
 
 	// Decrypt the content usign the decrypt function.
 	content, err := encrypt.Decrypt(key, encrypted)
@@ -78,7 +78,7 @@ func Retrieve(stored *file.Data, newAddedExercise chan string, key *[32]byte, co
 	}
 
 	// unamrchal the content to get the json data from it.
-	err = json.Unmarshal(content, &recieved)
+	err = json.Unmarshal(content, &received)
 	if err != nil {
 		fmt.Printf("Could not unmarshal json: %s\n", err)
 		return
@@ -88,7 +88,7 @@ func Retrieve(stored *file.Data, newAddedExercise chan string, key *[32]byte, co
 	exists := false
 
 	// Compare the two sets of data and add any non existing data.
-	for _, fetched := range recieved.Exercise {
+	for _, fetched := range received.Exercise {
 
 		// Make an asumption that it does not exist.
 		exists = false
