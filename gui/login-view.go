@@ -7,6 +7,7 @@ import (
 	"fyne.io/fyne"
 	"fyne.io/fyne/dialog"
 	"fyne.io/fyne/layout"
+	"fyne.io/fyne/theme"
 	"fyne.io/fyne/widget"
 )
 
@@ -78,6 +79,14 @@ func ShowLoginPage(app fyne.App, window fyne.Window) {
 	// Set a sane default for the window size on login and make sure that it isn't resizable.
 	window.Resize(fyne.NewSize(400, 100))
 	window.SetFixedSize(true)
+
+	// Check that we are using the right theme.
+	switch app.Preferences().StringWithFallback("Theme", "Light") {
+	case "Dark":
+		app.Settings().SetTheme(theme.DarkTheme())
+	case "Light":
+		app.Settings().SetTheme(theme.LightTheme())
+	}
 
 	// Show all of our set content and run the gui.
 	window.ShowAndRun()
