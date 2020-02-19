@@ -7,18 +7,19 @@
 
 # Sparta
 
-Sparta is a Sport and Rehearsal Tracking Application for logging all your sport activities safely and privately on the computer. No tracking and no collection of user data, we just save your activities for you. Sparta utilizes Military Grade Encryption to keep all your data and sport activities away from spying eyes.
+Sparta is a Sport and Rehearsal Tracking Application. It lets the user write down and save all sport activities safely and privately on the computer. No tracking and no collection of user data, activities are simply saved on the computer without outside interference. Sparta uses AES-256 encryption to keep all your data hidden from any spying eyes.
 
 ## Requirements
 
 Sparta is built using the following Go packages:
 
-- fyne (version 1.2.2 or later)
-- wormhole-william (version 1.0.1 or later)
+- [fyne](https://github.com/fyne-io/fyne) (version 1.2.2 or later)
+- [wormhole-william](https://github.com/psanford/wormhole-william) (version 1.0.1 or later)
 
 ## Downloads
 
 Please visit the [release page](https://github.com/Jacalz/sparta/releases) for the downloading the latest release.
+Versions for Linux, MacOS and Windows are avaliable, with an Android version comaing in the future.
 
 ## Folder structure:
 - **assets/ :** Storage of icons and other assets used in the project.
