@@ -1,6 +1,6 @@
 <p align="center">
   <br /><img
-    src="assets/icon-256.png"
+    src="assets/sparta-card-readme.png"
     alt="Sparta – Sport and Rehearsal Tracking Application"
   />
 </p>
