@@ -7,7 +7,7 @@
 
 # Sparta
 
-Sparta is a Sport and Rehearsal Tracking Application. It lets the user write down and save all sport activities safely and privately on the computer. No tracking and no collection of user data, activities are simply saved on the computer without outside interference. Sparta uses AES-256 encryption to keep all your data hidden from any spying eyes.
+Sparta is a Sport and Rehearsal Tracking Application. It lets the user write down and save all sport activities safely and privately on the computer. No tracking and absolutely zero collection of any user data. Activities are simply saved on the computer without outside interference. Sparta uses AES-256 encryption to keep all your data hidden from any spying eyes.
 
 ## Requirements
 
@@ -19,16 +19,20 @@ Sparta is built using the following Go packages:
 ## Downloads
 
 Please visit the [release page](https://github.com/Jacalz/sparta/releases) for the downloading the latest release.
-Versions for Linux, MacOS and Windows are available, with an Android version comaing in the future.
+Versions for Linux, MacOS and Windows are available, with an Android version coming in the future.
 
-## Folder structure:
-- **assets/ :** Storage of icons and other assets used in the project.
-- **bundled/ :** Images bundled in to the source code.
-- **file/ :** Common code for file handling in the application and home of the file package.
-  - **file/encrypt :** Cryptographic functions used for encryption etc.
+## Contributing
+
+Contributions are strongly appreciated. Everything from creating bug reports to contributing code will help the project a lot, so please feel free to help in any way, shape or form that you feel comfortable doing. We as a community can strive towards making this project even better. If you want to contribute code, the folder structure below will hopefully help you know where to start looking.
+
+### Folder structure:
+- **assets/ :** Storage for icons and other assets used throughout the project.
+- **bundled/ :** Images and logos bundled in to the source code.
+- **file/ :** Common code for file handling in the application.
+  - **file/encrypt :** Cryptographic functions used for encryption.
   - **file/parse :** Contains adapted versions of parse functions from `strconv` for extracting numbers from strings.
-- **gui :** Contains all the files containing the code used for creating and running the graphical user interface.
-- **share :** All specific file sharing code for updaing saved exercises across multiple devices.
+- **gui :** All the code for creating the interface along with functions that run on button presses are to be found here.
+- **share :** All specific file sharing code for end-to-end encrypted file sharing over a local network.
   
 ## License
 - Sparta is licensed under `GNU AFFERO GENERAL PUBLIC LICENSE Version 3` and created by [Jacalz](https://github.com/jacalz).
