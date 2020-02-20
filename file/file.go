@@ -46,8 +46,8 @@ func SetNonEmpty() {
 	fileStatusEmpty = false
 }
 
-// Config returns the config directory and handles the error accordingly.
-func Config() (dir string) {
+// ConfigDir returns the config directory where files are being stored.
+func ConfigDir() (dir string) {
 	// Workaround having golang 1.12.x in the cross compiling tool.
 	switch runtime.GOOS {
 	case "windows":
@@ -63,14 +63,14 @@ func Config() (dir string) {
 		}
 	}
 
-	return dir
+	return filepath.Join(dir, "fyne", "com.github.jacalz.sparta")
 }
 
 // Check does relevant checks around our data file.
 func Check(key *[32]byte) (exercises Data, err error) {
 
 	// Check if the user has a data file.
-	if _, err := os.Stat(filepath.Join(Config(), "sparta", "exercises.json")); err == nil {
+	if _, err := os.Stat(filepath.Join(ConfigDir(), "exercises.json")); err == nil {
 		// The file exists and we read the data. Return error if decryption failed (wrong password).
 		exercises, err = readData(key)
 		if err != nil {
@@ -79,7 +79,7 @@ func Check(key *[32]byte) (exercises Data, err error) {
 
 	} else if os.IsNotExist(err) {
 		// Since the file didn't exist, we create it.
-		_, err := os.Create(filepath.Join(Config(), "sparta", "exercises.json"))
+		_, err := os.Create(filepath.Join(ConfigDir(), "exercises.json"))
 		if err != nil {
 			fmt.Print("Could not create the file.", err)
 		}
@@ -94,7 +94,7 @@ func Check(key *[32]byte) (exercises Data, err error) {
 // ReadData reads data from an xml file, couldn't be simpler. Unexported.
 func readData(key *[32]byte) (exercises Data, err error) {
 	// Open up the file and it's content.
-	data, err := os.Open(filepath.Join(Config(), "sparta", "exercises.json"))
+	data, err := os.Open(filepath.Join(ConfigDir(), "exercises.json"))
 	if err != nil {
 		fmt.Print(err)
 	}
@@ -139,7 +139,7 @@ func (d *Data) Write(key *[32]byte) {
 	}
 
 	// Write to the file.
-	err = ioutil.WriteFile(filepath.Join(Config(), "sparta", "exercises.json"), encrypt.Encrypt(key, file), 0644)
+	err = ioutil.WriteFile(filepath.Join(ConfigDir(), "exercises.json"), encrypt.Encrypt(key, file), 0644)
 	if err != nil {
 		fmt.Print(err)
 	}
@@ -174,7 +174,7 @@ func (d *Data) Delete() {
 	fileStatusEmpty = true
 
 	// Remove the file to clear it.
-	err := os.Remove(filepath.Join(Config(), "sparta", "exercises.json"))
+	err := os.Remove(filepath.Join(ConfigDir(), "exercises.json"))
 	if err != nil {
 		fmt.Print(err)
 	}

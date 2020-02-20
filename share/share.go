@@ -20,7 +20,7 @@ func StartSharing(sharecode chan string, finished chan struct{}) {
 	var c wormhole.Client
 
 	// Open up the file.
-	f, err := os.Open(path.Join(file.Config(), "sparta", "exercises.json"))
+	f, err := os.Open(path.Join(file.ConfigDir(), "exercises.json"))
 	if err != nil {
 		fmt.Printf("Opening file: %s\n", err)
 		return
@@ -30,7 +30,7 @@ func StartSharing(sharecode chan string, finished chan struct{}) {
 	defer f.Close()
 
 	// Send the file in the background.
-	code, status, err := c.SendFile(context.Background(), path.Join(file.Config(), "sparta", "exercises.json"), f)
+	code, status, err := c.SendFile(context.Background(), path.Join(file.ConfigDir(), "sparta", "exercises.json"), f)
 	if err != nil {
 		fmt.Printf("Could not share file: %s\n", err)
 		return
