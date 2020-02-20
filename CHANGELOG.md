@@ -3,7 +3,7 @@
 ## 0.4.0 - Second beta
 - The password inside the password entry is now cleared from memory after login.
 - Internal optimization to reduce draw calls when showing exercises directly on start.
-- Improved imput checking in password changer to avoid changing password to an invalid password.
+- Improved input checking in password changer to avoid changing password to an invalid password.
 - Fixed a lot of potential security issues reported by [gosec](https://github.com/securego/gosec).
 - Settings page is now separated in to groups for better clarity.
 - Make the settings scrollable on smaller screens.
