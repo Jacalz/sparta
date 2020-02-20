@@ -19,7 +19,7 @@ Sparta is built using the following Go packages:
 ## Downloads
 
 Please visit the [release page](https://github.com/Jacalz/sparta/releases) for the downloading the latest release.
-Versions for Linux, MacOS and Windows are avaliable, with an Android version comaing in the future.
+Versions for Linux, MacOS and Windows are available, with an Android version comaing in the future.
 
 ## Folder structure:
 - **assets/ :** Storage of icons and other assets used in the project.
