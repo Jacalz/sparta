@@ -1,8 +1,8 @@
 package share
 
 import (
+	"sparta/crypto"
 	"sparta/file"
-	"sparta/file/encrypt"
 
 	"context"
 	"encoding/json"
@@ -71,7 +71,7 @@ func Retrieve(stored *file.Data, newAddedExercise chan string, key *[32]byte, co
 	received := file.Data{}
 
 	// Decrypt the content usign the decrypt function.
-	content, err := encrypt.Decrypt(key, encrypted)
+	content, err := crypto.Decrypt(key, encrypted)
 	if err != nil {
 		fmt.Printf("Could not decrypt content: %s\n", err)
 		return

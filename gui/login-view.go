@@ -1,8 +1,8 @@
 package gui
 
 import (
+	"sparta/crypto"
 	"sparta/file"
-	"sparta/file/encrypt"
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/dialog"
@@ -45,7 +45,7 @@ func ShowLoginPage(app fyne.App, window fyne.Window, user *user) {
 		}
 
 		// Calculate the sha256 hash of the username and password.
-		user.EncryptionKey = encrypt.EncryptionKey(username.Text, password.Text)
+		user.EncryptionKey = crypto.Hash(username.Text, password.Text)
 
 		// Store the username and password to user structs and clear data in widgets.
 		user.Username, username.Text = username.Text, ""

@@ -1,17 +1,17 @@
-package encrypt
+package crypto
 
 import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
-	"crypto/sha256"
+	"crypto/sha512"
 	"fmt"
 	"io"
 )
 
-// EncryptionKey uses returns the sha256 hash of the username and password.
-func EncryptionKey(username, password string) [32]byte {
-	return sha256.Sum256([]byte(username + password))
+// Hash uses returns the sha512/256 hash of the username and password.
+func Hash(username, password string) [32]byte {
+	return sha512.Sum512_256([]byte(username + password))
 }
 
 // commonCipther holds common cipther code between encryption and decryption.
@@ -59,13 +59,10 @@ func Decrypt(key *[32]byte, encrypted []byte) ([]byte, error) {
 		fmt.Println("The length of the encrypted content is longer than the nonceSize.")
 	}
 
-	// Make nonce and encrypted content the length up to the nonceSize.
-	nonce, encrypted := encrypted[:nonceSize], encrypted[nonceSize:]
-
 	// Unencrypt the content in to plaintext.
-	plaintext, err := gcm.Open(nil, nonce, encrypted, nil)
+	plaintext, err := gcm.Open(nil, encrypted[:nonceSize], encrypted[nonceSize:], nil)
 	if err != nil {
-		return []byte(""), err
+		return nil, err
 	}
 
 	return plaintext, nil

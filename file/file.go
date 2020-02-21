@@ -1,7 +1,7 @@
 package file
 
 import (
-	"sparta/file/encrypt"
+	"sparta/crypto"
 
 	"encoding/json"
 	"fmt"
@@ -119,7 +119,7 @@ func readData(key *[32]byte) (exercises Data, err error) {
 	go data.Close()
 
 	// Decrypt the data to the content variable.
-	content, err := encrypt.Decrypt(key, encrypted)
+	content, err := crypto.Decrypt(key, encrypted)
 	if err != nil {
 		return exercises, err
 	}
@@ -143,7 +143,7 @@ func (d *Data) Write(key *[32]byte) {
 	}
 
 	// Write to the file.
-	err = ioutil.WriteFile(filepath.Join(ConfigDir(), "exercises.json"), encrypt.Encrypt(key, file), 0644)
+	err = ioutil.WriteFile(filepath.Join(ConfigDir(), "exercises.json"), crypto.Encrypt(key, file), 0644)
 	if err != nil {
 		fmt.Print(err)
 	}

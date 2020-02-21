@@ -1,7 +1,7 @@
 package gui
 
 import (
-	"sparta/file/encrypt"
+	"sparta/crypto"
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/dialog"
@@ -50,7 +50,7 @@ func SettingsView(window fyne.Window, app fyne.App, dataLabel *widget.Label, use
 			dialog.ShowConfirm("Are you sure that you want to continue?", "The action will permanently change your username.", func(change bool) {
 				if change {
 					// Calculate the new PasswordKey.
-					user.EncryptionKey = encrypt.EncryptionKey(usernameEntry.Text, user.Password)
+					user.EncryptionKey = crypto.Hash(usernameEntry.Text, user.Password)
 
 					// Clear out the text inside the entry.
 					usernameEntry.SetText("")
@@ -79,7 +79,7 @@ func SettingsView(window fyne.Window, app fyne.App, dataLabel *widget.Label, use
 			dialog.ShowConfirm("Are you sure that you want to continue?", "The action will permanently change your password.", func(change bool) {
 				if change {
 					// Calculate the new PasswordKey.
-					user.EncryptionKey = encrypt.EncryptionKey(user.Username, passwordEntry.Text)
+					user.EncryptionKey = crypto.Hash(user.Username, passwordEntry.Text)
 
 					// Clear out the text inside the entry.
 					passwordEntry.SetText("")
