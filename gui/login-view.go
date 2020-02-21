@@ -54,7 +54,7 @@ func ShowLoginPage(app fyne.App, window fyne.Window, user *user) {
 		// Check for the file where we store the data. The user inputed the wrong password if we get an error.
 		exercises, err := file.Check(&user.EncryptionKey)
 		if err != nil {
-			dialog.ShowInformation("Wrong password or username", "The login credentials are incorrect, please try again.", window)
+			dialog.ShowInformation("Wrong username or password", "The login credentials are incorrect, please try again.", window)
 			return
 		}
 
@@ -73,6 +73,13 @@ func ShowLoginPage(app fyne.App, window fyne.Window, user *user) {
 	// Set a sane default for the window size on login and make sure that it isn't resizable.
 	window.Resize(fyne.NewSize(400, 100))
 	window.SetFixedSize(true)
+
+	// Update widgets if it is a first run.
+	if file.FirstRun() {
+		username.SetPlaceHolder("New Username")
+		password.SetPlaceHolder("New Password")
+		loginButton.SetText("Create User and Login")
+	}
 
 	// Check that we are using the right theme.
 	switch app.Preferences().StringWithFallback("Theme", "Light") {

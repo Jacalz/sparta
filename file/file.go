@@ -64,6 +64,15 @@ func ConfigDir() (dir string) {
 	return filepath.Join(dir, "fyne", "com.github.jacalz.sparta")
 }
 
+// FirstRun checks if it is an initial application start.
+func FirstRun() bool {
+	if _, err := os.Stat(filepath.Join(ConfigDir(), "exercises.json")); err == nil {
+		return false
+	}
+
+	return true
+}
+
 // Check does relevant checks around our data file.
 func Check(key *[32]byte) (exercises Data, err error) {
 
