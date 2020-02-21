@@ -37,14 +37,42 @@ func SettingsView(window fyne.Window, app fyne.App, dataLabel *widget.Label, use
 	// Add the theme switcher next to a label.
 	themeChanger := fyne.NewContainerWithLayout(layout.NewGridLayout(2), widget.NewLabel("Application Theme"), themeSwitcher)
 
+	// An entry for typing the new username.
+	usernameEntry := NewEntryWithPlaceholder("New Username")
+
+	// Create the button used for changing the username.
+	usernameButton := widget.NewButtonWithIcon("Change Username", theme.ConfirmIcon(), func() {
+		// Check that the username is valid.
+		if usernameEntry.Text == user.Password || usernameEntry.Text == "" {
+			dialog.ShowInformation("Please enter a valid username", "Usernames need to not be empty and not the same as the password.", window)
+		} else {
+			// Ask the user to confirm what we are about to do.
+			dialog.ShowConfirm("Are you sure that you want to continue?", "The action will permanently change your username.", func(change bool) {
+				if change {
+					// Calculate the new PasswordKey.
+					user.EncryptionKey = encrypt.EncryptionKey(usernameEntry.Text, user.Password)
+
+					// Clear out the text inside the entry.
+					usernameEntry.SetText("")
+
+					// Write the data encrypted using the new key and do so concurrently.
+					go user.ExerciseData.Write(&user.EncryptionKey)
+				}
+			}, window)
+		}
+
+	})
+
+	usernameChanger := fyne.NewContainerWithLayout(layout.NewGridLayout(2), usernameEntry, usernameButton)
+
 	// Create the entry for updating the password.
 	passwordEntry := widget.NewPasswordEntry()
-	passwordEntry.SetPlaceHolder("New password")
+	passwordEntry.SetPlaceHolder("New Password")
 
-	// Create the button used for actually changing the password.
-	passwordButton := widget.NewButtonWithIcon("Change password", theme.ConfirmIcon(), func() {
+	// Create the button used for changing the password.
+	passwordButton := widget.NewButtonWithIcon("Change Password", theme.ConfirmIcon(), func() {
 		// Check that the password is valid.
-		if len(passwordEntry.Text) < 8 {
+		if len(passwordEntry.Text) < 8 || passwordEntry.Text == usernameEntry.Text {
 			dialog.ShowInformation("Please enter a valid password", "Passwords need to be at least eight characters long.", window)
 		} else {
 			// Ask the user to confirm what we are about to do.
@@ -53,7 +81,7 @@ func SettingsView(window fyne.Window, app fyne.App, dataLabel *widget.Label, use
 					// Calculate the new PasswordKey.
 					user.EncryptionKey = encrypt.EncryptionKey(user.Username, passwordEntry.Text)
 
-					// Clear out the text inside the label.
+					// Clear out the text inside the entry.
 					passwordEntry.SetText("")
 
 					// Write the data encrypted using the new key and do so concurrently.
@@ -100,7 +128,7 @@ func SettingsView(window fyne.Window, app fyne.App, dataLabel *widget.Label, use
 	userInterfaceSettings := widget.NewGroup("User Interface Settings", themeChanger)
 
 	// accountPasswordSettings groups together all settings related to usernames and passwords.
-	accountPasswordSettings := widget.NewGroup("Account and Password Settings", passwordChanger)
+	accountPasswordSettings := widget.NewGroup("Account and Password Settings", usernameChanger, passwordChanger)
 
 	// advancedSettings is a group holding widgets related to advanced settings.
 	advancedSettings := widget.NewGroup("Advanced Settings", revertToDefaultSettings, widget.NewLabel(""), deleteButton)
