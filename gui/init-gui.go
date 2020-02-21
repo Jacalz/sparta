@@ -2,9 +2,18 @@ package gui
 
 import (
 	"sparta/assets"
+	"sparta/file"
 
 	"fyne.io/fyne/app"
 )
+
+// User holds the data about the user that is currently logged in.
+type User struct {
+	Username      string
+	EncryptionKey [32]byte
+	NewExercise   chan string
+	ExerciseData  file.Data
+}
 
 // Init will start up our graphical user interface.
 func Init() {
@@ -17,6 +26,9 @@ func Init() {
 	// Create the window for our user interface.
 	window := app.NewWindow("Sparta")
 
+	// Create the user struct type for later use.
+	user := &User{}
+
 	// Show the login page and all content after that.
-	ShowLoginPage(app, window)
+	ShowLoginPage(app, window, user)
 }

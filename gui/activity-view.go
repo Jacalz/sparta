@@ -12,7 +12,7 @@ import (
 )
 
 // ActivityView shows the opoup for adding a new activity.
-func ActivityView(window fyne.Window, exercises *file.Data, dataLabel *widget.Label, newAddedExercise chan string, passwordKey *[32]byte) fyne.CanvasObject {
+func ActivityView(window fyne.Window, dataLabel *widget.Label, user *User) fyne.CanvasObject {
 	// Variables for the entry variables used in the form.
 	dateEntry := NewEntryWithPlaceholder("YYYY-MM-DD")
 	clockEntry := NewEntryWithPlaceholder("HH:MM")
@@ -89,10 +89,10 @@ func ActivityView(window fyne.Window, exercises *file.Data, dataLabel *widget.La
 				defer form.OnCancel()
 
 				// Append new values to a new index.
-				exercises.Exercise = append(exercises.Exercise, file.Exercise{Date: dateEntry.Text, Clock: clockEntry.Text, Activity: activityEntry.Text, Distance: parse.Float(distanceEntry.Text), Time: parse.Float(timeEntry.Text), Reps: parse.Uint(repsEntry.Text), Sets: parse.Uint(setsEntry.Text), Comment: commentEntry.Text})
+				user.ExerciseData.Exercise = append(user.ExerciseData.Exercise, file.Exercise{Date: dateEntry.Text, Clock: clockEntry.Text, Activity: activityEntry.Text, Distance: parse.Float(distanceEntry.Text), Time: parse.Float(timeEntry.Text), Reps: parse.Uint(repsEntry.Text), Sets: parse.Uint(setsEntry.Text), Comment: commentEntry.Text})
 
 				// Encrypt and write the data to the configuration file. Do it on another goroutine.
-				go exercises.Write(passwordKey)
+				go user.ExerciseData.Write(&user.EncryptionKey)
 
 				// Workaround bug that happens after creating a new activity after removing the file. Set the file to be non empty also.
 				if file.Empty() {
@@ -101,7 +101,7 @@ func ActivityView(window fyne.Window, exercises *file.Data, dataLabel *widget.La
 				}
 
 				// Send the formated string from the highest index of the Exercise slice.
-				newAddedExercise <- exercises.Format(len(exercises.Exercise) - 1)
+				user.NewExercise <- user.ExerciseData.Format(len(user.ExerciseData.Exercise) - 1)
 			}()
 		}
 	}

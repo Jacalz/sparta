@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"sparta/file"
 	"sparta/share"
 
 	"fyne.io/fyne"
@@ -11,7 +10,7 @@ import (
 )
 
 // ShareView displays the tab page for syncing data between devices.
-func ShareView(exercises *file.Data, newAddedExercise chan string, passwordKey *[32]byte) fyne.CanvasObject {
+func ShareView(user *User) fyne.CanvasObject {
 
 	// Create the channel that we will use to share the code needed for receiving the data.
 	shareCodeChan := make(chan string)
@@ -24,7 +23,7 @@ func ShareView(exercises *file.Data, newAddedExercise chan string, passwordKey *
 
 	// recieveDataButton starts looking for shared data on the local network.
 	recieveDataButton := widget.NewButtonWithIcon("Start receiving exercises", theme.MailComposeIcon(), func() {
-		go share.Retrieve(exercises, newAddedExercise, passwordKey, recieveCodeEntry.Text)
+		go share.Retrieve(&user.ExerciseData, user.NewExercise, &user.EncryptionKey, recieveCodeEntry.Text)
 	})
 
 	// sendDataButton starts the network server and shares the file over the local internet.

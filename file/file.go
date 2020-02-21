@@ -9,13 +9,11 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
-	"time"
 )
 
 // Data has the xml data for the initial data tag and then incorporates the Exercise struct.
 type Data struct {
-	LastUpdated time.Time  `json:"updated"`
-	Exercise    []Exercise `json:"exercise"`
+	Exercise []Exercise `json:"exercise"`
 }
 
 // Exercise keeps track of the data for each exercise that the user has done.
@@ -129,9 +127,6 @@ func readData(key *[32]byte) (exercises Data, err error) {
 
 // Write writes new exercieses to the data file.
 func (d *Data) Write(key *[32]byte) {
-	// Update the section containing the time that our file was last updated.
-	d.LastUpdated = time.Now()
-
 	//Marchal the xml content in to a file variable.
 	file, err := json.Marshal(d)
 	if err != nil {

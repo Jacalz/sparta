@@ -10,7 +10,7 @@ import (
 )
 
 // ShowMainDataView shows the main view after we are logged in.
-func ShowMainDataView(window fyne.Window, app fyne.App, exercises *file.Data, passwordKey [32]byte, newAddedExercise chan string) {
+func ShowMainDataView(window fyne.Window, app fyne.App, user *User) {
 	// Create a label for displaing some info for the user. Default to showing nothing.
 	dataLabel := widget.NewLabel("")
 
@@ -22,13 +22,13 @@ func ShowMainDataView(window fyne.Window, app fyne.App, exercises *file.Data, pa
 			dataLabel.SetText("No exercieses have been created yet.")
 
 			// Then wait for more data to come running down the pipe.
-			dataLabel.SetText(<-newAddedExercise)
+			dataLabel.SetText(<-user.NewExercise)
 		} else {
 			// We loop through the imported file and add the formated info before the previous info (new information comes out on top).
-			for i := range exercises.Exercise {
+			for i := range user.ExerciseData.Exercise {
 
 				// Run through and update all the text inside the label without refreshing yet to avoid calling a lot of refresh calls.
-				dataLabel.Text = exercises.Format(i) + dataLabel.Text
+				dataLabel.Text = user.ExerciseData.Format(i) + dataLabel.Text
 			}
 
 			// Refresh the widget to show the updated text.
@@ -37,7 +37,7 @@ func ShowMainDataView(window fyne.Window, app fyne.App, exercises *file.Data, pa
 
 		// We then block the channel while waiting for an update on the channel.
 		for {
-			dataLabel.SetText(<-newAddedExercise + dataLabel.Text)
+			dataLabel.SetText(<-user.NewExercise + dataLabel.Text)
 		}
 	}()
 
@@ -47,9 +47,9 @@ func ShowMainDataView(window fyne.Window, app fyne.App, exercises *file.Data, pa
 	// Create tabs with data.
 	tabs := widget.NewTabContainer(
 		widget.NewTabItemWithIcon("Activities", theme.HomeIcon(), dataPage),
-		widget.NewTabItemWithIcon("Add Activity", theme.ContentAddIcon(), ActivityView(window, exercises, dataLabel, newAddedExercise, &passwordKey)),
-		widget.NewTabItemWithIcon("Share", theme.MailSendIcon(), ShareView(exercises, newAddedExercise, &passwordKey)),
-		widget.NewTabItemWithIcon("Settings", theme.SettingsIcon(), SettingsView(window, app, exercises, dataLabel, &passwordKey)),
+		widget.NewTabItemWithIcon("Add Activity", theme.ContentAddIcon(), ActivityView(window, dataLabel, user)),
+		widget.NewTabItemWithIcon("Share", theme.MailSendIcon(), ShareView(user)),
+		widget.NewTabItemWithIcon("Settings", theme.SettingsIcon(), SettingsView(window, app, dataLabel, user)),
 		// TODO: Add an about page with logo, name and version number.
 	)
 

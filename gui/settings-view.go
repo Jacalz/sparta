@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"sparta/file"
 	"sparta/file/encrypt"
 
 	"fyne.io/fyne"
@@ -14,7 +13,7 @@ import (
 // TODO: Multi user support by labling the data file exercises-user.xml
 
 // SettingsView contains the gui information for the settings screen.
-func SettingsView(window fyne.Window, app fyne.App, exercises *file.Data, dataLabel *widget.Label, passwordKey *[32]byte) fyne.CanvasObject {
+func SettingsView(window fyne.Window, app fyne.App, dataLabel *widget.Label, user *User) fyne.CanvasObject {
 
 	// TODO: Add setting for changing language.
 
@@ -52,13 +51,13 @@ func SettingsView(window fyne.Window, app fyne.App, exercises *file.Data, dataLa
 			dialog.ShowConfirm("Are you sure that you want to continue?", "The action will permanently change your password.", func(change bool) {
 				if change {
 					// Calculate the new PasswordKey.
-					*passwordKey = encrypt.EncryptionKey(UserName, passwordEntry.Text)
+					user.EncryptionKey = encrypt.EncryptionKey(user.Username, passwordEntry.Text)
 
 					// Clear out the text inside the label.
 					passwordEntry.SetText("")
 
 					// Write the data encrypted using the new key and do so concurrently.
-					go exercises.Write(passwordKey)
+					go user.ExerciseData.Write(&user.EncryptionKey)
 				}
 			}, window)
 		}
@@ -89,7 +88,7 @@ func SettingsView(window fyne.Window, app fyne.App, exercises *file.Data, dataLa
 		dialog.ShowConfirm("Are you sure that you want to continue?", "Deleting your data will remove all of your exercises and activities.", func(remove bool) {
 			if remove {
 				// Run the delete function and do it concurrently to avoid stalling the thread with file io.
-				go exercises.Delete()
+				go user.ExerciseData.Delete()
 
 				// Clear all the data inside the data label so we don't display the old data.
 				dataLabel.SetText("No exercieses have been created yet.")

@@ -11,9 +11,6 @@ import (
 	"fyne.io/fyne/widget"
 )
 
-// UserName holds the username for use later in settings.
-var UserName string
-
 // CheckValidInput checks if the inputed username and passwords are valid and creates a message if they are not.
 func CheckValidInput(username, password string, window fyne.Window) (valid bool) {
 	if username == "" || password == "" {
@@ -32,7 +29,7 @@ func CheckValidInput(username, password string, window fyne.Window) (valid bool)
 // TODO: Logout support and fix weirdly cut dialog boxes.
 
 // ShowLoginPage shows the login page that handles the inertaface for logging in.
-func ShowLoginPage(app fyne.App, window fyne.Window) {
+func ShowLoginPage(app fyne.App, window fyne.Window, user *User) {
 	// Initialize the login form that we are to be using.
 	username := NewExtendedEntry("Username", false)
 
@@ -47,24 +44,21 @@ func ShowLoginPage(app fyne.App, window fyne.Window) {
 			return
 		}
 
-		// Calculate the sha256 hash of the username and password.
-		passwordKey := encrypt.EncryptionKey(username.Text, password.Text)
-
-		// Clear out the text for the original password and set UserName to username.Text.
-		password.Text = ""
-		UserName = username.Text
-
-		// Create a channel for sending activity data through. Let's us avoid reading the file every time we add a new activity.
-		newAddedExercise := make(chan string)
+		// Calculate the sha256 hash of the username and password and add the username to the user struct.
+		user.EncryptionKey = encrypt.EncryptionKey(username.Text, password.Text)
+		user.Username = username.Text
 
 		// Check for the file where we store the data. The user inputed the wrong password if we get an error.
-		exercises, err := file.Check(&passwordKey)
+		exercises, err := file.Check(&user.EncryptionKey)
 		if err != nil {
 			dialog.ShowInformation("Wrong password or username", "The login credentials are incorrect, please try again.", window)
 			return
 		}
 
-		ShowMainDataView(window, app, &exercises, passwordKey, newAddedExercise)
+		// Store the exercises inside the user struct.
+		user.ExerciseData = exercises
+
+		ShowMainDataView(window, app, user)
 	})
 
 	// Add the Action component to make actions work inside the struct. This is used to press the loginButton on pressing enter/return ton the keyboard.
