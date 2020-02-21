@@ -8,8 +8,9 @@ import (
 )
 
 // User holds the data about the user that is currently logged in.
-type User struct {
+type user struct {
 	Username      string
+	Password      string
 	EncryptionKey [32]byte
 	NewExercise   chan string
 	ExerciseData  file.Data
@@ -27,7 +28,7 @@ func Init() {
 	window := app.NewWindow("Sparta")
 
 	// Create the user struct type for later use.
-	user := &User{}
+	user := &user{}
 
 	// Show the login page and all content after that.
 	ShowLoginPage(app, window, user)

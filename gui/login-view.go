@@ -29,7 +29,7 @@ func CheckValidInput(username, password string, window fyne.Window) (valid bool)
 // TODO: Logout support and fix weirdly cut dialog boxes.
 
 // ShowLoginPage shows the login page that handles the inertaface for logging in.
-func ShowLoginPage(app fyne.App, window fyne.Window, user *User) {
+func ShowLoginPage(app fyne.App, window fyne.Window, user *user) {
 	// Initialize the login form that we are to be using.
 	username := NewExtendedEntry("Username", false)
 
@@ -44,9 +44,12 @@ func ShowLoginPage(app fyne.App, window fyne.Window, user *User) {
 			return
 		}
 
-		// Calculate the sha256 hash of the username and password and add the username to the user struct.
+		// Calculate the sha256 hash of the username and password.
 		user.EncryptionKey = encrypt.EncryptionKey(username.Text, password.Text)
-		user.Username = username.Text
+
+		// Store the username and password to user structs and clear data in widgets.
+		user.Username, username.Text = username.Text, ""
+		user.Password, password.Text = password.Text, ""
 
 		// Check for the file where we store the data. The user inputed the wrong password if we get an error.
 		exercises, err := file.Check(&user.EncryptionKey)

@@ -12,7 +12,7 @@ import (
 )
 
 // ActivityView shows the opoup for adding a new activity.
-func ActivityView(window fyne.Window, dataLabel *widget.Label, user *User) fyne.CanvasObject {
+func ActivityView(window fyne.Window, dataLabel *widget.Label, user *user) fyne.CanvasObject {
 	// Variables for the entry variables used in the form.
 	dateEntry := NewEntryWithPlaceholder("YYYY-MM-DD")
 	clockEntry := NewEntryWithPlaceholder("HH:MM")

@@ -10,7 +10,7 @@ import (
 )
 
 // ShareView displays the tab page for syncing data between devices.
-func ShareView(user *User) fyne.CanvasObject {
+func ShareView(user *user) fyne.CanvasObject {
 
 	// Create the channel that we will use to share the code needed for receiving the data.
 	shareCodeChan := make(chan string)

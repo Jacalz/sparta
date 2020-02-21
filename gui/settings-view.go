@@ -13,7 +13,7 @@ import (
 // TODO: Multi user support by labling the data file exercises-user.xml
 
 // SettingsView contains the gui information for the settings screen.
-func SettingsView(window fyne.Window, app fyne.App, dataLabel *widget.Label, user *User) fyne.CanvasObject {
+func SettingsView(window fyne.Window, app fyne.App, dataLabel *widget.Label, user *user) fyne.CanvasObject {
 
 	// TODO: Add setting for changing language.
 

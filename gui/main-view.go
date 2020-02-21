@@ -10,7 +10,7 @@ import (
 )
 
 // ShowMainDataView shows the main view after we are logged in.
-func ShowMainDataView(window fyne.Window, app fyne.App, user *User) {
+func ShowMainDataView(window fyne.Window, app fyne.App, user *user) {
 	// Create a label for displaing some info for the user. Default to showing nothing.
 	dataLabel := widget.NewLabel("")
 
