@@ -12,7 +12,7 @@ import (
 )
 
 // ActivityView shows the opoup for adding a new activity.
-func ActivityView(window fyne.Window, exercises *file.Data, dataLabel *widget.Label, newAddedExercise chan string) fyne.CanvasObject {
+func ActivityView(window fyne.Window, exercises *file.Data, dataLabel *widget.Label, newAddedExercise chan string, passwordKey *[32]byte) fyne.CanvasObject {
 	// Variables for the entry variables used in the form.
 	dateEntry := NewEntryWithPlaceholder("YYYY-MM-DD")
 	clockEntry := NewEntryWithPlaceholder("HH:MM")
@@ -92,7 +92,7 @@ func ActivityView(window fyne.Window, exercises *file.Data, dataLabel *widget.La
 				exercises.Exercise = append(exercises.Exercise, file.Exercise{Date: dateEntry.Text, Clock: clockEntry.Text, Activity: activityEntry.Text, Distance: parse.Float(distanceEntry.Text), Time: parse.Float(timeEntry.Text), Reps: parse.Uint(repsEntry.Text), Sets: parse.Uint(setsEntry.Text), Comment: commentEntry.Text})
 
 				// Encrypt and write the data to the configuration file. Do it on another goroutine.
-				go exercises.Write(&PasswordKey)
+				go exercises.Write(passwordKey)
 
 				// Workaround bug that happens after creating a new activity after removing the file. Set the file to be non empty also.
 				if file.Empty() {

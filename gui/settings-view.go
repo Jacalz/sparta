@@ -14,7 +14,7 @@ import (
 // TODO: Multi user support by labling the data file exercises-user.xml
 
 // SettingsView contains the gui information for the settings screen.
-func SettingsView(window fyne.Window, app fyne.App, exercises *file.Data, dataLabel *widget.Label) fyne.CanvasObject {
+func SettingsView(window fyne.Window, app fyne.App, exercises *file.Data, dataLabel *widget.Label, passwordKey *[32]byte) fyne.CanvasObject {
 
 	// TODO: Add setting for changing language.
 
@@ -52,13 +52,13 @@ func SettingsView(window fyne.Window, app fyne.App, exercises *file.Data, dataLa
 			dialog.ShowConfirm("Are you sure that you want to continue?", "The action will permanently change your password.", func(change bool) {
 				if change {
 					// Calculate the new PasswordKey.
-					PasswordKey = encrypt.EncryptionKey(UserName, passwordEntry.Text)
+					*passwordKey = encrypt.EncryptionKey(UserName, passwordEntry.Text)
 
 					// Clear out the text inside the label.
 					passwordEntry.SetText("")
 
 					// Write the data encrypted using the new key and do so concurrently.
-					go exercises.Write(&PasswordKey)
+					go exercises.Write(passwordKey)
 				}
 			}, window)
 		}

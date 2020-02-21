@@ -11,9 +11,6 @@ import (
 	"fyne.io/fyne/widget"
 )
 
-// PasswordKey contains the key taken from the username and password.
-var PasswordKey [32]byte
-
 // UserName holds the username for use later in settings.
 var UserName string
 
@@ -51,7 +48,7 @@ func ShowLoginPage(app fyne.App, window fyne.Window) {
 		}
 
 		// Calculate the sha256 hash of the username and password.
-		PasswordKey = encrypt.EncryptionKey(username.Text, password.Text)
+		passwordKey := encrypt.EncryptionKey(username.Text, password.Text)
 
 		// Clear out the text for the original password and set UserName to username.Text.
 		password.Text = ""
@@ -61,13 +58,13 @@ func ShowLoginPage(app fyne.App, window fyne.Window) {
 		newAddedExercise := make(chan string)
 
 		// Check for the file where we store the data. The user inputed the wrong password if we get an error.
-		exercises, err := file.Check(&PasswordKey)
+		exercises, err := file.Check(&passwordKey)
 		if err != nil {
 			dialog.ShowInformation("Wrong password or username", "The login credentials are incorrect, please try again.", window)
 			return
 		}
 
-		ShowMainDataView(window, app, &exercises, newAddedExercise)
+		ShowMainDataView(window, app, &exercises, passwordKey, newAddedExercise)
 	})
 
 	// Add the Action component to make actions work inside the struct. This is used to press the loginButton on pressing enter/return ton the keyboard.

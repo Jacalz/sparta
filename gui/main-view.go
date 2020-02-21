@@ -10,7 +10,7 @@ import (
 )
 
 // ShowMainDataView shows the main view after we are logged in.
-func ShowMainDataView(window fyne.Window, app fyne.App, exercises *file.Data, newAddedExercise chan string) {
+func ShowMainDataView(window fyne.Window, app fyne.App, exercises *file.Data, passwordKey [32]byte, newAddedExercise chan string) {
 	// Create a label for displaing some info for the user. Default to showing nothing.
 	dataLabel := widget.NewLabel("")
 
@@ -47,9 +47,9 @@ func ShowMainDataView(window fyne.Window, app fyne.App, exercises *file.Data, ne
 	// Create tabs with data.
 	tabs := widget.NewTabContainer(
 		widget.NewTabItemWithIcon("Activities", theme.HomeIcon(), dataPage),
-		widget.NewTabItemWithIcon("Add Activity", theme.ContentAddIcon(), ActivityView(window, exercises, dataLabel, newAddedExercise)),
-		widget.NewTabItemWithIcon("Share", theme.MailSendIcon(), ShareView(exercises, newAddedExercise, &PasswordKey)),
-		widget.NewTabItemWithIcon("Settings", theme.SettingsIcon(), SettingsView(window, app, exercises, dataLabel)),
+		widget.NewTabItemWithIcon("Add Activity", theme.ContentAddIcon(), ActivityView(window, exercises, dataLabel, newAddedExercise, &passwordKey)),
+		widget.NewTabItemWithIcon("Share", theme.MailSendIcon(), ShareView(exercises, newAddedExercise, &passwordKey)),
+		widget.NewTabItemWithIcon("Settings", theme.SettingsIcon(), SettingsView(window, app, exercises, dataLabel, &passwordKey)),
 		// TODO: Add an about page with logo, name and version number.
 	)
 
