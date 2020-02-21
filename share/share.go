@@ -1,13 +1,10 @@
 package share
 
 import (
-	"sparta/crypto"
 	"sparta/file"
 
 	"context"
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path"
 
@@ -60,27 +57,10 @@ func Retrieve(stored *file.Data, newAddedExercise chan string, key *[32]byte, co
 		return
 	}
 
-	// Read the data from the http response.
-	encrypted, err := ioutil.ReadAll(data)
-	if err != nil {
-		fmt.Printf("Could not read from file: %s\n", err)
-		return
-	}
-
 	// received will store all fetched data.
-	received := file.Data{}
-
-	// Decrypt the content usign the decrypt function.
-	content, err := crypto.Decrypt(key, encrypted)
+	received, err := file.ReadEncryptedJSON(data, key)
 	if err != nil {
-		fmt.Printf("Could not decrypt content: %s\n", err)
-		return
-	}
-
-	// unamrchal the content to get the json data from it.
-	err = json.Unmarshal(content, &received)
-	if err != nil {
-		fmt.Printf("Could not unmarshal json: %s\n", err)
+		fmt.Printf("Parsing JSON from file returned: %s", err)
 		return
 	}
 

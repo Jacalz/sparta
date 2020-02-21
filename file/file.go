@@ -1,6 +1,7 @@
 package file
 
 import (
+	"io"
 	"sparta/crypto"
 
 	"encoding/json"
@@ -98,25 +99,15 @@ func Check(key *[32]byte) (exercises Data, err error) {
 	return exercises, nil
 }
 
-// ReadData reads data from an xml file, couldn't be simpler. Unexported.
-func readData(key *[32]byte) (exercises Data, err error) {
-	// Open up the file and it's content.
-	data, err := os.Open(filepath.Join(ConfigDir(), "exercises.json"))
-	if err != nil {
-		fmt.Print(err)
-	}
-
+// ReadEncryptedJSON reads encrypted data and outputs the Data.
+func ReadEncryptedJSON(r io.Reader, key *[32]byte) (exercises Data, err error) {
 	// Read the data to extract the encrypted content.
-	encrypted, err := ioutil.ReadAll(data)
+	encrypted, err := ioutil.ReadAll(r)
 	if err != nil {
-		fmt.Print(err)
+		return exercises, err
 	} else if string(encrypted) == "" {
-		fileStatusEmpty = true
 		return exercises, nil
 	}
-
-	// Close the file opening.
-	go data.Close()
 
 	// Decrypt the data to the content variable.
 	content, err := crypto.Decrypt(key, encrypted)
@@ -127,8 +118,29 @@ func readData(key *[32]byte) (exercises Data, err error) {
 	// Unmarshal the xml data in to our Data struct.
 	err = json.Unmarshal(content, &exercises)
 	if err != nil {
+		return exercises, err
+	}
+
+	return exercises, nil
+}
+
+// ReadData reads data from an xml file, couldn't be simpler. Unexported.
+func readData(key *[32]byte) (exercises Data, err error) {
+	// Open up the file and it's content.
+	data, err := os.Open(filepath.Join(ConfigDir(), "exercises.json"))
+	if err != nil {
 		fmt.Print(err)
 	}
+
+	// Read the JSON data from the encrypted file.
+	exercises, err = ReadEncryptedJSON(data, key)
+	if err != nil {
+		fileStatusEmpty = true
+		return exercises, err
+	}
+
+	// We are finished with the file now, let's close it.
+	go data.Close()
 
 	fileStatusEmpty = false
 	return exercises, nil
