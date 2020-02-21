@@ -28,7 +28,7 @@ func Init() {
 	window := app.NewWindow("Sparta")
 
 	// Create the user struct type for later use.
-	user := &user{}
+	user := &user{NewExercise: make(chan string)}
 
 	// Show the login page and all content after that.
 	ShowLoginPage(app, window, user)
