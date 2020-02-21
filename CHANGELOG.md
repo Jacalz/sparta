@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.1 - Third beta
+- A smaller interface code refactoring for some cleanups and to remove global variables.
+- Added an option to change the username in settings.
+- Improve the experience on the first start of the application.
+- Better password input checking when changing it inside settings.
+
 ## 0.4.0 - Second beta
 - The password inside the password entry is now cleared from memory after login.
 - Internal optimization to reduce draw calls when showing exercises directly on start.
