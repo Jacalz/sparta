@@ -65,8 +65,9 @@ func ShowLoginPage(app fyne.App, window fyne.Window, user *user) {
 		ShowMainDataView(window, app, user)
 	})
 
-	// Add the Action component to make actions work inside the struct. This is used to press the loginButton on pressing enter/return ton the keyboard.
-	username.Action, password.Action = &widgets.Action{Button: *loginButton}, &widgets.Action{Button: *loginButton}
+	// Extend the ExtendedEntry widgets with extra key press supports.
+	username.InitExtend(window, fyne.KeyDown, password, *loginButton)
+	password.InitExtend(window, fyne.KeyUp, username, *loginButton)
 
 	// Set the content to be displayed. It is the userName, userPassword fields and the login button inside a layout.
 	window.SetContent(fyne.NewContainerWithLayout(layout.NewVBoxLayout(), username, password, loginButton))

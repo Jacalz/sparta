@@ -8,11 +8,18 @@ import (
 // ExtendedEntry is used to make an entry that reacts to key presses.
 type ExtendedEntry struct {
 	widget.Entry
-	*Action
+
+	// PressAction for pressing a button on return.
+	*PressAction
+
+	// Fields related to switching entry with button.
+	ButtonPress  fyne.KeyName
+	EntryToFocus *ExtendedEntry
+	Window       fyne.Window
 }
 
-// Action handles the Button press action.
-type Action struct {
+// PressAction handles the Button press action.
+type PressAction struct {
 	Button widget.Button
 }
 
@@ -20,7 +27,9 @@ type Action struct {
 func (e *ExtendedEntry) TypedKey(ev *fyne.KeyEvent) {
 	switch ev.Name {
 	case fyne.KeyReturn:
-		e.Action.Button.OnTapped()
+		e.PressAction.Button.OnTapped()
+	case e.ButtonPress:
+		e.Window.Canvas().Focus(e.EntryToFocus)
 	default:
 		e.Entry.TypedKey(ev)
 	}
@@ -42,6 +51,14 @@ func NewExtendedEntry(placeholder string, password bool) *ExtendedEntry {
 	}
 
 	return entry
+}
+
+// InitExtend adds extra data to the extended entry.
+func (e *ExtendedEntry) InitExtend(window fyne.Window, key fyne.KeyName, focus *ExtendedEntry, press widget.Button) {
+	e.PressAction = &PressAction{Button: press}
+	e.EntryToFocus = focus
+	e.ButtonPress = key
+	e.Window = window
 }
 
 // NewEntryWithPlaceholder makes it easy to create entry widgets with placeholders.
