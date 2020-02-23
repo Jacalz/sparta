@@ -13,7 +13,7 @@ import (
 // TODO: Multi user support by labling the data file exercises-user.xml
 
 // SettingsView contains the gui information for the settings screen.
-func SettingsView(window fyne.Window, app fyne.App, dataLabel *widget.Label, user *user) fyne.CanvasObject {
+func (u *user) SettingsView(window fyne.Window, app fyne.App) fyne.CanvasObject {
 
 	// TODO: Add setting for changing language.
 
@@ -43,20 +43,20 @@ func SettingsView(window fyne.Window, app fyne.App, dataLabel *widget.Label, use
 	// Create the button used for changing the username.
 	usernameButton := widget.NewButtonWithIcon("Change Username", theme.ConfirmIcon(), func() {
 		// Check that the username is valid.
-		if usernameEntry.Text == user.Password || usernameEntry.Text == "" {
+		if usernameEntry.Text == u.Password || usernameEntry.Text == "" {
 			dialog.ShowInformation("Please enter a valid username", "Usernames need to not be empty and not the same as the password.", window)
 		} else {
 			// Ask the user to confirm what we are about to do.
 			dialog.ShowConfirm("Are you sure that you want to continue?", "The action will permanently change your username.", func(change bool) {
 				if change {
 					// Calculate the new PasswordKey.
-					user.EncryptionKey = crypto.Hash(usernameEntry.Text, user.Password)
+					u.EncryptionKey = crypto.Hash(usernameEntry.Text, u.Password)
 
 					// Clear out the text inside the entry.
 					usernameEntry.SetText("")
 
 					// Write the data encrypted using the new key and do so concurrently.
-					go user.ExerciseData.Write(&user.EncryptionKey)
+					go u.Data.Write(&u.EncryptionKey)
 				}
 			}, window)
 		}
@@ -79,13 +79,13 @@ func SettingsView(window fyne.Window, app fyne.App, dataLabel *widget.Label, use
 			dialog.ShowConfirm("Are you sure that you want to continue?", "The action will permanently change your password.", func(change bool) {
 				if change {
 					// Calculate the new PasswordKey.
-					user.EncryptionKey = crypto.Hash(user.Username, passwordEntry.Text)
+					u.EncryptionKey = crypto.Hash(u.Username, passwordEntry.Text)
 
 					// Clear out the text inside the entry.
 					passwordEntry.SetText("")
 
 					// Write the data encrypted using the new key and do so concurrently.
-					go user.ExerciseData.Write(&user.EncryptionKey)
+					go u.Data.Write(&u.EncryptionKey)
 				}
 			}, window)
 		}
@@ -116,10 +116,10 @@ func SettingsView(window fyne.Window, app fyne.App, dataLabel *widget.Label, use
 		dialog.ShowConfirm("Are you sure that you want to continue?", "Deleting your data will remove all of your exercises and activities.", func(remove bool) {
 			if remove {
 				// Run the delete function and do it concurrently to avoid stalling the thread with file io.
-				go user.ExerciseData.Delete()
+				go u.Data.Delete()
 
-				// Clear all the data inside the data label so we don't display the old data.
-				dataLabel.SetText("No exercieses have been created yet.")
+				// Notify the label that we have removed the data.
+				u.EmptyExercises <- true
 			}
 		}, window)
 	})

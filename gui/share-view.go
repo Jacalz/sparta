@@ -23,7 +23,7 @@ func ShareView(user *user) fyne.CanvasObject {
 
 	// recieveDataButton starts looking for shared data on the local network.
 	recieveDataButton := widget.NewButtonWithIcon("Start receiving exercises", theme.MailComposeIcon(), func() {
-		go share.Retrieve(&user.ExerciseData, user.NewExercise, &user.EncryptionKey, recieveCodeEntry.Text)
+		go share.Retrieve(&user.Data, user.ReorderExercises, &user.EncryptionKey, recieveCodeEntry.Text)
 	})
 
 	// sendDataButton starts the network server and shares the file over the local internet.

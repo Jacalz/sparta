@@ -9,11 +9,22 @@ import (
 
 // User holds the data about the user that is currently logged in.
 type user struct {
-	Username      string
-	Password      string
-	EncryptionKey [32]byte
-	NewExercise   chan string
-	ExerciseData  file.Data
+	Username         string
+	Password         string
+	EncryptionKey    [32]byte
+	Data             file.Data
+	NewExercise      chan string
+	FirstExercise    chan string
+	EmptyExercises   chan bool
+	ReorderExercises chan bool
+}
+
+func newUser() *user {
+	return &user{NewExercise: make(chan string),
+		FirstExercise:    make(chan string),
+		EmptyExercises:   make(chan bool),
+		ReorderExercises: make(chan bool),
+	}
 }
 
 // Init will start up our graphical user interface.
@@ -28,7 +39,7 @@ func Init() {
 	window := app.NewWindow("Sparta")
 
 	// Create the user struct type for later use.
-	user := &user{NewExercise: make(chan string)}
+	user := newUser()
 
 	// Show the login page and all content after that.
 	ShowLoginPage(app, window, user)

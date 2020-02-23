@@ -9,37 +9,50 @@ import (
 	"fyne.io/fyne/widget"
 )
 
+// InitialDisplay loops though and produces the text for all existing data.
+func (u *user) InitialDisplay() (text string) {
+	// We loop through the imported file and add the formated info before the previous info (new information comes out on top).
+	for i := range u.Data.Exercise {
+		text = u.Data.Format(i) + text
+	}
+
+	return text
+}
+
+// ExerciseDisplayer runs in the background and updated the label.
+func (u *user) ExerciseDisplayer(label *widget.Label) {
+	// Handle an empty data file.
+	if file.Empty() {
+		// Start by informing  the user that no data is available.
+		label.SetText("No exercieses have been created yet.")
+	} else {
+		// Refresh the widget to show the updated text.
+		label.SetText(u.InitialDisplay())
+	}
+
+	// We then block the channel while waiting for updates on the channel.
+	for {
+		select {
+		case exercise := <-u.NewExercise:
+			label.SetText(exercise + label.Text)
+		case exercise := <-u.FirstExercise:
+			label.SetText(exercise)
+		case <-u.ReorderExercises:
+			label.SetText(u.InitialDisplay())
+		case <-u.EmptyExercises:
+			label.SetText("No exercieses have been created yet.")
+		}
+
+	}
+}
+
 // ShowMainDataView shows the main view after we are logged in.
 func ShowMainDataView(window fyne.Window, app fyne.App, user *user) {
 	// Create a label for displaing some info for the user. Default to showing nothing.
 	dataLabel := widget.NewLabel("")
 
-	go func() {
-
-		// Handle an empty data file.
-		if file.Empty() {
-			// Start by inorming  the user that no data is available.
-			dataLabel.SetText("No exercieses have been created yet.")
-
-			// Then wait for more data to come running down the pipe.
-			dataLabel.SetText(<-user.NewExercise)
-		} else {
-			// We loop through the imported file and add the formated info before the previous info (new information comes out on top).
-			for i := range user.ExerciseData.Exercise {
-
-				// Run through and update all the text inside the label without refreshing yet to avoid calling a lot of refresh calls.
-				dataLabel.Text = user.ExerciseData.Format(i) + dataLabel.Text
-			}
-
-			// Refresh the widget to show the updated text.
-			dataLabel.SetText(dataLabel.Text)
-		}
-
-		// We then block the channel while waiting for an update on the channel.
-		for {
-			dataLabel.SetText(<-user.NewExercise + dataLabel.Text)
-		}
-	}()
+	// Start up the function to handle adding exercises in the background.
+	go user.ExerciseDisplayer(dataLabel)
 
 	// Tab data for the main window.
 	dataPage := widget.NewScrollContainer(fyne.NewContainerWithLayout(layout.NewVBoxLayout(), dataLabel))
@@ -47,9 +60,9 @@ func ShowMainDataView(window fyne.Window, app fyne.App, user *user) {
 	// Create tabs with data.
 	tabs := widget.NewTabContainer(
 		widget.NewTabItemWithIcon("Activities", theme.HomeIcon(), dataPage),
-		widget.NewTabItemWithIcon("Add Activity", theme.ContentAddIcon(), ActivityView(window, dataLabel, user)),
+		widget.NewTabItemWithIcon("Add Activity", theme.ContentAddIcon(), user.ActivityView(window)),
 		widget.NewTabItemWithIcon("Share", theme.MailSendIcon(), ShareView(user)),
-		widget.NewTabItemWithIcon("Settings", theme.SettingsIcon(), SettingsView(window, app, dataLabel, user)),
+		widget.NewTabItemWithIcon("Settings", theme.SettingsIcon(), user.SettingsView(window, app)),
 		// TODO: Add an about page with logo, name and version number.
 	)
 

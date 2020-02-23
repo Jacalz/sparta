@@ -1,6 +1,7 @@
 package share
 
 import (
+	"sort"
 	"sparta/file"
 
 	"context"
@@ -46,7 +47,7 @@ func StartSharing(sharecode chan string, finished chan struct{}) {
 }
 
 // Retrieve starts the retrieving process for fetching a shared file.
-func Retrieve(stored *file.Data, newAddedExercise chan string, key *[32]byte, code string) {
+func Retrieve(stored *file.Data, ReorderExercises chan bool, key *[32]byte, code string) {
 	// Create the wormhole client.
 	var c wormhole.Client
 
@@ -84,9 +85,16 @@ func Retrieve(stored *file.Data, newAddedExercise chan string, key *[32]byte, co
 		// If the fetched item does not exist, we make sure to add it.
 		if !exists {
 			stored.Exercise = append(stored.Exercise, fetched)
-			newAddedExercise <- stored.Format(len(stored.Exercise) - 1)
 		}
 	}
+
+	// Sort all old and new data to make sure that new exercises come first.
+	sort.Slice(stored.Exercise, func(i, j int) bool {
+		return stored.Exercise[i].Time.Before(stored.Exercise[j].Time)
+	})
+
+	// Indicate that the whole slice needs to be redisplayed.
+	ReorderExercises <- true
 
 	// Write the updated data to our data file.
 	go stored.Write(key)

@@ -1,10 +1,13 @@
 package gui
 
 import (
-	"fmt"
-	"regexp"
+	"sort"
 	"sparta/file"
 	"sparta/file/parse"
+
+	"fmt"
+	"regexp"
+	"time"
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/dialog"
@@ -12,13 +15,13 @@ import (
 )
 
 // ActivityView shows the opoup for adding a new activity.
-func ActivityView(window fyne.Window, dataLabel *widget.Label, user *user) fyne.CanvasObject {
+func (u *user) ActivityView(window fyne.Window) fyne.CanvasObject {
 	// Variables for the entry variables used in the form.
 	dateEntry := NewEntryWithPlaceholder("YYYY-MM-DD")
 	clockEntry := NewEntryWithPlaceholder("HH:MM")
 	activityEntry := NewEntryWithPlaceholder("Name of activity")
 	distanceEntry := NewEntryWithPlaceholder("Kilometers")
-	timeEntry := NewEntryWithPlaceholder("Minutes")
+	durationEntry := NewEntryWithPlaceholder("Minutes")
 	setsEntry := NewEntryWithPlaceholder("Number of sets")
 	repsEntry := NewEntryWithPlaceholder("Number of reps")
 	commentEntry := widget.NewMultiLineEntry()
@@ -32,7 +35,7 @@ func ActivityView(window fyne.Window, dataLabel *widget.Label, user *user) fyne.
 			clockEntry.SetText("")
 			activityEntry.SetText("")
 			distanceEntry.SetText("")
-			timeEntry.SetText("")
+			durationEntry.SetText("")
 			setsEntry.SetText("")
 			repsEntry.SetText("")
 			commentEntry.SetText("")
@@ -72,7 +75,7 @@ func ActivityView(window fyne.Window, dataLabel *widget.Label, user *user) fyne.
 		switch {
 		case !numericFloat.Match([]byte(distanceEntry.Text)):
 			nonNumericInput = true
-		case !numericFloat.Match([]byte(timeEntry.Text)):
+		case !numericFloat.Match([]byte(durationEntry.Text)):
 			nonNumericInput = true
 		case !numericUint.Match([]byte(setsEntry.Text)):
 			nonNumericInput = true
@@ -88,20 +91,44 @@ func ActivityView(window fyne.Window, dataLabel *widget.Label, user *user) fyne.
 				// Defer the entry fields to be cleaned out last.
 				defer form.OnCancel()
 
+				// Create variables for parsing time from date and clock.
+				var year, month, day, hour, min int
+
+				// Parse the date and time from strings.
+				fmt.Sscanf(dateEntry.Text, "%v-%v-%v", &year, &month, &day)
+				fmt.Sscanf(clockEntry.Text, "%v:%v", &hour, &min)
+
+				// Create the time.Time value for the imputed data.
+				timeOfExercise := time.Date(year, time.Month(month), day, hour, min, 0, 0, time.Local)
+
 				// Append new values to a new index.
-				user.ExerciseData.Exercise = append(user.ExerciseData.Exercise, file.Exercise{Date: dateEntry.Text, Clock: clockEntry.Text, Activity: activityEntry.Text, Distance: parse.Float(distanceEntry.Text), Time: parse.Float(timeEntry.Text), Reps: parse.Uint(repsEntry.Text), Sets: parse.Uint(setsEntry.Text), Comment: commentEntry.Text})
+				u.Data.Exercise = append(u.Data.Exercise, file.Exercise{Time: timeOfExercise, Clock: clockEntry.Text, Date: dateEntry.Text, Activity: activityEntry.Text, Distance: parse.Float(distanceEntry.Text), Duration: parse.Float(durationEntry.Text), Reps: parse.Uint(repsEntry.Text), Sets: parse.Uint(setsEntry.Text), Comment: commentEntry.Text})
 
 				// Encrypt and write the data to the configuration file. Do it on another goroutine.
-				go user.ExerciseData.Write(&user.EncryptionKey)
+				go u.Data.Write(&u.EncryptionKey)
 
-				// Workaround bug that happens after creating a new activity after removing the file. Set the file to be non empty also.
+				// If the data was empty before, we send it as a first exercise and say that it isn't empty anymore.
 				if file.Empty() {
-					dataLabel.Text = ""
+					u.FirstExercise <- u.Data.Format(len(u.Data.Exercise) - 1)
 					file.SetNonEmpty()
-				}
+				} else {
+					// Check the length of the newly appended slice.
+					length := len(u.Data.Exercise)
 
-				// Send the formated string from the highest index of the Exercise slice.
-				user.NewExercise <- user.ExerciseData.Format(len(user.ExerciseData.Exercise) - 1)
+					// Check if the newest added exercise was after the exercise before that. It means that we won't have to sort the slice.
+					if u.Data.Exercise[length-2].Time.Before(u.Data.Exercise[length-1].Time) {
+						// Send the formated string from the highest index of the Exercise slice.
+						u.NewExercise <- u.Data.Format(len(u.Data.Exercise) - 1)
+					} else {
+						// Sort all old and new data to make sure that new exercises come first.
+						sort.Slice(u.Data.Exercise, func(i, j int) bool {
+							return u.Data.Exercise[i].Time.Before(u.Data.Exercise[j].Time)
+						})
+
+						// Indicate that the whole slice needs to be redisplayed.
+						u.ReorderExercises <- true
+					}
+				}
 			}()
 		}
 	}
@@ -111,7 +138,7 @@ func ActivityView(window fyne.Window, dataLabel *widget.Label, user *user) fyne.
 	form.Append("Start time", clockEntry)
 	form.Append("Activity", activityEntry)
 	form.Append("Distance", distanceEntry)
-	form.Append("Time", timeEntry)
+	form.Append("Duration", durationEntry)
 	form.Append("Sets", setsEntry)
 	form.Append("Reps", repsEntry)
 	form.Append("Comment", commentEntry)

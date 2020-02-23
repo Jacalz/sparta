@@ -3,6 +3,7 @@ package file
 import (
 	"io"
 	"sparta/crypto"
+	"time"
 
 	"encoding/json"
 	"fmt"
@@ -19,14 +20,15 @@ type Data struct {
 
 // Exercise keeps track of the data for each exercise that the user has done.
 type Exercise struct {
-	Date     string  `json:"date"`
-	Clock    string  `json:"clock"`
-	Activity string  `json:"activity"`
-	Distance float64 `json:"distance"`
-	Time     float64 `json:"time"`
-	Reps     uint    `json:"reps"`
-	Sets     uint    `json:"sets"`
-	Comment  string  `json:"comment"`
+	Time     time.Time `json:"time"`
+	Date     string    `json:"date"`
+	Clock    string    `json:"clock"`
+	Activity string    `json:"activity"`
+	Distance float64   `json:"distance"`
+	Duration float64   `json:"duration"`
+	Reps     uint      `json:"reps"`
+	Sets     uint      `json:"sets"`
+	Comment  string    `json:"comment"`
 }
 
 // fileStatusEmpty defines if the file is empty or not.
@@ -165,13 +167,13 @@ func (d *Data) Write(key *[32]byte) {
 func (d *Data) Format(i int) (output string) {
 	if d.Exercise[i].Reps == 0 && d.Exercise[i].Sets == 0 {
 		output = fmt.Sprintf("\nAt %s on %s, you trained %s. The distance was %.2f kilometers and the exercise lasted for %v minutes.\nThis resulted in an average speed of %.3f km/h.\n",
-			d.Exercise[i].Clock, d.Exercise[i].Date, d.Exercise[i].Activity, d.Exercise[i].Distance, d.Exercise[i].Time, (d.Exercise[i].Distance/d.Exercise[i].Time)*60)
+			d.Exercise[i].Clock, d.Exercise[i].Date, d.Exercise[i].Activity, d.Exercise[i].Distance, d.Exercise[i].Duration, (d.Exercise[i].Distance/d.Exercise[i].Duration)*60)
 	} else if d.Exercise[i].Distance == 0 {
 		output = fmt.Sprintf("\nAt %s on %s, you trained %s for %v minutes. You did %v sets with %v reps each.\n",
-			d.Exercise[i].Clock, d.Exercise[i].Date, d.Exercise[i].Activity, d.Exercise[i].Time, d.Exercise[i].Sets, d.Exercise[i].Reps)
+			d.Exercise[i].Clock, d.Exercise[i].Date, d.Exercise[i].Activity, d.Exercise[i].Duration, d.Exercise[i].Sets, d.Exercise[i].Reps)
 	} else {
 		output = fmt.Sprintf("\nAt %s on %s, you trained %s for %v minutes. The distance was %.2f kilometers and you did %v sets with %v reps each.\n",
-			d.Exercise[i].Clock, d.Exercise[i].Date, d.Exercise[i].Activity, d.Exercise[i].Time, d.Exercise[i].Distance, d.Exercise[i].Sets, d.Exercise[i].Reps)
+			d.Exercise[i].Clock, d.Exercise[i].Date, d.Exercise[i].Activity, d.Exercise[i].Duration, d.Exercise[i].Distance, d.Exercise[i].Sets, d.Exercise[i].Reps)
 	}
 
 	if d.Exercise[i].Comment != "" {

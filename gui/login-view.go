@@ -59,7 +59,7 @@ func ShowLoginPage(app fyne.App, window fyne.Window, user *user) {
 		}
 
 		// Store the exercises inside the user struct.
-		user.ExerciseData = exercises
+		user.Data = exercises
 
 		ShowMainDataView(window, app, user)
 	})
