@@ -2,6 +2,7 @@ package gui
 
 import (
 	"sparta/crypto"
+	"sparta/gui/widgets"
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/dialog"
@@ -38,7 +39,7 @@ func (u *user) SettingsView(window fyne.Window, app fyne.App) fyne.CanvasObject 
 	themeChanger := fyne.NewContainerWithLayout(layout.NewGridLayout(2), widget.NewLabel("Application Theme"), themeSwitcher)
 
 	// An entry for typing the new username.
-	usernameEntry := NewEntryWithPlaceholder("New Username")
+	usernameEntry := widgets.NewEntryWithPlaceholder("New Username")
 
 	// Create the button used for changing the username.
 	usernameButton := widget.NewButtonWithIcon("Change Username", theme.ConfirmIcon(), func() {

@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"sparta/gui/widgets"
 	"sparta/share"
 
 	"fyne.io/fyne"
@@ -19,7 +20,7 @@ func ShareView(user *user) fyne.CanvasObject {
 	aboutGroup := widget.NewGroup("About Exercise Synchronization", widget.NewLabelWithStyle("The share support in Sparta enables the user to syncronize their exercises.\nThe file is served encrypted and will be automatically decrypted on a second device using the same login credentials.\nIt is as simple as starting the share on one device and then starting receiving on another device on the same network.\nThe receiving computer will then get all the new activities added locally.", fyne.TextAlignCenter, fyne.TextStyle{}))
 
 	// recieveCode makes it possible to type in receive code.
-	recieveCodeEntry := NewEntryWithPlaceholder("Receive Code")
+	recieveCodeEntry := widgets.NewEntryWithPlaceholder("Receive Code")
 
 	// recieveDataButton starts looking for shared data on the local network.
 	recieveDataButton := widget.NewButtonWithIcon("Start receiving exercises", theme.MailComposeIcon(), func() {

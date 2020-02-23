@@ -3,6 +3,7 @@ package gui
 import (
 	"sparta/crypto"
 	"sparta/file"
+	"sparta/gui/widgets"
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/dialog"
@@ -31,10 +32,10 @@ func CheckValidInput(username, password string, window fyne.Window) (valid bool)
 // ShowLoginPage shows the login page that handles the inertaface for logging in.
 func ShowLoginPage(app fyne.App, window fyne.Window, user *user) {
 	// Initialize the login form that we are to be using.
-	username := NewExtendedEntry("Username", false)
+	username := widgets.NewExtendedEntry("Username", false)
 
 	// Initialize the password input box that we are to be using.
-	password := NewExtendedEntry("Password", true)
+	password := widgets.NewExtendedEntry("Password", true)
 
 	// Create the login button that will calculate the 32bit long sha256 hash.
 	loginButton := widget.NewButton("Login", func() {
@@ -65,7 +66,7 @@ func ShowLoginPage(app fyne.App, window fyne.Window, user *user) {
 	})
 
 	// Add the Action component to make actions work inside the struct. This is used to press the loginButton on pressing enter/return ton the keyboard.
-	username.Action, password.Action = &Action{*loginButton}, &Action{*loginButton}
+	username.Action, password.Action = &widgets.Action{Button: *loginButton}, &widgets.Action{Button: *loginButton}
 
 	// Set the content to be displayed. It is the userName, userPassword fields and the login button inside a layout.
 	window.SetContent(fyne.NewContainerWithLayout(layout.NewVBoxLayout(), username, password, loginButton))

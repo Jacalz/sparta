@@ -1,4 +1,4 @@
-package gui
+package widgets
 
 import (
 	"fyne.io/fyne"
@@ -13,7 +13,7 @@ type ExtendedEntry struct {
 
 // Action handles the Button press action.
 type Action struct {
-	widget.Button
+	Button widget.Button
 }
 
 // TypedKey handles the key presses inside our UsernameEntry and uses Action to press the linked button.

@@ -4,6 +4,7 @@ import (
 	"sort"
 	"sparta/file"
 	"sparta/file/parse"
+	"sparta/gui/widgets"
 
 	"fmt"
 	"regexp"
@@ -17,13 +18,13 @@ import (
 // ActivityView shows the opoup for adding a new activity.
 func (u *user) ActivityView(window fyne.Window) fyne.CanvasObject {
 	// Variables for the entry variables used in the form.
-	dateEntry := NewEntryWithPlaceholder("YYYY-MM-DD")
-	clockEntry := NewEntryWithPlaceholder("HH:MM")
-	activityEntry := NewEntryWithPlaceholder("Name of activity")
-	distanceEntry := NewEntryWithPlaceholder("Kilometers")
-	durationEntry := NewEntryWithPlaceholder("Minutes")
-	setsEntry := NewEntryWithPlaceholder("Number of sets")
-	repsEntry := NewEntryWithPlaceholder("Number of reps")
+	dateEntry := widgets.NewEntryWithPlaceholder("YYYY-MM-DD")
+	clockEntry := widgets.NewEntryWithPlaceholder("HH:MM")
+	activityEntry := widgets.NewEntryWithPlaceholder("Name of activity")
+	distanceEntry := widgets.NewEntryWithPlaceholder("Kilometers")
+	durationEntry := widgets.NewEntryWithPlaceholder("Minutes")
+	setsEntry := widgets.NewEntryWithPlaceholder("Number of sets")
+	repsEntry := widgets.NewEntryWithPlaceholder("Number of reps")
 	commentEntry := widget.NewMultiLineEntry()
 	commentEntry.SetPlaceHolder("Type your comment here")
 
