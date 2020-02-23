@@ -11,8 +11,6 @@ import (
 	"fyne.io/fyne/widget"
 )
 
-// TODO: Multi user support by labling the data file exercises-user.xml
-
 // SettingsView contains the gui information for the settings screen.
 func (u *user) SettingsView(window fyne.Window, app fyne.App) fyne.CanvasObject {
 
@@ -97,17 +95,16 @@ func (u *user) SettingsView(window fyne.Window, app fyne.App) fyne.CanvasObject 
 
 	// revertToDefaultSettings reverts all settings to their default values.
 	revertToDefaultSettings := widget.NewButtonWithIcon("Reset settings to default values", theme.ViewRefreshIcon(), func() {
-		// Make sure to set the themeSwitcher to Dark if it isn't already.
-		if app.Preferences().String("Theme") != "Dark" {
-			// Set the widget placeholder to dark.
-			themeSwitcher.PlaceHolder = "Dark"
-			themeSwitcher.Refresh()
+		// Update theme and saved settings for theme change.
+		if app.Preferences().String("Theme") != "Light" {
+			themeSwitcher.PlaceHolder = "Light"
+        	themeSwitcher.Refresh()
 
-			// Set the visible theme to dark.
-			app.Settings().SetTheme(theme.DarkTheme())
+			// Set the visible theme to the light theme.
+			app.Settings().SetTheme(theme.LightTheme())
 
-			// Set the saved theme to dark.
-			app.Preferences().SetString("Theme", "Dark")
+			// Set the saved theme to Light.
+			app.Preferences().SetString("Theme", "Light")
 		}
 	})
 	// Create a button for clearing the data of a given profile.
