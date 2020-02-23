@@ -1,8 +1,6 @@
 package gui
 
 import (
-	"sparta/file"
-
 	"fyne.io/fyne"
 	"fyne.io/fyne/layout"
 	"fyne.io/fyne/theme"
@@ -22,7 +20,7 @@ func (u *user) InitialDisplay() (text string) {
 // ExerciseDisplayer runs in the background and updated the label.
 func (u *user) ExerciseDisplayer(label *widget.Label) {
 	// Handle an empty data file.
-	if file.Empty() {
+	if len(u.Data.Exercise) == 0 {
 		// Start by informing  the user that no data is available.
 		label.SetText("No exercieses have been created yet.")
 	} else {

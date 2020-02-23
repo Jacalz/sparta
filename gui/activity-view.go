@@ -108,10 +108,9 @@ func (u *user) ActivityView(window fyne.Window) fyne.CanvasObject {
 				// Encrypt and write the data to the configuration file. Do it on another goroutine.
 				go u.Data.Write(&u.EncryptionKey)
 
-				// If the data was empty before, we send it as a first exercise and say that it isn't empty anymore.
-				if file.Empty() {
+				// Check if the length before appending was zero. If it was, the file is empy and sees its first exercise added.
+				if len(u.Data.Exercise)-1 == 0 {
 					u.FirstExercise <- u.Data.Format(len(u.Data.Exercise) - 1)
-					file.SetNonEmpty()
 				} else {
 					// Check the length of the newly appended slice.
 					length := len(u.Data.Exercise)

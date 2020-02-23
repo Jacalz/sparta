@@ -31,21 +31,8 @@ type Exercise struct {
 	Comment  string    `json:"comment"`
 }
 
-// fileStatusEmpty defines if the file is empty or not.
-var fileStatusEmpty bool
-
 // zeroData is a variable containing an empty Data struct.
 var zeroData = &Data{}
-
-// Empty returns if we have a config file or not.
-func Empty() bool {
-	return fileStatusEmpty
-}
-
-// SetNonEmpty tells us that the file is not empty anymore.
-func SetNonEmpty() {
-	fileStatusEmpty = false
-}
 
 // ConfigDir returns the config directory where files are being stored.
 func ConfigDir() (dir string) {
@@ -93,9 +80,6 @@ func Check(key *[32]byte) (exercises Data, err error) {
 		if err != nil {
 			fmt.Print("Could not create the file.", err)
 		}
-
-		// Specify that the file is empty if not proven otherwise.
-		fileStatusEmpty = true
 	}
 
 	return exercises, nil
@@ -137,14 +121,12 @@ func readData(key *[32]byte) (exercises Data, err error) {
 	// Read the JSON data from the encrypted file.
 	exercises, err = ReadEncryptedJSON(data, key)
 	if err != nil {
-		fileStatusEmpty = true
 		return exercises, err
 	}
 
 	// We are finished with the file now, let's close it.
 	go data.Close()
 
-	fileStatusEmpty = false
 	return exercises, nil
 }
 
@@ -187,9 +169,6 @@ func (d *Data) Format(i int) (output string) {
 func (d *Data) Delete() {
 	// Clear the data by directing the pointer to point at the zeroData pointer.
 	*d = *zeroData
-
-	// Set the file status to be empty.
-	fileStatusEmpty = true
 
 	// Remove the file to clear it.
 	err := os.Remove(filepath.Join(ConfigDir(), "exercises.json"))
