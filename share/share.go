@@ -47,7 +47,7 @@ func StartSharing(sharecode chan string, finished chan struct{}) {
 }
 
 // Retrieve starts the retrieving process for fetching a shared file.
-func Retrieve(stored *file.Data, ReorderExercises chan bool, key *[32]byte, code string) {
+func Retrieve(stored *file.Data, ReorderExercises chan bool, FirstExercise chan string, key *[32]byte, code string) {
 	// Create the wormhole client.
 	var c wormhole.Client
 
@@ -88,14 +88,25 @@ func Retrieve(stored *file.Data, ReorderExercises chan bool, key *[32]byte, code
 		}
 	}
 
-	// Sort all old and new data to make sure that new exercises come first.
-	sort.Slice(stored.Exercise, func(i, j int) bool {
-		return stored.Exercise[i].Time.Before(stored.Exercise[j].Time)
-	})
+	// Check the length of our combined structs.
+	length := len(stored.Exercise)
 
-	// Indicate that the whole slice needs to be redisplayed.
-	ReorderExercises <- true
+	// Handle different lengths accordingly to avoid out of bounds index checks.
+	switch length {
+	case 0:
+		return
+	case 1:
+		FirstExercise <- stored.Format(length - 1)
+	default:
+		// Sort all old and new data to make sure that new exercises come first.
+		sort.Slice(stored.Exercise, func(i, j int) bool {
+			return stored.Exercise[i].Time.Before(stored.Exercise[j].Time)
+		})
 
-	// Write the updated data to our data file.
-	go stored.Write(key)
+		// Indicate that the whole slice needs to be redisplayed.
+		ReorderExercises <- true
+
+		// Write the updated data to our data file.
+		go stored.Write(key)
+	}
 }
