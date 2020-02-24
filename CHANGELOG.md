@@ -1,10 +1,19 @@
 # Changelog
 
-## 0.4.1 - Third beta
-- A smaller interface code refactoring for some cleanups and to remove global variables.
-- Added an option to change the username in settings.
+## 0.5.0 - Third beta
+- A substantial code refractor of the user interface to cleanup code and remove use of global variables.
+- Added an option to change the username in the settings.
 - Improve the experience on the first start of the application.
-- Better password input checking when changing it inside settings.
+- Better password input checking when changing it inside the settings.
+- Switch from AES-256 to AES-512/256 (breaking change).
+  - This improves security against length extension attacks.
+- Avoid code duplication between share and file operation code.
+- Major sort change to sort all exercises after when they occurred instead of when they were added.
+- Fix an issue where nothing would be displayed if the exercises file existed but still was empty after several app starts.
+- Make sure that the settings reset to light theme and not dark (missed during change of default).
+- Switch between login entry widgets using key up and key down.
+- Abort and show error if user tries to share with nothing to share.
+- Use the correct way to change selected option in the theme switcher.
 
 ## 0.4.0 - Second beta
 - The password inside the password entry is now cleared from memory after login.
