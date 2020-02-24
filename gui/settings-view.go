@@ -30,8 +30,7 @@ func (u *user) SettingsView(window fyne.Window, app fyne.App) fyne.CanvasObject 
 	})
 
 	// Default theme is light and thus we set the placeholder to that and then refresh it (without a refresh, it doesn't show until hovering on to widget).
-	themeSwitcher.PlaceHolder = app.Preferences().StringWithFallback("Theme", "Light")
-	themeSwitcher.Refresh()
+	themeSwitcher.SetSelected(app.Preferences().StringWithFallback("Theme", "Light"))
 
 	// Add the theme switcher next to a label.
 	themeChanger := fyne.NewContainerWithLayout(layout.NewGridLayout(2), widget.NewLabel("Application Theme"), themeSwitcher)
@@ -97,8 +96,7 @@ func (u *user) SettingsView(window fyne.Window, app fyne.App) fyne.CanvasObject 
 	revertToDefaultSettings := widget.NewButtonWithIcon("Reset settings to default values", theme.ViewRefreshIcon(), func() {
 		// Update theme and saved settings for theme change.
 		if app.Preferences().String("Theme") != "Light" {
-			themeSwitcher.PlaceHolder = "Light"
-        	themeSwitcher.Refresh()
+			themeSwitcher.SetSelected("Light")
 
 			// Set the visible theme to the light theme.
 			app.Settings().SetTheme(theme.LightTheme())
