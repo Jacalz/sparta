@@ -5,13 +5,14 @@ import (
 	"sparta/share"
 
 	"fyne.io/fyne"
+	"fyne.io/fyne/dialog"
 	"fyne.io/fyne/layout"
 	"fyne.io/fyne/theme"
 	"fyne.io/fyne/widget"
 )
 
 // ShareView displays the tab page for syncing data between devices.
-func ShareView(user *user) fyne.CanvasObject {
+func ShareView(window fyne.Window, user *user) fyne.CanvasObject {
 
 	// Create the channel that we will use to share the code needed for receiving the data.
 	shareCodeChan := make(chan string)
@@ -29,6 +30,11 @@ func ShareView(user *user) fyne.CanvasObject {
 
 	// sendDataButton starts the network server and shares the file over the local internet.
 	startSendingDataButton := widget.NewButtonWithIcon("Start sharing exercises", theme.ViewRefreshIcon(), func() {
+		if len(user.Data.Exercise) == 0 {
+			dialog.ShowInformation("No exercises to share", "You need to add exercises to be able to share them.", window)
+			return
+		}
+
 		// Create a channel for comunicating when we are done.
 		finished := make(chan struct{})
 
