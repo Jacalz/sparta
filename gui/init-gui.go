@@ -17,6 +17,7 @@ type user struct {
 	FirstExercise    chan string
 	EmptyExercises   chan bool
 	ReorderExercises chan bool
+	Errors           chan error
 }
 
 func newUser() *user {
@@ -24,6 +25,7 @@ func newUser() *user {
 		FirstExercise:    make(chan string),
 		EmptyExercises:   make(chan bool),
 		ReorderExercises: make(chan bool),
+		Errors:           make(chan error),
 	}
 }
 

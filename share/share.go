@@ -13,7 +13,7 @@ import (
 )
 
 // StartSharing starts up the server on the local network and returns it so we can call shutdown.
-func StartSharing(sharecode chan string, finished chan struct{}) {
+func StartSharing(sharecode chan string, errors chan error, finished chan struct{}) {
 	// Create the wormhole client.
 	var c wormhole.Client
 
@@ -30,6 +30,7 @@ func StartSharing(sharecode chan string, finished chan struct{}) {
 	// Send the file in the background.
 	code, status, err := c.SendFile(context.Background(), path.Join(file.ConfigDir(), "sparta", "exercises.json"), f)
 	if err != nil {
+		errors <- err
 		fmt.Printf("Could not share file: %s\n", err)
 		return
 	}
@@ -39,6 +40,7 @@ func StartSharing(sharecode chan string, finished chan struct{}) {
 
 	// Handle the status of the sharing.
 	if s := <-status; s.Error != nil {
+		errors <- s.Error
 		fmt.Printf("Sharing returned an error: %s\n", s.Error)
 		return
 	} else if s.OK {
@@ -47,13 +49,14 @@ func StartSharing(sharecode chan string, finished chan struct{}) {
 }
 
 // Retrieve starts the retrieving process for fetching a shared file.
-func Retrieve(stored *file.Data, ReorderExercises chan bool, FirstExercise chan string, key *[32]byte, code string) {
+func Retrieve(stored *file.Data, ReorderExercises chan bool, FirstExercise chan string, errors chan error, key *[32]byte, code string) {
 	// Create the wormhole client.
 	var c wormhole.Client
 
 	// Receive the data from wormhole sharing.
 	data, err := c.Receive(context.Background(), code)
 	if err != nil {
+		errors <- err
 		fmt.Printf("Receiving content returned: %s\n", err)
 		return
 	}
@@ -61,6 +64,7 @@ func Retrieve(stored *file.Data, ReorderExercises chan bool, FirstExercise chan 
 	// received will store all fetched data.
 	received, err := file.ReadEncryptedJSON(data, key)
 	if err != nil {
+		errors <- err
 		fmt.Printf("Parsing JSON from file returned: %s", err)
 		return
 	}

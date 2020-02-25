@@ -25,7 +25,7 @@ func ShareView(window fyne.Window, user *user) fyne.CanvasObject {
 
 	// recieveDataButton starts looking for shared data on the local network.
 	recieveDataButton := widget.NewButtonWithIcon("Start receiving exercises", theme.MailComposeIcon(), func() {
-		go share.Retrieve(&user.Data, user.ReorderExercises, user.FirstExercise, &user.EncryptionKey, recieveCodeEntry.Text)
+		go share.Retrieve(&user.Data, user.ReorderExercises, user.FirstExercise, user.Errors, &user.EncryptionKey, recieveCodeEntry.Text)
 	})
 
 	// sendDataButton starts the network server and shares the file over the local internet.
@@ -42,7 +42,7 @@ func ShareView(window fyne.Window, user *user) fyne.CanvasObject {
 		recieveDataButton.Disable()
 
 		// Start the sharing.
-		go share.StartSharing(shareCodeChan, finished)
+		go share.StartSharing(shareCodeChan, user.Errors, finished)
 
 		// Listen in on the channels and clear stuff up when we are finished.
 		go func() {
@@ -51,6 +51,10 @@ func ShareView(window fyne.Window, user *user) fyne.CanvasObject {
 				case code := <-shareCodeChan:
 					recieveCodeEntry.SetText(code)
 				case <-finished:
+					recieveDataButton.Enable()
+					return
+				case err := <-user.Errors:
+					dialog.ShowError(err, window)
 					recieveDataButton.Enable()
 					return
 				}
