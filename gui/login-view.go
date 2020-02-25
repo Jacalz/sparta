@@ -41,28 +41,26 @@ func ShowLoginPage(app fyne.App, window fyne.Window, user *user) {
 	loginButton := widget.NewButton("Login", func() {
 		// Check the inputed data to handle invalid inputs.
 		valid := CheckValidInput(username.Text, password.Text, window)
-		if !valid {
-			return
+		if valid {
+			// Calculate the sha256 hash of the username and password.
+			user.EncryptionKey = crypto.Hash(username.Text, password.Text)
+
+			// Check for the file where we store the data. The user inputed the wrong password if we get an error.
+			exercises, err := file.Check(&user.EncryptionKey)
+			if err != nil {
+				dialog.ShowInformation("Wrong username or password", "The login credentials are incorrect, please try again.", window)
+			} else {
+				// Store the username and password to user structs and clear data in widgets.
+				user.Username, username.Text = username.Text, ""
+				user.Password, password.Text = password.Text, ""
+
+				// Store the exercises inside the user struct.
+				user.Data = exercises
+
+				ShowMainDataView(window, app, user)
+			}
 		}
 
-		// Calculate the sha256 hash of the username and password.
-		user.EncryptionKey = crypto.Hash(username.Text, password.Text)
-
-		// Store the username and password to user structs and clear data in widgets.
-		user.Username, username.Text = username.Text, ""
-		user.Password, password.Text = password.Text, ""
-
-		// Check for the file where we store the data. The user inputed the wrong password if we get an error.
-		exercises, err := file.Check(&user.EncryptionKey)
-		if err != nil {
-			dialog.ShowInformation("Wrong username or password", "The login credentials are incorrect, please try again.", window)
-			return
-		}
-
-		// Store the exercises inside the user struct.
-		user.Data = exercises
-
-		ShowMainDataView(window, app, user)
 	})
 
 	// Extend the ExtendedEntry widgets with extra key press supports.
