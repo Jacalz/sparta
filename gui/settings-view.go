@@ -50,6 +50,9 @@ func (u *user) SettingsView(window fyne.Window, app fyne.App) fyne.CanvasObject 
 					// Calculate the new PasswordKey.
 					u.EncryptionKey = crypto.Hash(usernameEntry.Text, u.Password)
 
+					// Set the username  to the updated username.
+					u.Username = usernameEntry.Text
+
 					// Clear out the text inside the entry.
 					usernameEntry.SetText("")
 
@@ -78,6 +81,9 @@ func (u *user) SettingsView(window fyne.Window, app fyne.App) fyne.CanvasObject 
 				if change {
 					// Calculate the new PasswordKey.
 					u.EncryptionKey = crypto.Hash(u.Username, passwordEntry.Text)
+
+					// Set the user password to the updated password.
+					u.Password = passwordEntry.Text
 
 					// Clear out the text inside the entry.
 					passwordEntry.SetText("")
