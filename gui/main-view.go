@@ -57,8 +57,8 @@ func ShowMainDataView(window fyne.Window, app fyne.App, user *user) {
 
 	// Create tabs with data.
 	tabs := widget.NewTabContainer(
-		widget.NewTabItemWithIcon("Activities", theme.HomeIcon(), dataPage),
-		widget.NewTabItemWithIcon("Add Activity", theme.ContentAddIcon(), user.ActivityView(window)),
+		widget.NewTabItemWithIcon("Exercises", theme.HomeIcon(), dataPage),
+		widget.NewTabItemWithIcon("Add Exercise", theme.ContentAddIcon(), user.ExerciseView(window)),
 		widget.NewTabItemWithIcon("Sync", theme.MailSendIcon(), SyncView(window, user)),
 		widget.NewTabItemWithIcon("Settings", theme.SettingsIcon(), user.SettingsView(window, app)),
 		// TODO: Add an about page with logo, name and version number.

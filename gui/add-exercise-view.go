@@ -15,18 +15,18 @@ import (
 	"fyne.io/fyne/widget"
 )
 
-// ActivityView shows the opoup for adding a new activity.
-func (u *user) ActivityView(window fyne.Window) fyne.CanvasObject {
+// ExerciseView shows the opoup for adding a new activity.
+func (u *user) ExerciseView(window fyne.Window) fyne.CanvasObject {
 	// Variables for the entry variables used in the form.
 	dateEntry := widgets.NewEntryWithPlaceholder("YYYY-MM-DD")
 	clockEntry := widgets.NewEntryWithPlaceholder("HH:MM")
-	activityEntry := widgets.NewEntryWithPlaceholder("Name of activity")
+	activityEntry := widgets.NewEntryWithPlaceholder("Name of exercise")
 	distanceEntry := widgets.NewEntryWithPlaceholder("Kilometers")
 	durationEntry := widgets.NewEntryWithPlaceholder("Minutes")
 	setsEntry := widgets.NewEntryWithPlaceholder("Number of sets")
 	repsEntry := widgets.NewEntryWithPlaceholder("Number of reps")
 	commentEntry := widget.NewMultiLineEntry()
-	commentEntry.SetPlaceHolder("Type your comment here")
+	commentEntry.SetPlaceHolder("Type your comment here...")
 
 	// Create the initial form with a cancel button so it can be used last on submit.
 	form := &widget.Form{
@@ -86,7 +86,7 @@ func (u *user) ActivityView(window fyne.Window) fyne.CanvasObject {
 
 		// Show and error if any fields does not match the correct input patterns.
 		if nonNumericInput || activityEntry.Text == "" || !clock.Match([]byte(clockEntry.Text)) || !date.Match([]byte(dateEntry.Text)) {
-			dialog.ShowInformation("Non numeric input or invald formats in fields", "The date and the start time need correct data formating and the activity can not be empty.\nDistance, time, sets and reps can all be empty, however they do need to contain numeric data if non empty.", window)
+			dialog.ShowInformation("Non numeric input or invald formats in fields", "The date and the start time need correct data formating and the exercise can not be empty.\nDistance, time, sets and reps can all be empty, however they do need to contain numeric data if non empty.", window)
 		} else {
 			go func() {
 				// Defer the entry fields to be cleaned out last.
@@ -135,7 +135,7 @@ func (u *user) ActivityView(window fyne.Window) fyne.CanvasObject {
 
 	// Append all the rows separately in to the form.
 	form.Append("Date", dateEntry)
-	form.Append("Start time", clockEntry)
+	form.Append("Start Time", clockEntry)
 	form.Append("Activity", activityEntry)
 	form.Append("Distance", distanceEntry)
 	form.Append("Duration", durationEntry)
