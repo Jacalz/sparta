@@ -36,7 +36,7 @@ func (u *user) SettingsView(window fyne.Window, app fyne.App) fyne.CanvasObject 
 	themeChanger := fyne.NewContainerWithLayout(layout.NewGridLayout(2), widget.NewLabel("Application Theme"), themeSwitcher)
 
 	// An entry for typing the new username.
-	usernameEntry := widgets.NewEntryWithPlaceholder("New Username")
+	usernameEntry := widgets.NewExtendedEntry("New Username", false)
 
 	// Create the button used for changing the username.
 	usernameButton := widget.NewButtonWithIcon("Change Username", theme.ConfirmIcon(), func() {
@@ -67,8 +67,7 @@ func (u *user) SettingsView(window fyne.Window, app fyne.App) fyne.CanvasObject 
 	usernameChanger := fyne.NewContainerWithLayout(layout.NewGridLayout(2), usernameEntry, usernameButton)
 
 	// Create the entry for updating the password.
-	passwordEntry := widget.NewPasswordEntry()
-	passwordEntry.SetPlaceHolder("New Password")
+	passwordEntry := widgets.NewExtendedEntry("New Password", true)
 
 	// Create the button used for changing the password.
 	passwordButton := widget.NewButtonWithIcon("Change Password", theme.ConfirmIcon(), func() {
@@ -94,6 +93,10 @@ func (u *user) SettingsView(window fyne.Window, app fyne.App) fyne.CanvasObject 
 			}, window)
 		}
 	})
+
+	// Extend our extended buttons with array entry switching and enter to change.
+	usernameEntry.InitExtend(window, fyne.KeyDown, passwordEntry, *usernameButton)
+	passwordEntry.InitExtend(window, fyne.KeyUp, usernameEntry, *passwordButton)
 
 	// passwordChanger holds the widgets for the password changer.
 	passwordChanger := fyne.NewContainerWithLayout(layout.NewGridLayout(2), passwordEntry, passwordButton)
