@@ -52,6 +52,7 @@ func SyncView(window fyne.Window, user *user) fyne.CanvasObject {
 					recieveCodeEntry.SetText(code)
 				case <-finished:
 					recieveDataButton.Enable()
+					dialog.ShowInformation("Syncronization sucessfull", "The syncronization of exercises finsished sucessfully.", window)
 					return
 				case err := <-user.Errors:
 					dialog.ShowError(err, window)
