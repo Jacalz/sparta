@@ -1,26 +1,24 @@
 package sync
 
 import (
-	"sort"
 	"sparta/file"
 
 	"context"
-	"fmt"
 	"os"
 	"path"
+	"sort"
 
 	"github.com/psanford/wormhole-william/wormhole"
 )
 
 // StartSync starts up the server on the local network and returns it so we can call shutdown.
-func StartSync(synccode chan string, errors chan error, finished chan struct{}) {
+func StartSync(synccode chan string, errors chan error, finished chan bool) {
 	// Create the wormhole client.
 	var c wormhole.Client
 
 	// Open up the file.
 	f, err := os.Open(path.Join(file.ConfigDir(), "exercises.json"))
 	if err != nil {
-		fmt.Printf("Opening file: %s\n", err)
 		return
 	}
 
@@ -31,7 +29,6 @@ func StartSync(synccode chan string, errors chan error, finished chan struct{}) 
 	code, status, err := c.SendFile(context.Background(), path.Join(file.ConfigDir(), "sparta", "exercises.json"), f)
 	if err != nil {
 		errors <- err
-		fmt.Printf("Could not share file: %s\n", err)
 		return
 	}
 
@@ -41,7 +38,6 @@ func StartSync(synccode chan string, errors chan error, finished chan struct{}) 
 	// Handle the status of the sharing.
 	if s := <-status; s.Error != nil {
 		errors <- s.Error
-		fmt.Printf("Sync returned an error: %s\n", s.Error)
 		return
 	} else if s.OK {
 		close(finished)
@@ -49,7 +45,7 @@ func StartSync(synccode chan string, errors chan error, finished chan struct{}) 
 }
 
 // Retrieve starts the retrieving process for fetching a shared file.
-func Retrieve(stored *file.Data, ReorderExercises chan bool, FirstExercise chan string, errors chan error, key *[32]byte, code string) {
+func Retrieve(stored *file.Data, ReorderExercises chan bool, FirstExercise chan string, errors chan error, done chan bool, key *[32]byte, code string) {
 	// Create the wormhole client.
 	var c wormhole.Client
 
@@ -57,7 +53,6 @@ func Retrieve(stored *file.Data, ReorderExercises chan bool, FirstExercise chan 
 	data, err := c.Receive(context.Background(), code)
 	if err != nil {
 		errors <- err
-		fmt.Printf("Receiving content returned: %s\n", err)
 		return
 	}
 
@@ -65,7 +60,6 @@ func Retrieve(stored *file.Data, ReorderExercises chan bool, FirstExercise chan 
 	received, err := file.ReadEncryptedJSON(data, key)
 	if err != nil {
 		errors <- err
-		fmt.Printf("Parsing JSON from file returned: %s", err)
 		return
 	}
 
@@ -113,4 +107,7 @@ func Retrieve(stored *file.Data, ReorderExercises chan bool, FirstExercise chan 
 		// Write the updated data to our data file.
 		go stored.Write(key)
 	}
+
+	// It does not hurt to say that everything went according to plan.
+	done <- true
 }

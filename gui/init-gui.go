@@ -9,15 +9,20 @@ import (
 
 // User holds the data about the user that is currently logged in.
 type user struct {
-	Username         string
-	Password         string
-	EncryptionKey    [32]byte
-	Data             file.Data
+	Username      string
+	Password      string
+	EncryptionKey [32]byte
+	Data          file.Data
+
+	// Data channels for exercises.
 	NewExercise      chan string
 	FirstExercise    chan string
 	EmptyExercises   chan bool
 	ReorderExercises chan bool
-	Errors           chan error
+
+	// Channels for errors and signaling.
+	Errors       chan error
+	FinishedSync chan bool
 }
 
 func newUser() *user {
