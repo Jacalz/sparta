@@ -1,4 +1,4 @@
-package share
+package sync
 
 import (
 	"sort"
@@ -12,8 +12,8 @@ import (
 	"github.com/psanford/wormhole-william/wormhole"
 )
 
-// StartSharing starts up the server on the local network and returns it so we can call shutdown.
-func StartSharing(sharecode chan string, errors chan error, finished chan struct{}) {
+// StartSync starts up the server on the local network and returns it so we can call shutdown.
+func StartSync(synccode chan string, errors chan error, finished chan struct{}) {
 	// Create the wormhole client.
 	var c wormhole.Client
 
@@ -36,12 +36,12 @@ func StartSharing(sharecode chan string, errors chan error, finished chan struct
 	}
 
 	// Send the code down the drain so it can be shown inside the ui.
-	sharecode <- code
+	synccode <- code
 
 	// Handle the status of the sharing.
 	if s := <-status; s.Error != nil {
 		errors <- s.Error
-		fmt.Printf("Sharing returned an error: %s\n", s.Error)
+		fmt.Printf("Sync returned an error: %s\n", s.Error)
 		return
 	} else if s.OK {
 		close(finished)

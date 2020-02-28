@@ -33,7 +33,7 @@ Contributions are strongly appreciated. Everything from creating bug reports to 
   - **file/parse :** Contains adapted versions of parse functions from `strconv` for extracting numbers from strings.
 - **gui :** All the code for creating the interface along with functions that run on button presses are to be found here.
   - **gui/widgets :** Custom widget adaptations to extend and simplify functionality.
-- **share :** All specific file sharing code for end-to-end encrypted file sharing over a local network.
+- **sync :** All specific file sharing code for end-to-end encrypted file sharing over a local network.
   
 ## License
 - Sparta is licensed under `GNU AFFERO GENERAL PUBLIC LICENSE Version 3` and created by [Jacalz](https://github.com/jacalz).
