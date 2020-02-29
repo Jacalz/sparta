@@ -10,7 +10,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"runtime"
 )
 
 // Data has the xml data for the initial data tag and then incorporates the Exercise struct.
@@ -35,20 +34,11 @@ type Exercise struct {
 var zeroData = &Data{}
 
 // ConfigDir returns the config directory where files are being stored.
-func ConfigDir() (dir string) {
-	// Workaround having golang 1.12.x in the cross compiling tool.
-	switch runtime.GOOS {
-	case "windows":
-		dir = os.Getenv("AppData")
-	case "darwin":
-		dir = os.Getenv("HOME")
-		dir += "/Library/Preferences"
-	default: // Unix
-		dir = os.Getenv("XDG_CONFIG_HOME")
-		if dir == "" {
-			dir = os.Getenv("HOME")
-			dir += "/.config"
-		}
+func ConfigDir() string {
+	// Get the config directory of the user.
+	dir, err := os.UserConfigDir()
+	if err != nil {
+		fmt.Print(err)
 	}
 
 	return filepath.Join(dir, "fyne", "com.github.jacalz.sparta")

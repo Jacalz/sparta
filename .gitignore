@@ -18,9 +18,4 @@ sparta
 *.apk
 
 # Files created and used when using fyne-cross
-fyne.syso
-*.tar.gz
-*.tar.xz
-*.app
-usr
-build
+fyne-cross
