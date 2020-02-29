@@ -46,7 +46,7 @@ func (u *user) SyncView(window fyne.Window) fyne.CanvasObject {
 	// shareGroup is a group containing all the options for sharing data.
 	shareGroup := widget.NewGroup("Syncronizing Data", startSendingDataButton)
 
-	// Listen in on the channels sent from recieve and send.
+	// Listen in on the channels sent from receive and send.
 	go func() {
 		for {
 			select {
@@ -54,7 +54,7 @@ func (u *user) SyncView(window fyne.Window) fyne.CanvasObject {
 				recieveCodeEntry.SetText(code)
 			case <-u.FinishedSync:
 				recieveDataButton.Enable()
-				dialog.ShowInformation("Syncronization sucessfull", "The syncronization of exercises finsished sucessfully.", window)
+				dialog.ShowInformation("Synchronization successful", "The synchronization of exercises finsished successfully.", window)
 			case err := <-u.Errors:
 				dialog.ShowError(err, window)
 				recieveDataButton.Enable()
