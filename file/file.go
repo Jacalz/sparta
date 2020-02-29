@@ -38,10 +38,10 @@ func ConfigDir() string {
 	// Get the config directory of the user.
 	dir, err := os.UserConfigDir()
 	if err != nil {
-		fmt.Print(err)
+		fmt.Println("Reading user config directory: ", err)
 	}
 
-	return filepath.Join(dir, "fyne", "com.github.jacalz.sparta")
+	return filepath.Join(dir, "com.github.jacalz.sparta")
 }
 
 // FirstRun checks if it is an initial application start.
@@ -65,10 +65,17 @@ func Check(key *[32]byte) (exercises Data, err error) {
 		}
 
 	} else if os.IsNotExist(err) {
+		// Check if the directory does exist or not, if it doesn't we create it.
+		if _, err := os.Stat(ConfigDir()); os.IsNotExist(err) {
+			if _, err := os.Create(ConfigDir()); err != nil {
+				fmt.Println("Could not create directory: ", err)
+			}
+		}
+
 		// Since the file didn't exist, we create it.
 		_, err := os.Create(filepath.Join(ConfigDir(), "exercises.json"))
 		if err != nil {
-			fmt.Print("Could not create the file.", err)
+			fmt.Println("Could not create the file: ", err)
 		}
 	}
 
@@ -105,7 +112,7 @@ func readData(key *[32]byte) (exercises Data, err error) {
 	// Open up the file and it's content.
 	data, err := os.Open(filepath.Join(ConfigDir(), "exercises.json"))
 	if err != nil {
-		fmt.Print(err)
+		fmt.Println("Opening file while reading: ", err)
 	}
 
 	// Read the JSON data from the encrypted file.
@@ -125,13 +132,13 @@ func (d *Data) Write(key *[32]byte) {
 	//Marchal the xml content in to a file variable.
 	file, err := json.Marshal(d)
 	if err != nil {
-		fmt.Print(err)
+		fmt.Println("Marshalling of json: ", err)
 	}
 
 	// Write to the file.
 	err = ioutil.WriteFile(filepath.Join(ConfigDir(), "exercises.json"), crypto.Encrypt(key, file), 0644)
 	if err != nil {
-		fmt.Print(err)
+		fmt.Println("Writing to file: ", err)
 	}
 }
 
@@ -163,6 +170,6 @@ func (d *Data) Delete() {
 	// Remove the file to clear it.
 	err := os.Remove(filepath.Join(ConfigDir(), "exercises.json"))
 	if err != nil {
-		fmt.Print(err)
+		fmt.Println("Removing file: ", err)
 	}
 }
