@@ -136,7 +136,7 @@ func (d *Data) Write(key *[32]byte) {
 	}
 
 	// Write to the file.
-	err = ioutil.WriteFile(filepath.Join(ConfigDir(), "exercises.json"), crypto.Encrypt(key, file), 0644)
+	err = ioutil.WriteFile(filepath.Join(ConfigDir(), "exercises.json"), crypto.Encrypt(key, file), 0600)
 	if err != nil {
 		fmt.Println("Writing to file: ", err)
 	}

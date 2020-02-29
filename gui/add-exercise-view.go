@@ -96,8 +96,17 @@ func (u *user) ExerciseView(window fyne.Window) fyne.CanvasObject {
 				var year, month, day, hour, min int
 
 				// Parse the date and time from strings.
-				fmt.Sscanf(dateEntry.Text, "%v-%v-%v", &year, &month, &day)
-				fmt.Sscanf(clockEntry.Text, "%v:%v", &hour, &min)
+				_, err := fmt.Sscanf(dateEntry.Text, "%v-%v-%v", &year, &month, &day)
+				if err != nil {
+					fmt.Println("Parsing date: ", err)
+					return
+				}
+
+				_, err = fmt.Sscanf(clockEntry.Text, "%v:%v", &hour, &min)
+				if err != nil {
+					fmt.Println("Parsing time: ", err)
+					return
+				}
 
 				// Create the time.Time value for the imputed data.
 				timeOfExercise := time.Date(year, time.Month(month), day, hour, min, 0, 0, time.Local)
