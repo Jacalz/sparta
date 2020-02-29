@@ -17,6 +17,9 @@ check:
 	# Run full formating on the code.
 	gofmt -s -w .
 
+	# Check the whole program for security issues.
+	 ~/go/bin/gosec ./...
+
 compress:
 	# Compress the MacOS application into a zip file.
 	(cd fyne-cross/dist/ && zip -r sparta-darwin-amd64.zip darwin-amd64/Sparta.app)
