@@ -67,7 +67,7 @@ func Check(key *[32]byte) (exercises Data, err error) {
 	} else if os.IsNotExist(err) {
 		// Check if the directory does exist or not, if it doesn't we create it.
 		if _, err := os.Stat(ConfigDir()); os.IsNotExist(err) {
-			if _, err := os.Create(ConfigDir()); err != nil {
+			if err := os.Mkdir(ConfigDir(), os.ModePerm); err != nil {
 				fmt.Println("Could not create directory: ", err)
 			}
 		}
