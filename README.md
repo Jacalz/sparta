@@ -27,7 +27,7 @@ Contributions are strongly appreciated. Everything from creating bug reports to 
 
 ### Folder structure:
 - **assets/ :** Storage for icons and other assets used throughout the project.
-- **bundled/ :** Images and logos bundled in to the source code.
+- **assets/ :** Logos and artwork along with logos bundled in to the source code.
 - **crypto/ :** Cryptographic functions for hashing along with encryption and decryption.
 - **file/ :** Common code for file handling in the application.
   - **file/parse :** Contains adapted versions of parse functions from `strconv` for extracting numbers from strings.

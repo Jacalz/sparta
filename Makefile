@@ -10,6 +10,13 @@ android:
 	# Build the Android apk using the Android SDK.
 	~/go/bin/fyne package -os android -appID ${appID} -name ${name} -icon ${icon}
 
+bundle:
+	# Bundle the correct logo into sparta/src/bundled/bundled.go
+	~/go/bin/fyne bundle -package assets assets/icon-256.png > assets/bundled.go
+
+	# Modify the variable name to be correct.
+	sed -i 's/resourceIcon256Png/AppIcon/g' assets/bundled.go
+
 check:
 	# Check the whole codebase for misspellings.
 	~/go/bin/misspell -w .
