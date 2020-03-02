@@ -5,6 +5,7 @@ import (
 	"sparta/file"
 
 	"fyne.io/fyne/app"
+	"fyne.io/fyne/theme"
 )
 
 // User holds the data about the user that is currently logged in.
@@ -47,6 +48,14 @@ func Init() {
 
 	// Create the user struct type for later use.
 	user := newUser()
+
+	// Check that we are using the right theme.
+	switch app.Preferences().StringWithFallback("Theme", "Light") {
+	case "Dark":
+		app.Settings().SetTheme(theme.DarkTheme())
+	case "Light":
+		app.Settings().SetTheme(theme.LightTheme())
+	}
 
 	// Show the login page and all content after that.
 	ShowLoginPage(app, window, user)
