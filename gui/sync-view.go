@@ -53,6 +53,7 @@ func (u *user) SyncView(window fyne.Window) fyne.CanvasObject {
 			case code := <-syncCodeChan:
 				recieveCodeEntry.SetText(code)
 			case <-u.FinishedSync:
+				recieveCodeEntry.SetText("")
 				recieveDataButton.Enable()
 				dialog.ShowInformation("Synchronization successful", "The synchronization of exercises finsished successfully.", window)
 			case err := <-u.Errors:
