@@ -32,6 +32,7 @@ func newUser() *user {
 		EmptyExercises:   make(chan bool),
 		ReorderExercises: make(chan bool),
 		Errors:           make(chan error),
+		FinishedSync:     make(chan bool),
 	}
 }
 

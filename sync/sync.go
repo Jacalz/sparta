@@ -12,7 +12,7 @@ import (
 )
 
 // StartSync starts up the server on the local network and returns it so we can call shutdown.
-func StartSync(synccode chan string, errors chan error, finished chan bool) {
+func StartSync(synccode chan string, errors chan error, done chan bool) {
 	// Create the wormhole client.
 	var c wormhole.Client
 
@@ -40,7 +40,7 @@ func StartSync(synccode chan string, errors chan error, finished chan bool) {
 		errors <- s.Error
 		return
 	} else if s.OK {
-		close(finished)
+		done <- true
 	}
 }
 
