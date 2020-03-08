@@ -3,9 +3,9 @@
 ## 0.6.0 - Forth beta
 - Improve the experience when logging in with the wrong account.
 - Changed share wording to sync instead.
-- Show sync errors with error popups in the gui.
-- Update in-memory login credentials when chaning password or username.
-- Added support for up/down arrows and enter to execute for username and password chang entries in settings.
+- Show sync errors with error popups in the GUI.
+- Update in-memory login credentials when changing password or username.
+- Added support for up/down arrows and enter to execute for username and password change entries in settings.
 - How a popup telling the sender if the sync completed.
 - Switch from activity wording to exercise.
 - Clear the sync code on successful sync.
