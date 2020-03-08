@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"fmt"
 	"sparta/gui/widgets"
 	"sparta/sync"
 
@@ -57,6 +58,7 @@ func (u *user) SyncView(window fyne.Window) fyne.CanvasObject {
 				recieveDataButton.Enable()
 				dialog.ShowInformation("Synchronization successful", "The synchronization of exercises finsished successfully.", window)
 			case err := <-u.Errors:
+				fmt.Printf("Sync returned an error: %s", err)
 				dialog.ShowError(err, window)
 				recieveDataButton.Enable()
 			}
