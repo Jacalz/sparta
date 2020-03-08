@@ -5,5 +5,5 @@ go 1.13
 require (
 	fyne.io/fyne v1.2.3
 	github.com/psanford/wormhole-william v1.0.1
-	golang.org/x/net v0.0.0-20200114155413-6afb5195e5aa // indirect
+	golang.org/x/net v0.0.0-20200301022130-244492dfa37a // indirect
 )
