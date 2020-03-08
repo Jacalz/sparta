@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.6.0 - Forth beta
+- Improve the experience when logging in with the wrong account.
+- Changed share wording to sync instead.
+- Show sync errors with error popups in the gui.
+- Update in-memory login credentials when chaning password or username.
+- Added support for up/down arrows and enter to execute for username and password chang entries in settings.
+- How a popup telling the sender if the sync completed.
+- Switch from activity wording to exercise.
+- Clear the sync code on successful sync.
+- In general a better sync experience for users.
+- Improved file handling and better error messages (breaking change).
+- Fix a couple security issues brought up by gosec.
+- Move theme select to beginning to hopefully fix windows weirdness.
+- A bunch of spelling fixes.
+- Update fyne-cross to v1.4.0.
+  - All binaries are now built with Go 1.13.8 over the 1.12.x series.
+    - This means that MacOS 10.11 El Capitan is the minimum supported version.
+    - Defer uses in the codebase should be around 30% faster.
+- Updated fyne to v1.2.3 for a bunch of fixes.
+- Switched from shell scripts to makefiles for common operations.
+  - Added `make check` command for running `gosec`, `misspell` and `gofmt` for major checks over the whole codebase.
+
 ## 0.5.0 - Third beta
 - A substantial code refractor of the user interface to cleanup code and remove use of global variables.
 - Added an option to change the username in the settings.
