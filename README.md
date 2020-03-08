@@ -19,13 +19,20 @@ Sparta is built using the following Go packages:
 ## Downloads
 
 Please visit the [release page](https://github.com/Jacalz/sparta/releases) for the downloading the latest release.
-Versions for Linux, MacOS and Windows are available, with an Android version coming in the future.
+Versions for Linux, MacOS and Windows are available, with an Android version possibly coming in the future.
 
 ## Contributing
 
 Contributions are strongly appreciated. Everything from creating bug reports to contributing code will help the project a lot, so please feel free to help in any way, shape or form that you feel comfortable doing. We as a community can strive towards making this project even better. If you want to contribute code, the folder structure below will hopefully help you know where to start looking.
 
-### Folder structure:
+### TODO
+- [ ] Create a custom widget for displaying exercises in a more pleasant way.
+- [ ] Add the option to delete individual exercises.
+- [ ] Add import of gpx files from smart training watches and other training equipment.
+- [ ] An about page with logo, name and version number.
+- [ ] Possibly an Android version and maybe an iOS version if it is requested.
+
+### Folder Structure
 - **assets/ :** Storage for icons and other assets used throughout the project.
 - **assets/ :** Logos and artwork along with logos bundled in to the source code.
 - **crypto/ :** Cryptographic functions for hashing along with encryption and decryption.
