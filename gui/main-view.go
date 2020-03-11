@@ -58,6 +58,7 @@ func ShowMainDataView(window fyne.Window, app fyne.App, user *user) {
 	// Create tabs with data.
 	tabs := widget.NewTabContainer(
 		widget.NewTabItemWithIcon("Exercises", theme.HomeIcon(), dataPage),
+		widget.NewTabItemWithIcon("Statistics", theme.ZoomInIcon(), user.StatisticsView()),
 		widget.NewTabItemWithIcon("Add Exercise", theme.ContentAddIcon(), user.ExerciseView(window)),
 		widget.NewTabItemWithIcon("Sync", theme.MailSendIcon(), user.SyncView(window)),
 		widget.NewTabItemWithIcon("Settings", theme.SettingsIcon(), user.SettingsView(window, app)),
