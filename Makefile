@@ -42,14 +42,10 @@ compress:
 
 cross-compile:
 	# Remove all dist files.
-	sudo rm -rf fyne-cross/dist/*
+	rm -rf fyne-cross/dist/*
 
 	# Start by cross compiling for all our targets.
-	sudo ~/go/bin/fyne-cross -targets=windows/amd64,darwin/amd64,linux/amd64 -icon ${icon} -appID ${appID} -output=${name} .
-
-fix-permissions:
-	# Docker has to be run with sudo and thus the fyne-cross directory has the wrong file permissions.
-	sudo chmod -R 777 fyne-cross/
+	~/go/bin/fyne-cross -targets=windows/amd64,darwin/amd64,linux/amd64 -icon ${icon} -appID ${appID} -output=${name} .
 
 # Run the full release to prepare for an upcoming release.
-release: cross-compile fix-permissions compress
+release: cross-compile compress
