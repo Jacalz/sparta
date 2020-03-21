@@ -22,12 +22,15 @@ func (u *user) SyncView(window fyne.Window) fyne.CanvasObject {
 	aboutGroup := widget.NewGroup("About Exercise Synchronization", widget.NewLabelWithStyle("The share support in Sparta enables the user to syncronize their exercises.\nThe file is served encrypted and will be automatically decrypted on a second device using the same login credentials.\nIt is as simple as starting the share on one device and then starting receiving on another device on the same network.\nThe receiving computer will then get all the new activities added locally.", fyne.TextAlignCenter, fyne.TextStyle{}))
 
 	// recieveCode makes it possible to type in receive code.
-	recieveCodeEntry := widgets.NewEntryWithPlaceholder("Receive Code")
+	recieveCodeEntry := widgets.NewExtendedEntry("Receive Code", false)
 
 	// recieveDataButton starts looking for shared data on the local network.
 	recieveDataButton := widget.NewButtonWithIcon("Start Receiving Exercises", theme.MailComposeIcon(), func() {
 		go sync.Retrieve(&u.Data, u.ReorderExercises, u.FirstExercise, u.Errors, u.FinishedSync, &u.EncryptionKey, recieveCodeEntry.Text)
 	})
+
+	// Extend the recieveCodeEntry to add the option for recieving on pressing enter.
+	recieveCodeEntry.InitExtend(*recieveDataButton, widgets.ButtonFocus{})
 
 	// sendDataButton starts the network server and shares the file over the local internet.
 	startSendingDataButton := widget.NewButtonWithIcon("Start Syncing Exercises", theme.ViewRefreshIcon(), func() {
