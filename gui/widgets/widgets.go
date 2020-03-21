@@ -13,9 +13,7 @@ type ExtendedEntry struct {
 	*PressAction
 
 	// Fields related to switching entry with button.
-	ButtonPress  fyne.KeyName
-	EntryToFocus *ExtendedEntry
-	Window       fyne.Window
+	*ButtonFocus
 }
 
 // PressAction handles the Button press action.
@@ -23,13 +21,24 @@ type PressAction struct {
 	Button widget.Button
 }
 
+// ButtonFocus handles focusing a different entry on a specific key press.
+type ButtonFocus struct {
+	ButtonPress  fyne.KeyName
+	EntryToFocus *ExtendedEntry
+	Window       fyne.Window
+}
+
 // TypedKey handles the key presses inside our UsernameEntry and uses Action to press the linked button.
 func (e *ExtendedEntry) TypedKey(ev *fyne.KeyEvent) {
 	switch ev.Name {
 	case fyne.KeyReturn:
-		e.PressAction.Button.OnTapped()
+		if e.PressAction != nil {
+			e.PressAction.Button.OnTapped()
+		}
 	case e.ButtonPress:
-		e.Window.Canvas().Focus(e.EntryToFocus)
+		if e.ButtonFocus != nil {
+			e.Window.Canvas().Focus(e.ButtonFocus.EntryToFocus)
+		}
 	default:
 		e.Entry.TypedKey(ev)
 	}
@@ -54,11 +63,9 @@ func NewExtendedEntry(placeholder string, password bool) *ExtendedEntry {
 }
 
 // InitExtend adds extra data to the extended entry.
-func (e *ExtendedEntry) InitExtend(window fyne.Window, key fyne.KeyName, focus *ExtendedEntry, press widget.Button) {
+func (e *ExtendedEntry) InitExtend(press widget.Button, focus ButtonFocus) {
 	e.PressAction = &PressAction{Button: press}
-	e.EntryToFocus = focus
-	e.ButtonPress = key
-	e.Window = window
+	e.ButtonFocus = &focus
 }
 
 // NewEntryWithPlaceholder makes it easy to create entry widgets with placeholders.

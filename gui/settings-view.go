@@ -95,8 +95,8 @@ func (u *user) SettingsView(window fyne.Window, app fyne.App) fyne.CanvasObject 
 	})
 
 	// Extend our extended buttons with array entry switching and enter to change.
-	usernameEntry.InitExtend(window, fyne.KeyDown, passwordEntry, *usernameButton)
-	passwordEntry.InitExtend(window, fyne.KeyUp, usernameEntry, *passwordButton)
+	usernameEntry.InitExtend(*usernameButton, widgets.ButtonFocus{ButtonPress: fyne.KeyDown, EntryToFocus: passwordEntry, Window: window})
+	passwordEntry.InitExtend(*passwordButton, widgets.ButtonFocus{ButtonPress: fyne.KeyUp, EntryToFocus: usernameEntry, Window: window})
 
 	// passwordChanger holds the widgets for the password changer.
 	passwordChanger := fyne.NewContainerWithLayout(layout.NewGridLayout(2), passwordEntry, passwordButton)

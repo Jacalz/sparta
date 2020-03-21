@@ -63,8 +63,8 @@ func ShowLoginPage(app fyne.App, window fyne.Window, user *user) {
 	})
 
 	// Extend the ExtendedEntry widgets with extra key press supports.
-	username.InitExtend(window, fyne.KeyDown, password, *loginButton)
-	password.InitExtend(window, fyne.KeyUp, username, *loginButton)
+	username.InitExtend(*loginButton, widgets.ButtonFocus{ButtonPress: fyne.KeyDown, EntryToFocus: password, Window: window})
+	password.InitExtend(*loginButton, widgets.ButtonFocus{ButtonPress: fyne.KeyUp, EntryToFocus: username, Window: window})
 
 	// Set the content to be displayed. It is the userName, userPassword fields and the login button inside a layout.
 	window.SetContent(fyne.NewContainerWithLayout(layout.NewVBoxLayout(), username, password, loginButton))
