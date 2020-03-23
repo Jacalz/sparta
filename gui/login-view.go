@@ -31,10 +31,10 @@ func CheckValidInput(username, password string, window fyne.Window) (valid bool)
 // ShowLoginPage shows the login page that handles the inertaface for logging in.
 func ShowLoginPage(app fyne.App, window fyne.Window, user *user) {
 	// Initialize the login form that we are to be using.
-	username := widgets.NewExtendedEntry("Username", false)
+	username := widgets.NewAdvancedEntry("Username", false)
 
 	// Initialize the password input box that we are to be using.
-	password := widgets.NewExtendedEntry("Password", true)
+	password := widgets.NewAdvancedEntry("Password", true)
 
 	// Create the login button that will calculate the 32bit long sha256 hash.
 	loginButton := widget.NewButton("Login", func() {
@@ -63,8 +63,8 @@ func ShowLoginPage(app fyne.App, window fyne.Window, user *user) {
 	})
 
 	// Extend the ExtendedEntry widgets with extra key press supports.
-	username.InitExtend(*loginButton, widgets.ButtonFocus{ButtonPress: fyne.KeyDown, EntryToFocus: password, Window: window})
-	password.InitExtend(*loginButton, widgets.ButtonFocus{ButtonPress: fyne.KeyUp, EntryToFocus: username, Window: window})
+	username.InitExtend(*loginButton, widgets.MoveAction{Down: true, DownEntry: password, Window: window})
+	password.InitExtend(*loginButton, widgets.MoveAction{Up: true, UpEntry: username, Window: window})
 
 	// Set the content to be displayed. It is the userName, userPassword fields and the login button inside a layout.
 	window.SetContent(fyne.NewContainerWithLayout(layout.NewVBoxLayout(), username, password, loginButton))

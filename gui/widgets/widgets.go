@@ -5,15 +5,15 @@ import (
 	"fyne.io/fyne/widget"
 )
 
-// ExtendedEntry is used to make an entry that reacts to key presses.
-type ExtendedEntry struct {
+// AdvancedEntry is used to make an entry that reacts to key presses.
+type AdvancedEntry struct {
 	widget.Entry
 
 	// PressAction for pressing a button on return.
 	*PressAction
 
 	// Fields related to switching entry with button.
-	*ButtonFocus
+	*MoveAction
 }
 
 // PressAction handles the Button press action.
@@ -21,32 +21,40 @@ type PressAction struct {
 	Button widget.Button
 }
 
-// ButtonFocus handles focusing a different entry on a specific key press.
-type ButtonFocus struct {
-	ButtonPress  fyne.KeyName
-	EntryToFocus *ExtendedEntry
-	Window       fyne.Window
+// MoveAction handles focusing a different entry on a specific arrow key press.
+type MoveAction struct {
+	// Entry widgets to focus on up and down arrow keys respectively.
+	UpEntry   *AdvancedEntry
+	DownEntry *AdvancedEntry
+
+	// Bools to turn  up and down of in case they are not needed.
+	Up, Down bool
+
+	// Window used for focus calls.
+	Window fyne.Window
 }
 
 // TypedKey handles the key presses inside our UsernameEntry and uses Action to press the linked button.
-func (e *ExtendedEntry) TypedKey(ev *fyne.KeyEvent) {
+func (a *AdvancedEntry) TypedKey(ev *fyne.KeyEvent) {
 	switch ev.Name {
 	case fyne.KeyReturn:
-		if e.PressAction != nil {
-			e.PressAction.Button.OnTapped()
+		a.PressAction.Button.OnTapped()
+	case fyne.KeyUp:
+		if a.Up {
+			a.Window.Canvas().Focus(a.MoveAction.UpEntry)
 		}
-	case e.ButtonPress:
-		if e.ButtonFocus != nil {
-			e.Window.Canvas().Focus(e.ButtonFocus.EntryToFocus)
+	case fyne.KeyDown:
+		if a.Down {
+			a.Window.Canvas().Focus(a.MoveAction.DownEntry)
 		}
 	default:
-		e.Entry.TypedKey(ev)
+		a.Entry.TypedKey(ev)
 	}
 }
 
-// NewExtendedEntry creates an ExtendedEntry button.
-func NewExtendedEntry(placeholder string, password bool) *ExtendedEntry {
-	entry := &ExtendedEntry{}
+// NewAdvancedEntry creates an ExtendedEntry button.
+func NewAdvancedEntry(placeholder string, password bool) *AdvancedEntry {
+	entry := &AdvancedEntry{}
 
 	// Extend the base widget.
 	entry.ExtendBaseWidget(entry)
@@ -63,9 +71,9 @@ func NewExtendedEntry(placeholder string, password bool) *ExtendedEntry {
 }
 
 // InitExtend adds extra data to the extended entry.
-func (e *ExtendedEntry) InitExtend(press widget.Button, focus ButtonFocus) {
-	e.PressAction = &PressAction{Button: press}
-	e.ButtonFocus = &focus
+func (a *AdvancedEntry) InitExtend(press widget.Button, move MoveAction) {
+	a.PressAction = &PressAction{Button: press}
+	a.MoveAction = &move
 }
 
 // NewEntryWithPlaceholder makes it easy to create entry widgets with placeholders.
