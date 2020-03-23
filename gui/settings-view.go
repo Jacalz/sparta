@@ -64,8 +64,6 @@ func (u *user) SettingsView(window fyne.Window, app fyne.App) fyne.CanvasObject 
 
 	})
 
-	usernameChanger := fyne.NewContainerWithLayout(layout.NewGridLayout(2), usernameEntry, usernameButton)
-
 	// Create the entry for updating the password.
 	passwordEntry := widgets.NewAdvancedEntry("New Password", true)
 
@@ -98,9 +96,6 @@ func (u *user) SettingsView(window fyne.Window, app fyne.App) fyne.CanvasObject 
 	usernameEntry.InitExtend(*usernameButton, widgets.MoveAction{Down: true, DownEntry: passwordEntry, Window: window})
 	passwordEntry.InitExtend(*passwordButton, widgets.MoveAction{Up: true, UpEntry: usernameEntry, Window: window})
 
-	// passwordChanger holds the widgets for the password changer.
-	passwordChanger := fyne.NewContainerWithLayout(layout.NewGridLayout(2), passwordEntry, passwordButton)
-
 	// revertToDefaultSettings reverts all settings to their default values.
 	revertToDefaultSettings := widget.NewButtonWithIcon("Reset settings to default values", theme.ViewRefreshIcon(), func() {
 		// Update theme and saved settings for theme change.
@@ -132,14 +127,14 @@ func (u *user) SettingsView(window fyne.Window, app fyne.App) fyne.CanvasObject 
 	// userInterfaceSettings is a group holding widgets related to user interface settings such as theme.
 	userInterfaceSettings := widget.NewGroup("User Interface Settings", themeChanger)
 
-	// accountPasswordSettings groups together all settings related to usernames and passwords.
-	accountPasswordSettings := widget.NewGroup("Account and Password Settings", usernameChanger, passwordChanger)
+	// credentialSettings groups together all settings related to usernames and passwords.
+	credentialSettings := widget.NewGroup("Login Credential Settings", fyne.NewContainerWithLayout(layout.NewGridLayout(2), usernameEntry, usernameButton, passwordEntry, passwordButton))
 
 	// advancedSettings is a group holding widgets related to advanced settings.
 	advancedSettings := widget.NewGroup("Advanced Settings", revertToDefaultSettings, widget.NewLabel(""), deleteButton)
 
 	// settingsContentView holds all widget groups and content for the settings page.
-	settingsContentView := fyne.NewContainerWithLayout(layout.NewVBoxLayout(), userInterfaceSettings, layout.NewSpacer(), accountPasswordSettings, layout.NewSpacer(), advancedSettings)
+	settingsContentView := fyne.NewContainerWithLayout(layout.NewVBoxLayout(), userInterfaceSettings, layout.NewSpacer(), credentialSettings, layout.NewSpacer(), advancedSettings)
 
 	return widget.NewScrollContainer(settingsContentView)
 }
