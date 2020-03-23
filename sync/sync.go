@@ -8,6 +8,7 @@ import (
 	"path"
 	"sort"
 
+	"fyne.io/fyne"
 	"github.com/psanford/wormhole-william/wormhole"
 )
 
@@ -19,6 +20,8 @@ func StartSync(synccode chan string, errors chan error, done chan bool) {
 	// Open up the file.
 	f, err := os.Open(path.Join(file.ConfigDir(), "exercises.json"))
 	if err != nil {
+		fyne.LogError("Error on opening the file to share", err)
+		errors <- err
 		return
 	}
 
@@ -28,6 +31,7 @@ func StartSync(synccode chan string, errors chan error, done chan bool) {
 	// Send the file in the background.
 	code, status, err := c.SendFile(context.Background(), path.Join(file.ConfigDir(), "sparta", "exercises.json"), f)
 	if err != nil {
+		fyne.LogError("Error on sending the file to share", err)
 		errors <- err
 		return
 	}
@@ -37,6 +41,7 @@ func StartSync(synccode chan string, errors chan error, done chan bool) {
 
 	// Handle the status of the sharing.
 	if s := <-status; s.Error != nil {
+		fyne.LogError("Error regarding status of share", err)
 		errors <- s.Error
 		return
 	} else if s.OK {
@@ -52,6 +57,7 @@ func Retrieve(stored *file.Data, ReorderExercises chan bool, FirstExercise chan 
 	// Receive the data from wormhole sharing.
 	data, err := c.Receive(context.Background(), code)
 	if err != nil {
+		fyne.LogError("Error on receiving", err)
 		errors <- err
 		return
 	}
@@ -59,6 +65,7 @@ func Retrieve(stored *file.Data, ReorderExercises chan bool, FirstExercise chan 
 	// received will store all fetched data.
 	received, err := file.ReadEncryptedJSON(data, key)
 	if err != nil {
+		fyne.LogError("Error on reading the encrypted JSON data", err)
 		errors <- err
 		return
 	}

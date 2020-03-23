@@ -1,8 +1,9 @@
 package parse
 
 import (
-	"fmt"
 	"strconv"
+
+	"fyne.io/fyne"
 )
 
 // Float is a wrapper around strconv.ParseFloat that handles the error to make the function usable inline.
@@ -13,7 +14,8 @@ func Float(input string) float64 {
 
 	output, err := strconv.ParseFloat(input, 64)
 	if err != nil {
-		fmt.Print(err)
+		fyne.LogError("Error on parsing float", err)
+		return 0
 	}
 
 	return output
@@ -27,7 +29,8 @@ func Uint(input string) uint {
 
 	output, err := strconv.Atoi(input)
 	if err != nil {
-		fmt.Print(err)
+		fyne.LogError("Error on parsing int", err)
+		return 0
 	}
 
 	return uint(output)

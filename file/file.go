@@ -10,6 +10,8 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+
+	"fyne.io/fyne"
 )
 
 // Data has the xml data for the initial data tag and then incorporates the Exercise struct.
@@ -38,7 +40,7 @@ func ConfigDir() string {
 	// Get the config directory of the user.
 	dir, err := os.UserConfigDir()
 	if err != nil {
-		fmt.Println("Reading user config directory: ", err)
+		fyne.LogError("Error on reading config directory", err)
 	}
 
 	return filepath.Join(dir, "com.github.jacalz.sparta")
@@ -68,14 +70,14 @@ func Check(key *[32]byte) (exercises Data, err error) {
 		// Check if the directory does exist or not, if it doesn't we create it.
 		if _, err := os.Stat(ConfigDir()); os.IsNotExist(err) {
 			if err := os.Mkdir(ConfigDir(), os.ModePerm); err != nil {
-				fmt.Println("Could not create directory: ", err)
+				fyne.LogError("Error on creating directory", err)
 			}
 		}
 
 		// Since the file didn't exist, we create it.
 		_, err := os.Create(filepath.Join(ConfigDir(), "exercises.json"))
 		if err != nil {
-			fmt.Println("Could not create the file: ", err)
+			fyne.LogError("Error on creating the file", err)
 		}
 	}
 
@@ -112,7 +114,7 @@ func readData(key *[32]byte) (exercises Data, err error) {
 	// Open up the file and it's content.
 	data, err := os.Open(filepath.Join(ConfigDir(), "exercises.json"))
 	if err != nil {
-		fmt.Println("Opening file while reading: ", err)
+		fyne.LogError("Error on opening the file", err)
 	}
 
 	// Read the JSON data from the encrypted file.
@@ -132,13 +134,13 @@ func (d *Data) Write(key *[32]byte) {
 	//Marchal the xml content in to a file variable.
 	file, err := json.Marshal(d)
 	if err != nil {
-		fmt.Println("Marshalling of json: ", err)
+		fyne.LogError("Error on marshalling of json", err)
 	}
 
 	// Write to the file.
 	err = ioutil.WriteFile(filepath.Join(ConfigDir(), "exercises.json"), crypto.Encrypt(key, file), 0600)
 	if err != nil {
-		fmt.Println("Writing to file: ", err)
+		fyne.LogError("Error on writing to file", err)
 	}
 }
 
@@ -170,6 +172,6 @@ func (d *Data) Delete() {
 	// Remove the file to clear it.
 	err := os.Remove(filepath.Join(ConfigDir(), "exercises.json"))
 	if err != nil {
-		fmt.Println("Removing file: ", err)
+		fyne.LogError("Error on removing the json file", err)
 	}
 }
