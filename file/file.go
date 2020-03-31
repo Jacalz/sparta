@@ -16,20 +16,20 @@ import (
 
 // Data has the xml data for the initial data tag and then incorporates the Exercise struct.
 type Data struct {
-	Exercise []Exercise `json:"exercise"`
+	Exercise []Exercise `json:"exercise,omitempty"`
 }
 
 // Exercise keeps track of the data for each exercise that the user has done.
 type Exercise struct {
-	Time     time.Time `json:"time"`
-	Date     string    `json:"date"`
-	Clock    string    `json:"clock"`
-	Activity string    `json:"activity"`
-	Distance float64   `json:"distance"`
-	Duration float64   `json:"duration"`
-	Reps     uint      `json:"reps"`
-	Sets     uint      `json:"sets"`
-	Comment  string    `json:"comment"`
+	Time     time.Time `json:"time,omitempty"`
+	Date     string    `json:"date,omitempty"`
+	Clock    string    `json:"clock,omitempty"`
+	Activity string    `json:"activity,omitempty"`
+	Distance float64   `json:"distance,omitempty"`
+	Duration float64   `json:"duration,omitempty"`
+	Reps     uint      `json:"reps,omitempty"`
+	Sets     uint      `json:"sets,omitempty"`
+	Comment  string    `json:"comment,omitempty"`
 }
 
 // zeroData is a variable containing an empty Data struct.
