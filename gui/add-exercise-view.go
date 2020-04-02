@@ -43,29 +43,17 @@ func (u *user) ExerciseView(window fyne.Window) fyne.CanvasObject {
 		},
 	}
 
-	// Compile regular expressions for checking numeric input with optional decimals..
-	numericFloat, err := regexp.Compile(`^$|(\d*\.)?\d+$`)
-	if err != nil {
-		fmt.Print(err)
-	}
+	// Compile regular expressions for checking numeric input with optional decimals.
+	validFloat := regexp.MustCompile(`^$|(\d*\.)?\d+$`)
 
-	// Compile regular expressions for checking numeric input without decimals..
-	numericUint, err := regexp.Compile(`^$|^[0-9]*$`)
-	if err != nil {
-		fmt.Print(err)
-	}
+	// Compile regular expressions for checking numeric input without decimals.
+	validUint := regexp.MustCompile(`^$|^[0-9]*$`)
 
 	// Compile regular expressions for checking date input.
-	date, err := regexp.Compile(`^(\d{1,4})-(\d{1,2})-(\d{1,2})$`)
-	if err != nil {
-		fmt.Print(err)
-	}
+	validDate := regexp.MustCompile(`^(\d{1,4})-(\d{1,2})-(\d{1,2})$`)
 
 	// Compile regular expressions for checking clock input.
-	clock, err := regexp.Compile(`^(\d{1,2}):(\d{1,2})$`)
-	if err != nil {
-		fmt.Print(err)
-	}
+	validClock := regexp.MustCompile(`^(\d{1,2}):(\d{1,2})$`)
 
 	// Create the form for displaying.
 	form.OnSubmit = func() {
@@ -74,18 +62,18 @@ func (u *user) ExerciseView(window fyne.Window) fyne.CanvasObject {
 
 		// Check that input is numeric in given fields.
 		switch {
-		case !numericFloat.Match([]byte(distanceEntry.Text)):
+		case !validFloat.MatchString(distanceEntry.Text):
 			nonNumericInput = true
-		case !numericFloat.Match([]byte(durationEntry.Text)):
+		case !validFloat.MatchString(durationEntry.Text):
 			nonNumericInput = true
-		case !numericUint.Match([]byte(setsEntry.Text)):
+		case !validUint.MatchString(setsEntry.Text):
 			nonNumericInput = true
-		case !numericUint.Match([]byte(repsEntry.Text)):
+		case !validUint.MatchString(repsEntry.Text):
 			nonNumericInput = true
 		}
 
 		// Show and error if any fields does not match the correct input patterns.
-		if nonNumericInput || activityEntry.Text == "" || !clock.Match([]byte(clockEntry.Text)) || !date.Match([]byte(dateEntry.Text)) {
+		if nonNumericInput || activityEntry.Text == "" || !validClock.MatchString(clockEntry.Text) || !validDate.MatchString(dateEntry.Text) {
 			dialog.ShowInformation("Non numeric input or invald formats in fields", "The date and the start time need correct data formating and the exercise can not be empty.\nDistance, time, sets and reps can all be empty, however they do need to contain numeric data if non empty.", window)
 		} else {
 			go func() {
