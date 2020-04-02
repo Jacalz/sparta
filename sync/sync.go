@@ -1,7 +1,9 @@
 package sync
 
 import (
+	"log"
 	"sparta/file"
+	"time"
 
 	"context"
 	"os"
@@ -13,7 +15,7 @@ import (
 )
 
 // StartSync starts up the server on the local network and returns it so we can call shutdown.
-func StartSync(synccode chan string, errors chan error, done chan bool) {
+func StartSync(synccode chan string, errors chan error, done chan bool, timeout uint16) {
 	// Create the wormhole client.
 	var c wormhole.Client
 
@@ -28,16 +30,32 @@ func StartSync(synccode chan string, errors chan error, done chan bool) {
 	// Defer the closing of the file.
 	defer f.Close()
 
+	log.Println(timeout)
+	log.Println(time.Duration(timeout) * time.Second)
+
+	// Set up a timeout and defer cancel so all timers are stopped when we are done.
+	ctx, cancel := context.WithTimeout(context.Background() /*time.Duration(timeout)*/, time.Second)
+	defer cancel()
+
 	// Send the file in the background.
-	code, status, err := c.SendFile(context.Background(), path.Join(file.ConfigDir(), "sparta", "exercises.json"), f)
+	code, status, err := c.SendFile(ctx, path.Join(file.ConfigDir(), "sparta", "exercises.json"), f)
 	if err != nil {
 		fyne.LogError("Error on sending the file to share", err)
 		errors <- err
 		return
 	}
 
+	log.Println("Cancelled?")
+
+	err = ctx.Err()
+	if err != nil {
+		errors <- err
+	}
+
 	// Send the code down the drain so it can be shown inside the ui.
 	synccode <- code
+
+	log.Println(<-status)
 
 	// Handle the status of the sharing.
 	if s := <-status; s.Error != nil {

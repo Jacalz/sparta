@@ -39,7 +39,7 @@ func (u *user) SyncView(window fyne.Window) fyne.CanvasObject {
 		recieveDataButton.Disable()
 
 		// Start the sharing.
-		go sync.StartSync(syncCodeChan, u.Errors, u.FinishedSync)
+		go sync.StartSync(syncCodeChan, u.Errors, u.FinishedSync, u.Timeout)
 	}
 
 	recieveDataButton.OnTapped = func() {

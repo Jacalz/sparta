@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"log"
 	"sparta/crypto"
 	"sparta/gui/widgets"
 
@@ -34,6 +35,28 @@ func (u *user) SettingsView(window fyne.Window, app fyne.App) fyne.CanvasObject 
 
 	// Add the theme switcher next to a label.
 	themeChanger := fyne.NewContainerWithLayout(layout.NewGridLayout(2), widget.NewLabel("Application Theme"), themeSwitcher)
+
+	// syncTimeoutSelector gives the user options to set timeout for the send sync command.
+	syncTimeoutSelector := widget.NewSelect([]string{"30 seconds", "1 minute", "2 minutes", "5 minutes"}, func(selected string) {
+		switch selected {
+		case "30 seconds":
+			u.Timeout = 1
+		case "1 minute":
+			u.Timeout = 60
+		case "2 minutes":
+			u.Timeout = 120
+		case "5 minutes":
+			u.Timeout = 300
+		}
+
+		log.Println(selected)
+	})
+
+	// Set the timeout selected to be the default timeout.
+	syncTimeoutSelector.SetSelected("30 seconds")
+
+	// timeoutSettings holds the timout settings widget containers.
+	timeoutSettings := fyne.NewContainerWithLayout(layout.NewGridLayout(2), widget.NewLabel("Syncronization Timeout"), syncTimeoutSelector)
 
 	// An entry for typing the new username.
 	usernameEntry := widgets.NewAdvancedEntry("New Username", false)
@@ -127,6 +150,9 @@ func (u *user) SettingsView(window fyne.Window, app fyne.App) fyne.CanvasObject 
 	// userInterfaceSettings is a group holding widgets related to user interface settings such as theme.
 	userInterfaceSettings := widget.NewGroup("User Interface Settings", themeChanger)
 
+	// syncSettings is the group for all settings related to sync support.
+	syncSettings := widget.NewGroup("Syncronization Settings", timeoutSettings)
+
 	// credentialSettings groups together all settings related to usernames and passwords.
 	credentialSettings := widget.NewGroup("Login Credential Settings", fyne.NewContainerWithLayout(layout.NewGridLayout(2), usernameEntry, usernameButton, passwordEntry, passwordButton))
 
@@ -134,7 +160,7 @@ func (u *user) SettingsView(window fyne.Window, app fyne.App) fyne.CanvasObject 
 	advancedSettings := widget.NewGroup("Advanced Settings", revertToDefaultSettings, widget.NewLabel(""), deleteButton)
 
 	// settingsContentView holds all widget groups and content for the settings page.
-	settingsContentView := fyne.NewContainerWithLayout(layout.NewVBoxLayout(), userInterfaceSettings, layout.NewSpacer(), credentialSettings, layout.NewSpacer(), advancedSettings)
+	settingsContentView := fyne.NewContainerWithLayout(layout.NewVBoxLayout(), userInterfaceSettings, layout.NewSpacer(), syncSettings, layout.NewSpacer(), credentialSettings, layout.NewSpacer(), advancedSettings)
 
 	return widget.NewScrollContainer(settingsContentView)
 }

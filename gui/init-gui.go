@@ -14,6 +14,7 @@ type user struct {
 	Password      string
 	EncryptionKey [32]byte
 	Data          file.Data
+	Timeout       uint16
 
 	// Data channels for exercises.
 	NewExercise      chan string
@@ -27,7 +28,9 @@ type user struct {
 }
 
 func newUser() *user {
-	return &user{NewExercise: make(chan string),
+	return &user{
+		// Make sure to create all the channels.
+		NewExercise:      make(chan string),
 		FirstExercise:    make(chan string),
 		EmptyExercises:   make(chan bool),
 		ReorderExercises: make(chan bool),
