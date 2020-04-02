@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"regexp"
 	"sparta/gui/widgets"
 	"sparta/sync"
 
@@ -42,12 +43,17 @@ func (u *user) SyncView(window fyne.Window) fyne.CanvasObject {
 		go sync.StartSync(syncCodeChan, u.Errors, u.FinishedSync)
 	}
 
-	recieveDataButton.OnTapped = func() {
-		// Disable the button to make sure that users can't do anything bad.
-		startSendingDataButton.Disable()
+	// Regular expression for verifying sync code.
+	validCode := regexp.MustCompile(`^\d\d?-\w{2,12}-\w{2,12}$`)
 
-		// Start retrieving data.
-		go sync.Retrieve(&u.Data, u.ReorderExercises, u.FirstExercise, u.Errors, u.FinishedSync, &u.EncryptionKey, recieveCodeEntry.Text)
+	recieveDataButton.OnTapped = func() {
+		if validCode.MatchString(recieveCodeEntry.Text) {
+			// Disable the button to make sure that users can't do anything bad.
+			startSendingDataButton.Disable()
+
+			// Start retrieving data.
+			go sync.Retrieve(&u.Data, u.ReorderExercises, u.FirstExercise, u.Errors, u.FinishedSync, &u.EncryptionKey, recieveCodeEntry.Text)
+		}
 	}
 
 	// shareGroup is a group containing all the options for sharing data.
