@@ -44,16 +44,16 @@ func (u *user) ExerciseView(window fyne.Window) fyne.CanvasObject {
 	}
 
 	// Compile regular expressions for checking numeric input with optional decimals.
-	validFloat := regexp.MustCompile(`^$|(\d*\.)?\d+$`)
+	validFloat := regexp.MustCompile(`^$|(\d+\.)?\d+$`)
 
 	// Compile regular expressions for checking numeric input without decimals.
-	validUint := regexp.MustCompile(`^$|^[0-9]*$`)
+	validUint := regexp.MustCompile(`^$|^\d*$`)
 
 	// Compile regular expressions for checking date input.
-	validDate := regexp.MustCompile(`^(\d{1,4})-(\d{1,2})-(\d{1,2})$`)
+	validDate := regexp.MustCompile(`^([12]\d{3})-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[0-1])$`)
 
 	// Compile regular expressions for checking clock input.
-	validClock := regexp.MustCompile(`^(\d{1,2}):(\d{1,2})$`)
+	validClock := regexp.MustCompile(`^([0-1][0-9]|2[0-3]):[0-5][0-9]$`)
 
 	// Create the form for displaying.
 	form.OnSubmit = func() {
