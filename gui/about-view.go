@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"fmt"
 	"sparta/assets"
 	"sparta/file/parse"
 
@@ -25,7 +24,7 @@ func AboutView() fyne.CanvasObject {
 			layout.NewSpacer(),
 			widget.NewLabelWithStyle("Sparta", fyne.TextAlignLeading, fyne.TextStyle{Bold: true}),
 			widget.NewLabelWithStyle("-", fyne.TextAlignLeading, fyne.TextStyle{Bold: true}),
-			widget.NewHyperlinkWithStyle(version, parse.URL(fmt.Sprintf("https://github.com/Jacalz/sparta/releases/tag/%s", version)), fyne.TextAlignLeading, fyne.TextStyle{Bold: true}),
+			widget.NewHyperlinkWithStyle(version, parse.URL("https://github.com/Jacalz/sparta/releases/tag/"+version), fyne.TextAlignLeading, fyne.TextStyle{Bold: true}),
 			layout.NewSpacer(),
 		),
 		layout.NewSpacer(),
