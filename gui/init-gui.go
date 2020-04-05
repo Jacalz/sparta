@@ -42,7 +42,7 @@ func Init() {
 	app := app.NewWithID("com.github.jacalz.sparta")
 
 	// Set the application icon for our program.
-	app.SetIcon(assets.AppIcon)
+	app.SetIcon(assets.AppIcon256)
 
 	// Create the window for our user interface.
 	window := app.NewWindow("Sparta")

@@ -61,7 +61,7 @@ func ShowMainDataView(window fyne.Window, app fyne.App, user *user) {
 		widget.NewTabItemWithIcon("Add Exercise", theme.ContentAddIcon(), user.ExerciseView(window)),
 		widget.NewTabItemWithIcon("Sync", theme.MailSendIcon(), user.SyncView(window)),
 		widget.NewTabItemWithIcon("Settings", theme.SettingsIcon(), user.SettingsView(window, app)),
-		// TODO: Add an about page with logo, name and version number.
+		widget.NewTabItemWithIcon("About", theme.InfoIcon(), AboutView()),
 	)
 
 	// Set the tabs to be on top of the page.

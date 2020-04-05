@@ -1,6 +1,7 @@
 package parse
 
 import (
+	"net/url"
 	"strconv"
 
 	"fyne.io/fyne"
@@ -34,4 +35,14 @@ func Uint(input string) uint {
 	}
 
 	return uint(output)
+}
+
+// URL parses an url string into the *url.Url type.
+func URL(input string) *url.URL {
+	link, err := url.Parse(input)
+	if err != nil {
+		fyne.LogError("Could not parse URL string", err)
+	}
+
+	return link
 }
