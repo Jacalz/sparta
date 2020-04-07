@@ -13,7 +13,7 @@ import (
 )
 
 // StartSync starts up the server on the local network and returns it so we can call shutdown.
-func StartSync(synccode chan string, errors chan error, done chan bool) {
+func StartSync(synccode chan string) error {
 	// Create the wormhole client.
 	var c wormhole.Client
 
@@ -21,8 +21,7 @@ func StartSync(synccode chan string, errors chan error, done chan bool) {
 	f, err := os.Open(path.Join(file.ConfigDir(), "exercises.json"))
 	if err != nil {
 		fyne.LogError("Error on opening the file to share", err)
-		errors <- err
-		return
+		return err
 	}
 
 	// Defer the closing of the file.
@@ -32,8 +31,7 @@ func StartSync(synccode chan string, errors chan error, done chan bool) {
 	code, status, err := c.SendFile(context.Background(), path.Join(file.ConfigDir(), "sparta", "exercises.json"), f)
 	if err != nil {
 		fyne.LogError("Error on sending the file to share", err)
-		errors <- err
-		return
+		return err
 	}
 
 	// Send the code down the drain so it can be shown inside the ui.
@@ -42,15 +40,16 @@ func StartSync(synccode chan string, errors chan error, done chan bool) {
 	// Handle the status of the sharing.
 	if s := <-status; s.Error != nil {
 		fyne.LogError("Error regarding status of share", err)
-		errors <- s.Error
-		return
+		return err
 	} else if s.OK {
-		done <- true
+		return nil
 	}
+
+	return nil
 }
 
 // Retrieve starts the retrieving process for fetching a shared file.
-func Retrieve(stored *file.Data, ReorderExercises chan bool, FirstExercise chan string, errors chan error, done chan bool, key *[32]byte, code string) {
+func Retrieve(stored *file.Data, ReorderExercises chan bool, FirstExercise chan string, key *[32]byte, code string) error {
 	// Create the wormhole client.
 	var c wormhole.Client
 
@@ -58,16 +57,14 @@ func Retrieve(stored *file.Data, ReorderExercises chan bool, FirstExercise chan 
 	data, err := c.Receive(context.Background(), code)
 	if err != nil {
 		fyne.LogError("Error on receiving", err)
-		errors <- err
-		return
+		return err
 	}
 
 	// received will store all fetched data.
 	received, err := file.ReadEncryptedJSON(data, key)
 	if err != nil {
 		fyne.LogError("Error on reading the encrypted JSON data", err)
-		errors <- err
-		return
+		return err
 	}
 
 	// Variables for keeping track of compare value sin for loops.
@@ -99,7 +96,7 @@ func Retrieve(stored *file.Data, ReorderExercises chan bool, FirstExercise chan 
 	// Handle different lengths accordingly to avoid out of bounds index checks.
 	switch length {
 	case 0:
-		return
+		return nil
 	case 1:
 		FirstExercise <- stored.Format(length - 1)
 	default:
@@ -115,6 +112,5 @@ func Retrieve(stored *file.Data, ReorderExercises chan bool, FirstExercise chan 
 		go stored.Write(key)
 	}
 
-	// It does not hurt to say that everything went according to plan.
-	done <- true
+	return nil
 }

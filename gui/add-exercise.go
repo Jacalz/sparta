@@ -15,8 +15,8 @@ import (
 	"fyne.io/fyne/widget"
 )
 
-// ExerciseView shows the opoup for adding a new activity.
-func (u *user) ExerciseView(window fyne.Window) fyne.CanvasObject {
+// AddExerciseView shows the opoup for adding a new activity.
+func (u *user) AddExerciseView(w fyne.Window) fyne.CanvasObject {
 	// Variables for the entry variables used in the form.
 	dateEntry := widgets.NewEntryWithPlaceholder("YYYY-MM-DD")
 	clockEntry := widgets.NewEntryWithPlaceholder("HH:MM")
@@ -74,7 +74,7 @@ func (u *user) ExerciseView(window fyne.Window) fyne.CanvasObject {
 
 		// Show and error if any fields does not match the correct input patterns.
 		if nonNumericInput || activityEntry.Text == "" || !validClock.MatchString(clockEntry.Text) || !validDate.MatchString(dateEntry.Text) {
-			dialog.ShowInformation("Non numeric input or invald formats in fields", "The date and the start time need correct data formating and the exercise can not be empty.\nDistance, time, sets and reps can all be empty, however they do need to contain numeric data if non empty.", window)
+			dialog.ShowInformation("Non numeric input or invald formats in fields", "The date and the start time need correct data formating and the exercise can not be empty.\nDistance, time, sets and reps can all be empty, however they do need to contain numeric data if non empty.", w)
 		} else {
 			go func() {
 				// Defer the entry fields to be cleaned out last.

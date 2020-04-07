@@ -13,10 +13,7 @@ import (
 )
 
 // SyncView displays the tab page for syncing data between devices.
-func (u *user) SyncView(window fyne.Window) fyne.CanvasObject {
-
-	// Create the channel that we will use to share the code needed for receiving the data.
-	syncCodeChan := make(chan string)
+func (u *user) SyncView(w fyne.Window) fyne.CanvasObject {
 
 	// aboutGroup is a small group to display information about file sharing.
 	aboutGroup := widget.NewGroup("About Exercise Synchronization", widget.NewLabelWithStyle("The share support in Sparta enables the user to syncronize their exercises.\nThe file is served encrypted and will be automatically decrypted on a second device using the same login credentials.\nIt is as simple as starting the share on one device and then starting receiving on another device on the same network.\nThe receiving computer will then get all the new activities added locally.", fyne.TextAlignCenter, fyne.TextStyle{}))
@@ -32,15 +29,29 @@ func (u *user) SyncView(window fyne.Window) fyne.CanvasObject {
 
 	startSendingDataButton.OnTapped = func() {
 		if len(u.Data.Exercise) == 0 {
-			dialog.ShowInformation("No exercises to syncronize", "You need to add exercises to be able to sync between devices.", window)
+			dialog.ShowInformation("No exercises to syncronize", "You need to add exercises to be able to sync between devices.", w)
 			return
 		}
 
 		// Disable the receive button to hinder people from receiving on same computer.
 		recieveDataButton.Disable()
 
-		// Start the sharing.
-		go sync.StartSync(syncCodeChan, u.Errors, u.FinishedSync)
+		go func() {
+			// Start sharing our exercises.
+			err := sync.StartSync(u.SyncCode)
+			if err != nil {
+				dialog.ShowError(err, w)
+			} else {
+				dialog.ShowInformation("Synchronization successful", "The synchronization of exercises finsished successfully.", w)
+			}
+
+			// Clean up and make buttons usable again.
+			recieveCodeEntry.SetText("")
+			recieveDataButton.Enable()
+		}()
+
+		// Add the sync code to the recieveCodeEntry.
+		recieveCodeEntry.SetText(<-u.SyncCode)
 	}
 
 	// Regular expression for verifying sync code.
@@ -51,36 +62,23 @@ func (u *user) SyncView(window fyne.Window) fyne.CanvasObject {
 			// Disable the button to make sure that users can't do anything bad.
 			startSendingDataButton.Disable()
 
-			// Start retrieving data.
-			go sync.Retrieve(&u.Data, u.ReorderExercises, u.FirstExercise, u.Errors, u.FinishedSync, &u.EncryptionKey, recieveCodeEntry.Text)
+			go func() {
+				err := sync.Retrieve(&u.Data, u.ReorderExercises, u.FirstExercise, &u.EncryptionKey, recieveCodeEntry.Text)
+				if err != nil {
+					dialog.ShowError(err, w)
+				} else {
+					dialog.ShowInformation("Synchronization successful", "The synchronization of exercises finsished successfully.", w)
+				}
+			}()
+
+			// Clean up and make buttons usable again.
+			recieveCodeEntry.SetText("")
+			startSendingDataButton.Enable()
 		}
 	}
 
 	// shareGroup is a group containing all the options for sharing data.
 	shareGroup := widget.NewGroup("Syncronizing Data", startSendingDataButton)
-
-	// Listen in on the channels sent from receive and send and errors.
-	go func() {
-		for {
-			select {
-			case code := <-syncCodeChan:
-				recieveCodeEntry.SetText(code)
-			case <-u.FinishedSync:
-				dialog.ShowInformation("Synchronization successful", "The synchronization of exercises finsished successfully.", window)
-
-				// Clean up and make buttons usable again.
-				recieveCodeEntry.SetText("")
-				recieveDataButton.Enable()
-				startSendingDataButton.Enable()
-			case err := <-u.Errors:
-				dialog.ShowError(err, window)
-
-				// Clean up and make buttons usable again.
-				recieveDataButton.Enable()
-				startSendingDataButton.Enable()
-			}
-		}
-	}()
 
 	// Extend the recieveCodeEntry to add the option for receiving on pressing enter.
 	recieveCodeEntry.InitExtend(*recieveDataButton, widgets.MoveAction{})

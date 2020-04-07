@@ -2,8 +2,6 @@ package gui
 
 import (
 	"fyne.io/fyne"
-	"fyne.io/fyne/layout"
-	"fyne.io/fyne/theme"
 	"fyne.io/fyne/widget"
 )
 
@@ -17,7 +15,7 @@ func (u *user) InitialDisplay() (text string) {
 	return text
 }
 
-// ExerciseDisplayer runs in the background and updated the label.
+// ExerciseDisplayer runs in the background and updates the label.
 func (u *user) ExerciseDisplayer(label *widget.Label) {
 	// Handle an empty data file.
 	if len(u.Data.Exercise) == 0 {
@@ -44,33 +42,13 @@ func (u *user) ExerciseDisplayer(label *widget.Label) {
 	}
 }
 
-// ShowMainDataView shows the main view after we are logged in.
-func ShowMainDataView(window fyne.Window, app fyne.App, user *user) {
+// ExercisesView shows the main view after we are logged in.
+func (u *user) ExercisesView(w fyne.Window, a fyne.App) fyne.CanvasObject {
 	// Create a label for displaing some info for the user. Default to showing nothing.
 	dataLabel := widget.NewLabel("")
 
 	// Start up the function to handle adding exercises in the background.
-	go user.ExerciseDisplayer(dataLabel)
+	go u.ExerciseDisplayer(dataLabel)
 
-	// Tab data for the main window.
-	dataPage := widget.NewScrollContainer(fyne.NewContainerWithLayout(layout.NewVBoxLayout(), dataLabel))
-
-	// Create tabs with data.
-	tabs := widget.NewTabContainer(
-		widget.NewTabItemWithIcon("Exercises", theme.HomeIcon(), dataPage),
-		widget.NewTabItemWithIcon("Add Exercise", theme.ContentAddIcon(), user.ExerciseView(window)),
-		widget.NewTabItemWithIcon("Sync", theme.MailSendIcon(), user.SyncView(window)),
-		widget.NewTabItemWithIcon("Settings", theme.SettingsIcon(), user.SettingsView(window, app)),
-		widget.NewTabItemWithIcon("About", theme.InfoIcon(), AboutView()),
-	)
-
-	// Set the tabs to be on top of the page.
-	tabs.SetTabLocation(widget.TabLocationTop)
-
-	// Adapt the window to a good size and make it resizable again.
-	window.SetFixedSize(false)
-	window.Resize(fyne.NewSize(800, 500))
-
-	// Set the content to show and do so in a scroll container for the exercieses to show correctly.
-	window.SetContent(tabs)
+	return widget.NewScrollContainer(dataLabel)
 }
