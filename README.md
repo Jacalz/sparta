@@ -13,7 +13,7 @@ Sparta is a Sport and Rehearsal Tracking Application. It lets the user write dow
 
 Sparta is built using the following Go packages:
 
-- [fyne](https://github.com/fyne-io/fyne) (version 1.2.2 or later)
+- [fyne](https://github.com/fyne-io/fyne) (version 1.2.4 or later)
 - [wormhole-william](https://github.com/psanford/wormhole-william) (version 1.0.1 or later)
 
 ## Downloads
@@ -29,12 +29,10 @@ Contributions are strongly appreciated. Everything from creating bug reports to 
 - [ ] Create a custom widget for displaying exercises in a more pleasant way.
 - [ ] Add the option to delete individual exercises.
 - [ ] Add import of gpx files from smart training watches and other training equipment.
-- [ ] An about page with logo, name and version number.
 - [ ] Possibly an Android version and maybe an iOS version if it is requested.
 
 ### Folder Structure
-- **assets/ :** Storage for icons and other assets used throughout the project.
-- **assets/ :** Logos and artwork along with logos bundled in to the source code.
+- **assets/ :** Logos, artwork and assets bundled in the source code.
 - **crypto/ :** Cryptographic functions for hashing along with encryption and decryption.
 - **file/ :** Common code for file handling in the application.
   - **file/parse :** Contains adapted versions of parse functions from `strconv` for extracting numbers from strings.
