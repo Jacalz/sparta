@@ -12,26 +12,28 @@ import (
 
 // User holds the data about the user that is currently logged in.
 type user struct {
-	Username      string
-	Password      string
-	EncryptionKey [32]byte
-	Data          file.Data
+	// User sensitive data.
+	username      string
+	password      string
+	passwordHash  string
+	encryptionKey [32]byte
+	data          file.Data
 
 	// Data channels for exercises.
-	NewExercise      chan string
-	FirstExercise    chan string
-	EmptyExercises   chan bool
-	ReorderExercises chan bool
+	newExercise      chan string
+	firstExercise    chan string
+	emptyExercises   chan bool
+	reorderExercises chan bool
 
 	// Channel for sending the sync code.
 	SyncCode chan string
 }
 
 func newUser() *user {
-	return &user{NewExercise: make(chan string),
-		FirstExercise:    make(chan string),
-		EmptyExercises:   make(chan bool),
-		ReorderExercises: make(chan bool),
+	return &user{newExercise: make(chan string),
+		firstExercise:    make(chan string),
+		emptyExercises:   make(chan bool),
+		reorderExercises: make(chan bool),
 		SyncCode:         make(chan string),
 	}
 }
@@ -60,7 +62,7 @@ func Init() {
 
 	// Create the tab handler for the user interface and set up the login view.
 	t := &widget.TabContainer{}
-	t.Append(u.LoginTabContainer(a, w, t))
+	t.Append(u.loginTabContainer(a, w, t))
 
 	// Set the window to a good size, add the content and lastly run the application.
 	w.SetContent(t)

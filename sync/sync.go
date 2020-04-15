@@ -49,7 +49,7 @@ func StartSync(synccode chan string) error {
 }
 
 // Retrieve starts the retrieving process for fetching a shared file.
-func Retrieve(stored *file.Data, ReorderExercises chan bool, FirstExercise chan string, key *[32]byte, code string) error {
+func Retrieve(stored *file.Data, ReorderExercises chan bool, FirstExercise chan string, key *[32]byte, code, username string) error {
 	// Create the wormhole client.
 	var c wormhole.Client
 
@@ -109,7 +109,7 @@ func Retrieve(stored *file.Data, ReorderExercises chan bool, FirstExercise chan 
 		ReorderExercises <- true
 
 		// Write the updated data to our data file.
-		go stored.Write(key)
+		go stored.Write(key, username)
 	}
 
 	return nil

@@ -12,7 +12,7 @@ import (
 )
 
 // SettingsView contains the gui information for the settings screen.
-func (u *user) SettingsView(w fyne.Window, a fyne.App) fyne.CanvasObject {
+func (u *user) settingsView(w fyne.Window, a fyne.App) fyne.CanvasObject {
 
 	// TODO: Add setting for changing language.
 
@@ -41,23 +41,24 @@ func (u *user) SettingsView(w fyne.Window, a fyne.App) fyne.CanvasObject {
 	// Create the button used for changing the username.
 	usernameButton := widget.NewButtonWithIcon("Change Username", theme.ConfirmIcon(), func() {
 		// Check that the username is valid.
-		if usernameEntry.Text == u.Password || usernameEntry.Text == "" {
+		if usernameEntry.Text == u.password || usernameEntry.Text == "" {
 			dialog.ShowInformation("Please enter a valid username", "Usernames need to not be empty and not the same as the password.", w)
 		} else {
 			// Ask the user to confirm what we are about to do.
 			dialog.ShowConfirm("Are you sure that you want to continue?", "The action will permanently change your username.", func(change bool) {
 				if change {
-					// Calculate the new PasswordKey.
-					u.EncryptionKey = crypto.Hash(usernameEntry.Text, u.Password)
+					// Replace the password hash in a new storage location.
+					a.Preferences().RemoveValue("Username:" + u.username)
+					a.Preferences().SetString("Username:"+usernameEntry.Text, u.passwordHash)
 
 					// Set the username  to the updated username.
-					u.Username = usernameEntry.Text
+					u.username = usernameEntry.Text
 
 					// Clear out the text inside the entry.
 					usernameEntry.SetText("")
 
 					// Write the data encrypted using the new key and do so concurrently.
-					go u.Data.Write(&u.EncryptionKey)
+					go u.data.Write(&u.encryptionKey, u.username)
 				}
 			}, w)
 		}
@@ -70,23 +71,24 @@ func (u *user) SettingsView(w fyne.Window, a fyne.App) fyne.CanvasObject {
 	// Create the button used for changing the password.
 	passwordButton := widget.NewButtonWithIcon("Change Password", theme.ConfirmIcon(), func() {
 		// Check that the password is valid.
-		if len(passwordEntry.Text) < 8 || passwordEntry.Text == usernameEntry.Text {
+		if len(passwordEntry.Text) < 8 || passwordEntry.Text == u.username {
 			dialog.ShowInformation("Please enter a valid password", "Passwords need to be at least eight characters long.", w)
 		} else {
 			// Ask the user to confirm what we are about to do.
 			dialog.ShowConfirm("Are you sure that you want to continue?", "The action will permanently change your password.", func(change bool) {
 				if change {
-					// Calculate the new PasswordKey.
-					u.EncryptionKey = crypto.Hash(u.Username, passwordEntry.Text)
+					// Calculate and store the new hashes.
+					u.encryptionKey = crypto.GenerateEncryptionKey(passwordEntry.Text)
+					u.passwordHash = crypto.GeneratePasswordHash(passwordEntry.Text)
 
-					// Set the user password to the updated password.
-					u.Password = passwordEntry.Text
+					// Update the password hash in storage.
+					a.Preferences().SetString("Username:"+u.username, u.passwordHash)
 
 					// Clear out the text inside the entry.
 					passwordEntry.SetText("")
 
 					// Write the data encrypted using the new key and do so concurrently.
-					go u.Data.Write(&u.EncryptionKey)
+					go u.data.Write(&u.encryptionKey, u.username)
 				}
 			}, w)
 		}
@@ -116,10 +118,10 @@ func (u *user) SettingsView(w fyne.Window, a fyne.App) fyne.CanvasObject {
 		dialog.ShowConfirm("Are you sure that you want to continue?", "Deleting your data will remove all of your exercises and activities.", func(remove bool) {
 			if remove {
 				// Run the delete function and do it concurrently to avoid stalling the thread with file io.
-				go u.Data.Delete()
+				go u.data.Delete(u.username)
 
 				// Notify the label that we have removed the data.
-				u.EmptyExercises <- true
+				u.emptyExercises <- true
 			}
 		}, w)
 	})

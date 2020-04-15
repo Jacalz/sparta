@@ -13,7 +13,7 @@ import (
 )
 
 // SyncView displays the tab page for syncing data between devices.
-func (u *user) SyncView(w fyne.Window) fyne.CanvasObject {
+func (u *user) syncView(w fyne.Window) fyne.CanvasObject {
 
 	// aboutGroup is a small group to display information about file sharing.
 	aboutGroup := widget.NewGroup("About Exercise Synchronization", widget.NewLabelWithStyle("The share support in Sparta enables the user to syncronize their exercises.\nThe file is served encrypted and will be automatically decrypted on a second device using the same login credentials.\nIt is as simple as starting the share on one device and then starting receiving on another device on the same network.\nThe receiving computer will then get all the new activities added locally.", fyne.TextAlignCenter, fyne.TextStyle{}))
@@ -28,7 +28,7 @@ func (u *user) SyncView(w fyne.Window) fyne.CanvasObject {
 	recieveDataButton := widget.NewButtonWithIcon("Start Receiving Exercises", theme.MailComposeIcon(), nil)
 
 	startSendingDataButton.OnTapped = func() {
-		if len(u.Data.Exercise) == 0 {
+		if len(u.data.Exercise) == 0 {
 			dialog.ShowInformation("No exercises to syncronize", "You need to add exercises to be able to sync between devices.", w)
 			return
 		}
@@ -63,7 +63,7 @@ func (u *user) SyncView(w fyne.Window) fyne.CanvasObject {
 			startSendingDataButton.Disable()
 
 			go func() {
-				err := sync.Retrieve(&u.Data, u.ReorderExercises, u.FirstExercise, &u.EncryptionKey, recieveCodeEntry.Text)
+				err := sync.Retrieve(&u.data, u.reorderExercises, u.firstExercise, &u.encryptionKey, recieveCodeEntry.Text, u.username)
 				if err != nil {
 					dialog.ShowError(err, w)
 				} else {

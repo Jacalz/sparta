@@ -9,11 +9,54 @@ import (
 	"io"
 
 	"fyne.io/fyne"
+	"fyne.io/fyne/dialog"
+	"golang.org/x/crypto/bcrypt"
 )
 
-// Hash uses returns the sha512/256 hash of the username and password.
-func Hash(username, password string) [32]byte {
-	return sha512.Sum512_256([]byte(username + password))
+// ValidInput checks if the inputed username and passwords are valid and creates a message if they are not.
+func ValidInput(username, password string, w fyne.Window) (valid bool) {
+	if username == "" || password == "" {
+		dialog.ShowInformation("Missing username/password", "Please provide both username and password.", w)
+	} else if username == password {
+		dialog.ShowInformation("Identical username and password", "Use separate usernames and passwords.", w)
+	} else if len(password) < 8 {
+		dialog.ShowInformation("Too short password", "The password should be eight characters or longer.", w)
+	} else {
+		valid = true
+	}
+
+	return valid
+}
+
+// CorrectCredentials returns if the username and  password is correct or not.
+func CorrectCredentials(username, password string, a fyne.App, w fyne.Window) bool {
+	if !ValidInput(username, password, w) {
+		return false
+	}
+
+	// Grab the password hash of the user.
+	hash := a.Preferences().String("Username:" + username)
+
+	if err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password)); err != nil {
+		return false
+	}
+
+	return true
+}
+
+// GenerateEncryptionKey uses returns the sha512/256 hash of the password to ensure that the encryption key is 32bytes long.
+func GenerateEncryptionKey(password string) [32]byte {
+	return sha512.Sum512_256([]byte(password))
+}
+
+// GeneratePasswordHash returns the hash and an eventual error
+func GeneratePasswordHash(password string) string {
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	if err != nil {
+		return ""
+	}
+
+	return string(hash)
 }
 
 // commonCipther holds common cipther code between encryption and decryption.

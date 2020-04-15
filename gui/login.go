@@ -12,22 +12,7 @@ import (
 	"fyne.io/fyne/widget"
 )
 
-// ValidInput checks if the inputed username and passwords are valid and creates a message if they are not.
-func ValidInput(username, password string, window fyne.Window) (valid bool) {
-	if username == "" || password == "" {
-		dialog.ShowInformation("Missing username/password", "Please provide both username and password.", window)
-	} else if username == password {
-		dialog.ShowInformation("Identical username and password", "Use separate usernames and passwords.", window)
-	} else if len(password) < 8 {
-		dialog.ShowInformation("Too short password", "The password should be eight characters or longer.", window)
-	} else {
-		valid = true
-	}
-
-	return valid
-}
-
-func (u *user) LoginTabContainer(a fyne.App, w fyne.Window, t *widget.TabContainer) *widget.TabItem {
+func (u *user) loginTabContainer(a fyne.App, w fyne.Window, t *widget.TabContainer) *widget.TabItem {
 	// Create the username entry.
 	usernameEntry := widgets.NewAdvancedEntry("Username", false)
 
@@ -35,46 +20,76 @@ func (u *user) LoginTabContainer(a fyne.App, w fyne.Window, t *widget.TabContain
 	passwordEntry := widgets.NewAdvancedEntry("Password", true)
 
 	// Create the login button that will login the user.
-	loginButton := widget.NewButton("Login", func() {
-		if ValidInput(usernameEntry.Text, passwordEntry.Text, w) {
-			u.EncryptionKey = crypto.Hash(usernameEntry.Text, passwordEntry.Text)
+	loginButton := widget.NewButtonWithIcon("Login", theme.ConfirmIcon(), nil)
 
-			// Deine err here so we can add exercises to u.Data directly.
-			var err error
-
-			// Check files and try to log in using the computed password hash.
-			u.Data, err = file.Check(&u.EncryptionKey)
-			if err != nil {
-				dialog.ShowInformation("Wrong username or password", "The login credentials are incorrect, please try again.", w)
-			} else {
-				// Store the username and password to user structs and clear data in widgets.
-				u.Username, usernameEntry.Text = usernameEntry.Text, ""
-				u.Password, passwordEntry.Text = passwordEntry.Text, ""
-
-				// Run it all in a new goroutine to avoid stalling the main one.
-				go func() {
-					// Add all the content tabs to the interface.
-					t.Append(widget.NewTabItemWithIcon("Exercises", theme.HomeIcon(), u.ExercisesView(w, a)))
-					t.Append(widget.NewTabItemWithIcon("Add Exercise", theme.ContentAddIcon(), u.AddExerciseView(w)))
-					t.Append(widget.NewTabItemWithIcon("Sync", theme.MailSendIcon(), u.SyncView(w)))
-					t.Append(widget.NewTabItemWithIcon("Settings", theme.SettingsIcon(), u.SettingsView(w, a)))
-					t.Append(widget.NewTabItemWithIcon("About", theme.InfoIcon(), AboutView()))
-
-					// Remove the login tab now that we are logged in.
-					t.RemoveIndex(0)
-
-					// Select the tab index to avoid confusing fyne.
-					t.SelectTabIndex(0)
-				}()
-			}
+	// newUserButton holds the button widget for creating a new user.
+	newUserButton := widget.NewButtonWithIcon("Create New User", theme.ContentAddIcon(), func() {
+		if !crypto.ValidInput(usernameEntry.Text, passwordEntry.Text, w) {
+			return
 		}
+
+		// Create the file for the user.
+		err := file.CreateNewUser(usernameEntry.Text)
+		if err != nil {
+			fyne.LogError("Error when creating the user file", err)
+			dialog.ShowError(err, w)
+		}
+
+		// Add the password hash for the user.
+		a.Preferences().SetString("Username:"+usernameEntry.Text, crypto.GeneratePasswordHash(passwordEntry.Text))
+
+		// Inform the user of the sucess and show the login button again.
+		dialog.ShowInformation("A new user was created", "The new user was created without issues. You can now log in with it.", w)
+		loginButton.Show()
 	})
 
-	// Update widgets if it is a first run.
-	if file.FirstRun() {
-		usernameEntry.SetPlaceHolder("New Username")
-		passwordEntry.SetPlaceHolder("New Password")
-		loginButton.SetText("Create User and Login")
+	loginButton.OnTapped = func() {
+		if loginButton.Hidden {
+			newUserButton.OnTapped()
+			return
+		} else if !crypto.CorrectCredentials(usernameEntry.Text, passwordEntry.Text, a, w) {
+			dialog.ShowInformation("Wrong username and/or password", "The login credentials are incorrect, please try again.", w)
+			return
+		}
+
+		// We need our 32byte long encryption key for AES-256 encryption.
+		u.encryptionKey = crypto.GenerateEncryptionKey(passwordEntry.Text)
+
+		// Deine err here so we can add exercises to u.Data directly.
+		var err error
+
+		// Check files and try to log in using the computed password hash.
+		u.data, err = file.ReadData(&u.encryptionKey, usernameEntry.Text)
+		if err != nil {
+			fyne.LogError("Error on reading exercises data", err)
+			dialog.ShowError(err, w)
+		} else {
+			// Store the username to the user struct and clear data in widgets.
+			u.username, u.password = usernameEntry.Text, passwordEntry.Text
+			usernameEntry.Text, passwordEntry.Text = "", ""
+
+			// Run it all in a new goroutine to avoid stalling the main one.
+			go func() {
+				// Add all the content tabs to the interface.
+				t.Append(widget.NewTabItemWithIcon("Exercises", theme.HomeIcon(), u.exercisesView(w, a)))
+				t.Append(widget.NewTabItemWithIcon("Add Exercise", theme.ContentAddIcon(), u.addExerciseView(w)))
+				t.Append(widget.NewTabItemWithIcon("Sync", theme.MailSendIcon(), u.syncView(w)))
+				t.Append(widget.NewTabItemWithIcon("Settings", theme.SettingsIcon(), u.settingsView(w, a)))
+				t.Append(widget.NewTabItemWithIcon("About", theme.InfoIcon(), aboutView()))
+
+				// Remove the login tab now that we are logged in.
+				t.RemoveIndex(0)
+
+				// Select the tab index to avoid confusing fyne.
+				t.SelectTabIndex(0)
+			}()
+		}
+
+	}
+
+	// No need to show the loginButton if no users exist.
+	if file.NoExistingUsers() {
+		loginButton.Hide()
 	}
 
 	// Extend the AdvancedEntry widgets with extra key press supports.
@@ -84,14 +99,14 @@ func (u *user) LoginTabContainer(a fyne.App, w fyne.Window, t *widget.TabContain
 	if fyne.Device.IsMobile(fyne.CurrentDevice()) {
 		return widget.NewTabItem("Login", fyne.NewContainerWithLayout(layout.NewVBoxLayout(),
 			layout.NewSpacer(),
-			fyne.NewContainerWithLayout(layout.NewVBoxLayout(), usernameEntry, passwordEntry, loginButton),
+			fyne.NewContainerWithLayout(layout.NewVBoxLayout(), usernameEntry, passwordEntry, loginButton, newUserButton),
 			layout.NewSpacer(),
 		))
 	}
 
 	return widget.NewTabItem("Login", fyne.NewContainerWithLayout(layout.NewGridLayout(1),
 		layout.NewSpacer(),
-		fyne.NewContainerWithLayout(layout.NewGridLayout(3), layout.NewSpacer(), widget.NewVBox(usernameEntry, passwordEntry, loginButton), layout.NewSpacer()),
+		fyne.NewContainerWithLayout(layout.NewGridLayout(3), layout.NewSpacer(), widget.NewVBox(usernameEntry, passwordEntry, loginButton, newUserButton), layout.NewSpacer()),
 		layout.NewSpacer(),
 	))
 }

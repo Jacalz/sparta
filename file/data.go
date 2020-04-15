@@ -35,55 +35,6 @@ type Exercise struct {
 // zeroData is a variable containing an empty Data struct.
 var zeroData = &Data{}
 
-// ConfigDir returns the config directory where files are being stored.
-func ConfigDir() string {
-	// Get the config directory of the user.
-	dir, err := os.UserConfigDir()
-	if err != nil {
-		fyne.LogError("Error on reading config directory", err)
-	}
-
-	return filepath.Join(dir, "com.github.jacalz.sparta")
-}
-
-// FirstRun checks if it is an initial application start.
-func FirstRun() bool {
-	if _, err := os.Stat(filepath.Join(ConfigDir(), "exercises.json")); err == nil {
-		return false
-	}
-
-	return true
-}
-
-// Check does relevant checks around our data file.
-func Check(key *[32]byte) (exercises Data, err error) {
-
-	// Check if the user has a data file.
-	if _, err := os.Stat(filepath.Join(ConfigDir(), "exercises.json")); err == nil {
-		// The file exists and we read the data. Return error if decryption failed (wrong password).
-		exercises, err = readData(key)
-		if err != nil {
-			return exercises, err
-		}
-
-	} else if os.IsNotExist(err) {
-		// Check if the directory does exist or not, if it doesn't we create it.
-		if _, err := os.Stat(ConfigDir()); os.IsNotExist(err) {
-			if err := os.Mkdir(ConfigDir(), os.ModePerm); err != nil {
-				fyne.LogError("Error on creating directory", err)
-			}
-		}
-
-		// Since the file didn't exist, we create it.
-		_, err := os.Create(filepath.Join(ConfigDir(), "exercises.json"))
-		if err != nil {
-			fyne.LogError("Error on creating the file", err)
-		}
-	}
-
-	return exercises, nil
-}
-
 // ReadEncryptedJSON reads encrypted data and outputs the Data.
 func ReadEncryptedJSON(r io.Reader, key *[32]byte) (exercises Data, err error) {
 	// Read the data to extract the encrypted content.
@@ -110,11 +61,12 @@ func ReadEncryptedJSON(r io.Reader, key *[32]byte) (exercises Data, err error) {
 }
 
 // ReadData reads data from an xml file, couldn't be simpler. Unexported.
-func readData(key *[32]byte) (exercises Data, err error) {
+func ReadData(key *[32]byte, username string) (exercises Data, err error) {
 	// Open up the file and it's content.
-	data, err := os.Open(filepath.Join(ConfigDir(), "exercises.json"))
+	data, err := os.Open(filepath.Join(ConfigDir(), username+"-exercises.json"))
 	if err != nil {
 		fyne.LogError("Error on opening the file", err)
+		return exercises, err
 	}
 
 	// Read the JSON data from the encrypted file.
@@ -130,7 +82,7 @@ func readData(key *[32]byte) (exercises Data, err error) {
 }
 
 // Write writes new exercieses to the data file.
-func (d *Data) Write(key *[32]byte) {
+func (d *Data) Write(key *[32]byte, username string) {
 	//Marchal the xml content in to a file variable.
 	file, err := json.Marshal(d)
 	if err != nil {
@@ -138,7 +90,7 @@ func (d *Data) Write(key *[32]byte) {
 	}
 
 	// Write to the file.
-	err = ioutil.WriteFile(filepath.Join(ConfigDir(), "exercises.json"), crypto.Encrypt(key, file), 0600)
+	err = ioutil.WriteFile(filepath.Join(ConfigDir(), username+"-exercises.json"), crypto.Encrypt(key, file), 0600)
 	if err != nil {
 		fyne.LogError("Error on writing to file", err)
 	}
@@ -165,12 +117,12 @@ func (d *Data) Format(i int) (output string) {
 }
 
 // Delete removes all content in the case of a user wanting to start fresh.
-func (d *Data) Delete() {
+func (d *Data) Delete(username string) {
 	// Clear the data by directing the pointer to point at the zeroData pointer.
 	*d = *zeroData
 
 	// Remove the file to clear it.
-	err := os.Remove(filepath.Join(ConfigDir(), "exercises.json"))
+	err := os.Remove(filepath.Join(ConfigDir(), username+"exercises.json"))
 	if err != nil {
 		fyne.LogError("Error on removing the json file", err)
 	}
