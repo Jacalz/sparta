@@ -27,8 +27,8 @@ type Exercise struct {
 	Activity string    `json:"activity,omitempty"`
 	Distance float64   `json:"distance,omitempty"`
 	Duration float64   `json:"duration,omitempty"`
-	Reps     uint      `json:"reps,omitempty"`
-	Sets     uint      `json:"sets,omitempty"`
+	Reps     uint32    `json:"reps,omitempty"`
+	Sets     uint32    `json:"sets,omitempty"`
 	Comment  string    `json:"comment,omitempty"`
 }
 

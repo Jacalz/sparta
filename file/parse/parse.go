@@ -15,7 +15,7 @@ func Float(input string) float64 {
 
 	output, err := strconv.ParseFloat(input, 64)
 	if err != nil {
-		fyne.LogError("Error on parsing float", err)
+		fyne.LogError("Could not parse the Float value", err)
 		return 0
 	}
 
@@ -23,18 +23,18 @@ func Float(input string) float64 {
 }
 
 // Uint is just a wrapper around strconv.Atoi() returning a uint and handling the error.
-func Uint(input string) uint {
+func Uint(input string) uint32 {
 	if input == "" {
 		return 0
 	}
 
-	output, err := strconv.Atoi(input)
+	output, err := strconv.ParseUint(input, 10, 32)
 	if err != nil {
-		fyne.LogError("Error on parsing int", err)
+		fyne.LogError("Could not parse the Uint value", err)
 		return 0
 	}
 
-	return uint(output)
+	return uint32(output)
 }
 
 // URL parses an url string into the *url.Url type.
