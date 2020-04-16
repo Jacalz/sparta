@@ -38,7 +38,7 @@ func (u *user) loginTabContainer(a fyne.App, w fyne.Window, t *widget.TabContain
 		// Add the password hash for the user.
 		a.Preferences().SetString("Username:"+usernameEntry.Text, crypto.GeneratePasswordHash(passwordEntry.Text))
 
-		// Inform the user of the sucess and show the login button again.
+		// Inform the user of the success and show the login button again.
 		dialog.ShowInformation("A new user was created", "The new user was created without issues. You can now log in with it.", w)
 		loginButton.Show()
 	})
