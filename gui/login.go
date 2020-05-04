@@ -29,14 +29,16 @@ func (u *user) loginTabContainer(a fyne.App, w fyne.Window, t *widget.TabContain
 		}
 
 		// Create the file for the user.
-		err := file.CreateNewUser(usernameEntry.Text)
-		if err != nil {
-			fyne.LogError("Error when creating the user file", err)
+		if err := file.CreateNewUser(usernameEntry.Text); err != nil {
 			dialog.ShowError(err, w)
+			return
 		}
 
-		// Add the password hash for the user.
-		a.Preferences().SetString("Username:"+usernameEntry.Text, crypto.GeneratePasswordHash(passwordEntry.Text))
+		// Store the password verification.
+		if _, err := crypto.SaveNewPasswordHash(passwordEntry.Text, usernameEntry.Text, a); err != nil {
+			dialog.ShowError(err, w)
+			return
+		}
 
 		// Inform the user of the success and show the login button again.
 		dialog.ShowInformation("A new user was created", "The new user was created without issues. You can now log in with it.", w)
@@ -47,21 +49,20 @@ func (u *user) loginTabContainer(a fyne.App, w fyne.Window, t *widget.TabContain
 		if loginButton.Hidden {
 			newUserButton.OnTapped()
 			return
-		} else if !crypto.CorrectCredentials(usernameEntry.Text, passwordEntry.Text, a, w) {
+		}
+
+		// Define err here so we can add to u.encryptionKey and u.Data directly.
+		var err error
+
+		u.encryptionKey, err = crypto.CorrectCredentials(usernameEntry.Text, passwordEntry.Text, a, w)
+		if err != nil {
 			dialog.ShowInformation("Wrong username and/or password", "The login credentials are incorrect, please try again.", w)
 			return
 		}
 
-		// We need our 32byte long encryption key for AES-256 encryption.
-		u.encryptionKey = crypto.GenerateEncryptionKey(passwordEntry.Text)
-
-		// Deine err here so we can add exercises to u.Data directly.
-		var err error
-
 		// Check files and try to log in using the computed password hash.
 		u.data, err = file.ReadData(&u.encryptionKey, usernameEntry.Text)
 		if err != nil {
-			fyne.LogError("Error on reading exercises data", err)
 			dialog.ShowError(err, w)
 		} else {
 			// Store the username to the user struct and clear data in widgets.

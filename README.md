@@ -7,7 +7,7 @@
 
 # Sparta
 
-Sparta is a Sport and Rehearsal Tracking Application. It lets the user write down and save all sport activities safely and privately on the computer. No tracking and absolutely zero collection of any user data. Activities are simply saved on the computer without outside interference. Sparta uses AES-256 encryption to keep all your data hidden from any spying eyes.
+Sparta is a Sport and Rehearsal Tracking Application. It lets the user write down and save all sport activities safely and privately on the computer. No tracking and absolutely zero collection of any user data. Activities are simply saved on the computer without outside interference. Sparta uses top of line `AES-256` encryption, state of the art key derivation using `Argon2` and end-to-end encrypted sharing over the network using `wormhole-william` to keep all your data hidden from any spying eyes.
 
 ## Requirements
 
@@ -15,6 +15,7 @@ Sparta is built using the following Go packages:
 
 - [fyne](https://github.com/fyne-io/fyne) (version 1.2.4 or later)
 - [wormhole-william](https://github.com/psanford/wormhole-william) (version 1.0.1 or later)
+- [x/crypto](https://golang.org/x/crypto)
 
 ## Downloads
 
@@ -33,12 +34,13 @@ Contributions are strongly appreciated. Everything from creating bug reports to 
 
 ### Folder Structure
 - **assets/ :** Logos, artwork and assets bundled in the source code.
-- **crypto/ :** Cryptographic functions for hashing along with encryption and decryption.
-- **file/ :** Common code for file handling in the application.
-  - **file/parse :** Contains adapted versions of parse functions from `strconv` for extracting numbers from strings.
-- **gui :** All the code for creating the interface along with functions that run on button presses are to be found here.
-  - **gui/widgets :** Custom widget adaptations to extend and simplify functionality.
-- **sync :** All specific file sharing code for end-to-end encrypted file sharing over a local network.
+- **crypto/ :** Cryptographic functions and wrappers to simplify password hashing and encryption/decryption.
+  - **crypto/argon2/ :** Wrapper around `golang.org/x/crypto/argon2` for simplified use inside **crypto**.
+- **file/ :** Common code for file and data handling inside the application.
+  - **file/parse :** Contains adapted wrappers and functions for parsing numbers and urls from strings.
+- **gui :** Graphical interface code for controlling look and function in the application window using `fyne.io/fyne`.
+  - **gui/widgets :** Custom widget adaptations to extend and simplify functionality on top of standard widgets.
+- **sync :** Implementation of end-to-end encrypted file sharing over a local network using `github.com/psanford/wormhole-william`.
   
 ## License
 - Sparta is licensed under `GNU AFFERO GENERAL PUBLIC LICENSE Version 3` and created by [Jacalz](https://github.com/jacalz).

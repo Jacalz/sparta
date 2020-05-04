@@ -35,11 +35,12 @@ type Exercise struct {
 // zeroData is a variable containing an empty Data struct.
 var zeroData = &Data{}
 
-// ReadEncryptedJSON reads encrypted data and outputs the Data.
-func ReadEncryptedJSON(r io.Reader, key *[32]byte) (exercises Data, err error) {
+// ReadEncryptedJSON reads encrypted data and then outputs the JSON as a struct.
+func ReadEncryptedJSON(r io.Reader, key *[]byte) (exercises Data, err error) {
 	// Read the data to extract the encrypted content.
 	encrypted, err := ioutil.ReadAll(r)
 	if err != nil {
+		fyne.LogError("Error on reading data from file", err)
 		return exercises, err
 	} else if string(encrypted) == "" {
 		return exercises, nil
@@ -54,6 +55,7 @@ func ReadEncryptedJSON(r io.Reader, key *[32]byte) (exercises Data, err error) {
 	// Unmarshal the xml data in to our Data struct.
 	err = json.Unmarshal(content, &exercises)
 	if err != nil {
+		fyne.LogError("Error on JSON unmarshal", err)
 		return exercises, err
 	}
 
@@ -61,7 +63,7 @@ func ReadEncryptedJSON(r io.Reader, key *[32]byte) (exercises Data, err error) {
 }
 
 // ReadData reads data from an xml file, couldn't be simpler. Unexported.
-func ReadData(key *[32]byte, username string) (exercises Data, err error) {
+func ReadData(key *[]byte, username string) (exercises Data, err error) {
 	// Open up the file and it's content.
 	data, err := os.Open(filepath.Join(ConfigDir(), username+"-exercises.json"))
 	if err != nil {
@@ -69,30 +71,31 @@ func ReadData(key *[32]byte, username string) (exercises Data, err error) {
 		return exercises, err
 	}
 
+	defer data.Close()
+
 	// Read the JSON data from the encrypted file.
 	exercises, err = ReadEncryptedJSON(data, key)
 	if err != nil {
 		return exercises, err
 	}
 
-	// We are finished with the file now, let's close it.
-	go data.Close()
-
 	return exercises, nil
 }
 
 // Write writes new exercieses to the data file.
-func (d *Data) Write(key *[32]byte, username string) {
+func (d *Data) Write(key *[]byte, username string) {
 	//Marchal the xml content in to a file variable.
 	file, err := json.Marshal(d)
 	if err != nil {
 		fyne.LogError("Error on marshalling of json", err)
+		return
 	}
 
 	// Write to the file.
 	err = ioutil.WriteFile(filepath.Join(ConfigDir(), username+"-exercises.json"), crypto.Encrypt(key, file), 0600)
 	if err != nil {
 		fyne.LogError("Error on writing to file", err)
+		return
 	}
 }
 

@@ -1,6 +1,8 @@
 package sync
 
 import (
+	"io/ioutil"
+	"sparta/crypto"
 	"sparta/file"
 
 	"context"
@@ -13,12 +15,11 @@ import (
 )
 
 // StartSync starts up the server on the local network and returns it so we can call shutdown.
-func StartSync(synccode chan string) error {
+func StartSync(synccode chan string, username string, key *[]byte) error {
 	// Create the wormhole client.
 	var c wormhole.Client
 
-	// Open up the file.
-	f, err := os.Open(path.Join(file.ConfigDir(), "exercises.json"))
+	f, err := os.Open(path.Join(file.ConfigDir(), username+"-exercises.json"))
 	if err != nil {
 		fyne.LogError("Error on opening the file to share", err)
 		return err
@@ -27,8 +28,23 @@ func StartSync(synccode chan string) error {
 	// Defer the closing of the file.
 	defer f.Close()
 
+	// Read the data to extract the encrypted content.
+	encrypted, err := ioutil.ReadAll(f)
+	if err != nil {
+		fyne.LogError("Error on reading data from file", err)
+		return err
+	} else if string(encrypted) == "" {
+		return nil
+	}
+
+	// Decrypt the data to the content variable.
+	content, err := crypto.Decrypt(key, encrypted)
+	if err != nil {
+		return err
+	}
+
 	// Send the file in the background.
-	code, status, err := c.SendFile(context.Background(), path.Join(file.ConfigDir(), "sparta", "exercises.json"), f)
+	code, status, err := c.SendText(context.Background(), string(content))
 	if err != nil {
 		fyne.LogError("Error on sending the file to share", err)
 		return err
@@ -49,7 +65,7 @@ func StartSync(synccode chan string) error {
 }
 
 // Retrieve starts the retrieving process for fetching a shared file.
-func Retrieve(stored *file.Data, ReorderExercises chan bool, FirstExercise chan string, key *[32]byte, code, username string) error {
+func Retrieve(stored *file.Data, ReorderExercises chan bool, FirstExercise chan string, key *[]byte, code, username string) error {
 	// Create the wormhole client.
 	var c wormhole.Client
 
@@ -67,7 +83,7 @@ func Retrieve(stored *file.Data, ReorderExercises chan bool, FirstExercise chan 
 		return err
 	}
 
-	// Variables for keeping track of compare value sin for loops.
+	// Variable for keeping track of compare values in for loops.
 	exists := false
 
 	// Compare the two sets of data and add any non existing data.

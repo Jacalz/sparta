@@ -38,7 +38,7 @@ func (u *user) syncView(w fyne.Window) fyne.CanvasObject {
 
 		go func() {
 			// Start sharing our exercises.
-			err := sync.StartSync(u.SyncCode)
+			err := sync.StartSync(u.SyncCode, u.username, &u.encryptionKey)
 			if err != nil {
 				dialog.ShowError(err, w)
 			} else {

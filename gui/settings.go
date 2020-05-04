@@ -77,9 +77,16 @@ func (u *user) settingsView(w fyne.Window, a fyne.App) fyne.CanvasObject {
 			// Ask the user to confirm what we are about to do.
 			dialog.ShowConfirm("Are you sure that you want to continue?", "The action will permanently change your password.", func(change bool) {
 				if change {
+					// Define the error so we can store directly to the user.
+					var err error
+
 					// Calculate and store the new hashes.
-					u.encryptionKey = crypto.GenerateEncryptionKey(passwordEntry.Text)
-					u.passwordHash = crypto.GeneratePasswordHash(passwordEntry.Text)
+					u.encryptionKey, u.passwordHash, err = crypto.GeneratePasswordHash(passwordEntry.Text)
+					if err != nil {
+						fyne.LogError("Error on generating password hash", err)
+						dialog.ShowError(err, w)
+						return
+					}
 
 					// Update the password hash in storage.
 					a.Preferences().SetString("Username:"+u.username, u.passwordHash)
