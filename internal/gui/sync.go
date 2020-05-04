@@ -2,8 +2,9 @@ package gui
 
 import (
 	"regexp"
-	"sparta/gui/widgets"
-	"sparta/sync"
+
+	"github.com/Jacalz/sparta/internal/gui/widgets"
+	"github.com/Jacalz/sparta/internal/sync"
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/dialog"

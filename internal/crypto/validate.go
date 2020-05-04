@@ -1,7 +1,7 @@
 package crypto
 
 import (
-	"sparta/crypto/argon2"
+	"github.com/Jacalz/sparta/internal/crypto/argon2"
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/dialog"

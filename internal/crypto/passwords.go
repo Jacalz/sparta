@@ -2,7 +2,8 @@ package crypto
 
 import (
 	"runtime"
-	"sparta/crypto/argon2"
+
+	"github.com/Jacalz/sparta/internal/crypto/argon2"
 
 	"fyne.io/fyne"
 )

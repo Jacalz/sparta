@@ -1,15 +1,15 @@
 package file
 
 import (
-	"io"
-	"sparta/crypto"
-	"time"
-
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"time"
+
+	"github.com/Jacalz/sparta/internal/crypto"
 
 	"fyne.io/fyne"
 )

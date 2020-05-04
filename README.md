@@ -22,6 +22,11 @@ Sparta is built using the following Go packages:
 Please visit the [release page](https://github.com/Jacalz/sparta/releases) for the downloading the latest release.
 Versions for Linux, MacOS and Windows are available, with an Android version possibly coming in the future.
 
+Systems that have [Go](https://golang.org) and the [required prequsites for Fyne](https://fyne.io/develop/) installed can alternatively install using `go get`:
+```bash
+go get github.com/Jacalz/sparta
+```
+
 ## Contributing
 
 Contributions are strongly appreciated. Everything from creating bug reports to contributing code will help the project a lot, so please feel free to help in any way, shape or form that you feel comfortable doing. We as a community can strive towards making this project even better. If you want to contribute code, the folder structure below will hopefully help you know where to start looking.
@@ -33,14 +38,14 @@ Contributions are strongly appreciated. Everything from creating bug reports to 
 - [ ] Possibly an Android version and maybe an iOS version if it is requested.
 
 ### Folder Structure
-- **assets/ :** Logos, artwork and assets bundled in the source code.
-- **crypto/ :** Cryptographic functions and wrappers to simplify password hashing and encryption/decryption.
-  - **crypto/argon2/ :** Wrapper around `golang.org/x/crypto/argon2` for simplified use inside **crypto**.
-- **file/ :** Common code for file and data handling inside the application.
-  - **file/parse :** Contains adapted wrappers and functions for parsing numbers and urls from strings.
-- **gui :** Graphical interface code for controlling look and function in the application window using `fyne.io/fyne`.
-  - **gui/widgets :** Custom widget adaptations to extend and simplify functionality on top of standard widgets.
-- **sync :** Implementation of end-to-end encrypted file sharing over a local network using `github.com/psanford/wormhole-william`.
+- **internal/assets/ :** Logos, artwork and assets bundled in the source code.
+- **internal/crypto/ :** Cryptographic functions and wrappers to simplify password hashing and encryption/decryption.
+  - **internal/crypto/argon2/ :** Wrapper around `golang.org/x/crypto/argon2` for simplified use inside **internal/crypto**.
+- **internal/file/ :** Common code for file and data handling inside the application.
+  - **internal/file/parse :** Contains adapted wrappers and functions for parsing numbers and urls from strings.
+- **internal/gui :** Graphical interface code for controlling look and function in the application window using `fyne.io/fyne`.
+  - **internal/gui/widgets :** Custom widget adaptations to extend and simplify functionality on top of standard widgets.
+- **internal/sync :** Implementation of end-to-end encrypted file sharing over a local network using `github.com/psanford/wormhole-william`.
   
 ## License
 - Sparta is licensed under `GNU AFFERO GENERAL PUBLIC LICENSE Version 3` and created by [Jacalz](https://github.com/jacalz).

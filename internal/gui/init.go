@@ -1,9 +1,9 @@
 package gui
 
 import (
-	"sparta/assets"
-	"sparta/crypto"
-	"sparta/file"
+	"github.com/Jacalz/sparta/internal/assets"
+	"github.com/Jacalz/sparta/internal/crypto"
+	"github.com/Jacalz/sparta/internal/file"
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/app"

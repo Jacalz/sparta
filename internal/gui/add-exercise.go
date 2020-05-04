@@ -1,14 +1,14 @@
 package gui
 
 import (
-	"sort"
-	"sparta/file"
-	"sparta/file/parse"
-	"sparta/gui/widgets"
-
 	"fmt"
 	"regexp"
+	"sort"
 	"time"
+
+	"github.com/Jacalz/sparta/internal/file"
+	"github.com/Jacalz/sparta/internal/file/parse"
+	"github.com/Jacalz/sparta/internal/gui/widgets"
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/dialog"

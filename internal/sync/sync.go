@@ -1,14 +1,14 @@
 package sync
 
 import (
-	"io/ioutil"
-	"sparta/crypto"
-	"sparta/file"
-
 	"context"
+	"io/ioutil"
 	"os"
-	"path"
+	"path/filepath"
 	"sort"
+
+	"github.com/Jacalz/sparta/internal/crypto"
+	"github.com/Jacalz/sparta/internal/file"
 
 	"fyne.io/fyne"
 	"github.com/psanford/wormhole-william/wormhole"
@@ -19,7 +19,7 @@ func StartSync(synccode chan string, username string, key *[]byte) error {
 	// Create the wormhole client.
 	var c wormhole.Client
 
-	f, err := os.Open(path.Join(file.ConfigDir(), username+"-exercises.json"))
+	f, err := os.Open(filepath.Join(file.ConfigDir(), username+"-exercises.json"))
 	if err != nil {
 		fyne.LogError("Error on opening the file to share", err)
 		return err

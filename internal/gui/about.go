@@ -1,8 +1,8 @@
 package gui
 
 import (
-	"sparta/assets"
-	"sparta/file/parse"
+	"github.com/Jacalz/sparta/internal/assets"
+	"github.com/Jacalz/sparta/internal/file/parse"
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/canvas"

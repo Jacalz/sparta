@@ -1,6 +1,6 @@
 package main
 
-import "sparta/gui"
+import "github.com/Jacalz/sparta/internal/gui"
 
 func main() {
 	gui.Init()
