@@ -2,12 +2,8 @@ package sync
 
 import (
 	"context"
-	"io/ioutil"
-	"os"
-	"path/filepath"
 	"sort"
 
-	"github.com/Jacalz/sparta/internal/crypto"
 	"github.com/Jacalz/sparta/internal/file"
 
 	"fyne.io/fyne"
@@ -19,26 +15,15 @@ func StartSync(synccode chan string, username string, key *[]byte) error {
 	// Create the wormhole client.
 	var c wormhole.Client
 
-	f, err := os.Open(filepath.Join(file.ConfigDir(), username+"-exercises.json"))
+	f, err := file.OpenUserFile(username)
 	if err != nil {
-		fyne.LogError("Error on opening the file to share", err)
 		return err
 	}
 
-	// Defer the closing of the file.
-	defer f.Close()
-
-	// Read the data to extract the encrypted content.
-	encrypted, err := ioutil.ReadAll(f)
-	if err != nil {
-		fyne.LogError("Error on reading data from file", err)
-		return err
-	} else if string(encrypted) == "" {
-		return nil
-	}
+	defer f.Close() // #nosec - We are not writing to the file.
 
 	// Decrypt the data to the content variable.
-	content, err := crypto.Decrypt(key, encrypted)
+	content, err := file.ReadEncrypted(f, key)
 	if err != nil {
 		return err
 	}

@@ -16,7 +16,7 @@ func NoExistingUsers() bool {
 		return false
 	}
 
-	defer f.Close()
+	defer f.Close() // #nosec - We are not writing to the file.
 
 	_, err = f.Readdirnames(1)
 	if err == io.EOF {

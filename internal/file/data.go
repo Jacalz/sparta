@@ -35,19 +35,29 @@ type Exercise struct {
 // zeroData is a variable containing an empty Data struct.
 var zeroData = &Data{}
 
-// ReadEncryptedJSON reads encrypted data and then outputs the JSON as a struct.
-func ReadEncryptedJSON(r io.Reader, key *[]byte) (exercises Data, err error) {
+// ReadEncrypted reads the data from a reader, decrypts it and outputs the content.
+func ReadEncrypted(r io.Reader, key *[]byte) (content []byte, err error) {
 	// Read the data to extract the encrypted content.
 	encrypted, err := ioutil.ReadAll(r)
 	if err != nil {
 		fyne.LogError("Error on reading data from file", err)
-		return exercises, err
+		return nil, err
 	} else if string(encrypted) == "" {
-		return exercises, nil
+		return nil, nil
 	}
 
 	// Decrypt the data to the content variable.
-	content, err := crypto.Decrypt(key, encrypted)
+	content, err = crypto.Decrypt(key, encrypted)
+	if err != nil {
+		return nil, err
+	}
+
+	return content, nil
+}
+
+// ReadEncryptedJSON reads encrypted data and then outputs the JSON as a struct.
+func ReadEncryptedJSON(r io.Reader, key *[]byte) (exercises Data, err error) {
+	content, err := ReadEncrypted(r, key)
 	if err != nil {
 		return exercises, err
 	}
@@ -62,19 +72,30 @@ func ReadEncryptedJSON(r io.Reader, key *[]byte) (exercises Data, err error) {
 	return exercises, nil
 }
 
+// OpenUserFile is used to open up the file for the specified user.
+func OpenUserFile(username string) (f *os.File, err error) {
+	// Open up the file and it's content.
+	f, err = os.Open(filepath.Join(ConfigDir(), username+"-exercises.json")) // #nosec - The username is checked and can not be used outside of the folder.
+	if err != nil {
+		fyne.LogError("Error on opening the file for the user", err)
+		return nil, err
+	}
+
+	return f, nil
+}
+
 // ReadData reads data from an xml file, couldn't be simpler. Unexported.
 func ReadData(key *[]byte, username string) (exercises Data, err error) {
 	// Open up the file and it's content.
-	data, err := os.Open(filepath.Join(ConfigDir(), username+"-exercises.json"))
+	f, err := OpenUserFile(username)
 	if err != nil {
-		fyne.LogError("Error on opening the file", err)
 		return exercises, err
 	}
 
-	defer data.Close()
+	defer f.Close() // #nosec - We are not writing to the file.
 
 	// Read the JSON data from the encrypted file.
-	exercises, err = ReadEncryptedJSON(data, key)
+	exercises, err = ReadEncryptedJSON(f, key)
 	if err != nil {
 		return exercises, err
 	}
