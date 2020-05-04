@@ -2,6 +2,7 @@ package gui
 
 import (
 	"github.com/Jacalz/sparta/internal/crypto"
+	"github.com/Jacalz/sparta/internal/crypto/validate"
 	"github.com/Jacalz/sparta/internal/file"
 	"github.com/Jacalz/sparta/internal/gui/widgets"
 
@@ -24,7 +25,7 @@ func (u *user) loginTabContainer(a fyne.App, w fyne.Window, t *widget.TabContain
 
 	// newUserButton holds the button widget for creating a new user.
 	newUserButton := widget.NewButtonWithIcon("Create New User", theme.ContentAddIcon(), func() {
-		if !crypto.ValidInput(usernameEntry.Text, passwordEntry.Text, w) {
+		if !validate.Input(usernameEntry.Text, passwordEntry.Text, w) {
 			return
 		}
 
@@ -54,9 +55,8 @@ func (u *user) loginTabContainer(a fyne.App, w fyne.Window, t *widget.TabContain
 		// Define err here so we can add to u.encryptionKey and u.Data directly.
 		var err error
 
-		u.encryptionKey, err = crypto.CorrectCredentials(usernameEntry.Text, passwordEntry.Text, a, w)
+		u.encryptionKey, err = validate.CorrectCredentials(usernameEntry.Text, passwordEntry.Text, a, w)
 		if err != nil {
-			dialog.ShowInformation("Wrong username and/or password", "The login credentials are incorrect, please try again.", w)
 			return
 		}
 

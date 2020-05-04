@@ -41,6 +41,7 @@ Contributions are strongly appreciated. Everything from creating bug reports to 
 - **internal/assets/ :** Logos, artwork and assets bundled in the source code.
 - **internal/crypto/ :** Cryptographic functions and wrappers to simplify password hashing and encryption/decryption.
   - **internal/crypto/argon2/ :** Wrapper around `golang.org/x/crypto/argon2` for simplified use inside **internal/crypto**.
+  - **internal/crypto/validate/ :** Handles functions for validating usernames and passwords.
 - **internal/file/ :** Common code for file and data handling inside the application.
   - **internal/file/parse :** Contains adapted wrappers and functions for parsing numbers and urls from strings.
 - **internal/gui :** Graphical interface code for controlling look and function in the application window using `fyne.io/fyne`.

@@ -15,6 +15,18 @@ import (
 	"fyne.io/fyne/widget"
 )
 
+// Compile regular expressions for checking numeric input with optional decimals.
+var validFloat = regexp.MustCompile(`^$|(\d+\.)?\d+$`)
+
+// Compile regular expressions for checking numeric input without decimals.
+var validUint = regexp.MustCompile(`^$|^\d*$`)
+
+// Compile regular expressions for checking date input.
+var validDate = regexp.MustCompile(`^([12]\d{3})-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[0-1])$`)
+
+// Compile regular expressions for checking clock input.
+var validClock = regexp.MustCompile(`^([0-1][0-9]|2[0-3]):[0-5][0-9]$`)
+
 // AddExerciseView shows the opoup for adding a new activity.
 func (u *user) addExerciseView(w fyne.Window) fyne.CanvasObject {
 	// Variables for the entry variables used in the form.
@@ -42,18 +54,6 @@ func (u *user) addExerciseView(w fyne.Window) fyne.CanvasObject {
 			commentEntry.SetText("")
 		},
 	}
-
-	// Compile regular expressions for checking numeric input with optional decimals.
-	validFloat := regexp.MustCompile(`^$|(\d+\.)?\d+$`)
-
-	// Compile regular expressions for checking numeric input without decimals.
-	validUint := regexp.MustCompile(`^$|^\d*$`)
-
-	// Compile regular expressions for checking date input.
-	validDate := regexp.MustCompile(`^([12]\d{3})-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[0-1])$`)
-
-	// Compile regular expressions for checking clock input.
-	validClock := regexp.MustCompile(`^([0-1][0-9]|2[0-3]):[0-5][0-9]$`)
 
 	// Create the form for displaying.
 	form.OnSubmit = func() {

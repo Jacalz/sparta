@@ -2,6 +2,7 @@ package gui
 
 import (
 	"github.com/Jacalz/sparta/internal/crypto"
+	"github.com/Jacalz/sparta/internal/crypto/validate"
 	"github.com/Jacalz/sparta/internal/gui/widgets"
 
 	"fyne.io/fyne"
@@ -41,9 +42,7 @@ func (u *user) settingsView(w fyne.Window, a fyne.App) fyne.CanvasObject {
 	// Create the button used for changing the username.
 	usernameButton := widget.NewButtonWithIcon("Change Username", theme.ConfirmIcon(), func() {
 		// Check that the username is valid.
-		if usernameEntry.Text == u.password || usernameEntry.Text == "" {
-			dialog.ShowInformation("Please enter a valid username", "Usernames need to not be empty and not the same as the password.", w)
-		} else {
+		if validate.Input(usernameEntry.Text, u.password, w) {
 			// Ask the user to confirm what we are about to do.
 			dialog.ShowConfirm("Are you sure that you want to continue?", "The action will permanently change your username.", func(change bool) {
 				if change {
@@ -71,9 +70,7 @@ func (u *user) settingsView(w fyne.Window, a fyne.App) fyne.CanvasObject {
 	// Create the button used for changing the password.
 	passwordButton := widget.NewButtonWithIcon("Change Password", theme.ConfirmIcon(), func() {
 		// Check that the password is valid.
-		if len(passwordEntry.Text) < 8 || passwordEntry.Text == u.username {
-			dialog.ShowInformation("Please enter a valid password", "Passwords need to be at least eight characters long.", w)
-		} else {
+		if validate.Input(u.username, passwordEntry.Text, w) {
 			// Ask the user to confirm what we are about to do.
 			dialog.ShowConfirm("Are you sure that you want to continue?", "The action will permanently change your password.", func(change bool) {
 				if change {
@@ -83,7 +80,6 @@ func (u *user) settingsView(w fyne.Window, a fyne.App) fyne.CanvasObject {
 					// Calculate and store the new hashes.
 					u.encryptionKey, u.passwordHash, err = crypto.GeneratePasswordHash(passwordEntry.Text)
 					if err != nil {
-						fyne.LogError("Error on generating password hash", err)
 						dialog.ShowError(err, w)
 						return
 					}
