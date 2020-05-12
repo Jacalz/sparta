@@ -1,14 +1,7 @@
 # Constant variables for simplifying code below.
 appID=com.github.jacalz.sparta
-icon=assets/icon-512.png
+icon=internal/assets/icon-512.png
 name=Sparta
-
-android:
-	# Export the variable to specify where the ndk is located.
-	export ANDROID_NDK_HOME=~/Android/Sdk/ndk/21.0.6113669/
-
-	# Build the Android apk using the Android SDK.
-	~/go/bin/fyne package -os android -appID ${appID} -name ${name} -icon ${icon}
 
 bundle:
 	# Bundle the correct logo into sparta/src/bundled/bundled.go
@@ -25,7 +18,7 @@ check:
 	gofmt -s -w .
 
 	# Check the whole program for security issues.
-	 ~/go/bin/gosec ./...
+	~/go/bin/gosec ./...
 
 compress:
 	# Compress the MacOS application into a zip file.
