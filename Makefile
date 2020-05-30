@@ -5,10 +5,10 @@ name=Sparta
 
 bundle:
 	# Bundle the correct logo into sparta/src/bundled/bundled.go
-	~/go/bin/fyne bundle -package assets assets/icon-256.png > assets/bundled.go
+	~/go/bin/fyne bundle -package assets internal/assets/icon-256.png > internal/assets/bundled.go
 
 	# Modify the variable name to be correct.
-	sed -i 's/resourceIcon256Png/AppIcon/g' assets/bundled.go
+	sed -i 's/resourceIcon256Png/AppIcon/g' internal/assets/bundled.go
 
 check:
 	# Check the whole codebase for misspellings.
@@ -20,25 +20,16 @@ check:
 	# Check the whole program for security issues.
 	~/go/bin/gosec ./...
 
-compress:
-	# Compress the MacOS application into a zip file.
-	(cd fyne-cross/dist/ && zip -r sparta-darwin-amd64.zip darwin-amd64/Sparta.app)
+darwin:
+	~/go/bin/fyne-cross darwin -arch amd64 -app-id ${appID} -icon ${icon} -output ${name}
 
-	# Compress the Windows binary into a zip file.
-	(cd fyne-cross/dist/ && zip sparta-windows-amd64.zip windows-amd64/Sparta.exe)
+linux:
+	~/go/bin/fyne-cross linux -arch amd64 -app-id ${appID} -icon ${icon}
 
-	# Move out the Linux package and rename it.
-	(cd fyne-cross/dist/ && mv linux-amd64/Sparta.tar.gz sparta-linux-amd64.tar.gz)
+windows:
+	~/go/bin/fyne-cross windows -arch amd64 -app-id ${appID} -icon ${icon}
 
-	# Remove the old folders frm the folder.
-	(cd fyne-cross/dist/ && rm -rf darwin-amd64/ windows-amd64/ linux-amd64/)
+cross-compile: darwin linux windows
 
-cross-compile:
-	# Remove all dist files.
-	rm -rf fyne-cross/dist/*
-
-	# Start by cross compiling for all our targets.
-	~/go/bin/fyne-cross -targets=windows/amd64,darwin/amd64,linux/amd64 -icon ${icon} -appID ${appID} -output=${name} .
-
-# Run the full release to prepare for an upcoming release.
+# Run the full release to prepare release binaries for an upcoming release.
 release: cross-compile compress
