@@ -29,13 +29,17 @@ func NoExistingUsers() bool {
 // CreateNewUser creates our new user.
 func CreateNewUser(username string) error {
 	if _, err := os.Stat(ConfigDir()); os.IsNotExist(err) {
-		return nil
+		if err := os.Mkdir(ConfigDir(), os.ModePerm); err != nil {
+			fyne.LogError("Error on creating config directory", err)
+			return err
+		}
 	} else if err != nil {
 		return err
 	}
 
 	_, err := os.Create(filepath.Join(ConfigDir(), username+"-exercises.json"))
 	if err != nil {
+		fyne.LogError("Error on creating user file", err)
 		return err
 	}
 

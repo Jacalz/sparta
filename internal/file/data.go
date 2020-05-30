@@ -60,6 +60,8 @@ func ReadEncryptedJSON(r io.Reader, key *[]byte) (exercises Data, err error) {
 	content, err := ReadEncrypted(r, key)
 	if err != nil {
 		return exercises, err
+	} else if content == nil {
+		return exercises, nil
 	}
 
 	// Unmarshal the xml data in to our Data struct.

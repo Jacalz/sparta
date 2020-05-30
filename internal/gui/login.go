@@ -29,7 +29,7 @@ func (u *user) loginTabContainer(a fyne.App, w fyne.Window, t *widget.TabContain
 			return
 		}
 
-		// Create the file for the user.
+		// Create the file for the user and the directory if it doesn't exist.
 		if err := file.CreateNewUser(usernameEntry.Text); err != nil {
 			dialog.ShowError(err, w)
 			return
