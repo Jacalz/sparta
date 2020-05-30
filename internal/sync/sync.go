@@ -49,8 +49,8 @@ func StartSync(synccode chan string, username string, key *[]byte) error {
 	return nil
 }
 
-// Retrieve starts the retrieving process for fetching a shared file.
-func Retrieve(stored *file.Data, ReorderExercises chan bool, FirstExercise chan string, key *[]byte, code, username string) error {
+// Receive starts the retrieving process for fetching a shared file.
+func Receive(stored *file.Data, ReorderExercises chan bool, FirstExercise chan string, key *[]byte, code, username string) error {
 	// Create the wormhole client.
 	var c wormhole.Client
 
@@ -62,9 +62,8 @@ func Retrieve(stored *file.Data, ReorderExercises chan bool, FirstExercise chan 
 	}
 
 	// received will store all fetched data.
-	received, err := file.ReadEncryptedJSON(data, key)
+	received, err := file.ReadJSON(data)
 	if err != nil {
-		fyne.LogError("Error on reading the encrypted JSON data", err)
 		return err
 	}
 

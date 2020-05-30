@@ -74,6 +74,26 @@ func ReadEncryptedJSON(r io.Reader, key *[]byte) (exercises Data, err error) {
 	return exercises, nil
 }
 
+// ReadJSON is an adaptation of ReadEncryptedJSON that handles already unencrypted JSON text.
+func ReadJSON(r io.Reader) (exercises Data, err error) {
+	text, err := ioutil.ReadAll(r)
+	if err != nil {
+		fyne.LogError("Error on reading data from the reader", err)
+		return exercises, err
+	} else if string(text) == "" {
+		return exercises, nil
+	}
+
+	// Unmarshal the xml data in to our Data struct.
+	err = json.Unmarshal(text, &exercises)
+	if err != nil {
+		fyne.LogError("Error on JSON unmarshal", err)
+		return exercises, err
+	}
+
+	return exercises, nil
+}
+
 // OpenUserFile is used to open up the file for the specified user.
 func OpenUserFile(username string) (f *os.File, err error) {
 	// Open up the file and it's content.

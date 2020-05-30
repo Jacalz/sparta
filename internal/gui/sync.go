@@ -59,12 +59,14 @@ func (u *user) syncView(w fyne.Window) fyne.CanvasObject {
 	validCode := regexp.MustCompile(`^\d\d?-\w{2,12}-\w{2,12}$`)
 
 	recieveDataButton.OnTapped = func() {
-		if validCode.MatchString(recieveCodeEntry.Text) {
+		if validCode.MatchString(recieveCodeEntry.Entry.Text) {
 			// Disable the button to make sure that users can't do anything bad.
 			startSendingDataButton.Disable()
 
+			code := recieveCodeEntry.Entry.Text
+
 			go func() {
-				err := sync.Retrieve(&u.data, u.reorderExercises, u.firstExercise, &u.encryptionKey, recieveCodeEntry.Text, u.username)
+				err := sync.Receive(&u.data, u.reorderExercises, u.firstExercise, &u.encryptionKey, code, u.username)
 				if err != nil {
 					dialog.ShowError(err, w)
 				} else {
