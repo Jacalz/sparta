@@ -30,6 +30,3 @@ windows:
 	~/go/bin/fyne-cross windows -arch amd64 -app-id ${appID} -icon ${icon}
 
 cross-compile: darwin linux windows
-
-# Run the full release to prepare release binaries for an upcoming release.
-release: cross-compile compress
