@@ -37,8 +37,10 @@ func (u *user) addExerciseView(w fyne.Window) fyne.CanvasObject {
 	durationEntry := widgets.NewEntryWithPlaceholder("Minutes")
 	setsEntry := widgets.NewEntryWithPlaceholder("Number of sets")
 	repsEntry := widgets.NewEntryWithPlaceholder("Number of reps")
+
 	commentEntry := widget.NewMultiLineEntry()
 	commentEntry.SetPlaceHolder("Type your comment here...")
+	commentEntry.Wrapping = fyne.TextWrapWord
 
 	// Create the initial form with a cancel button so it can be used last on submit.
 	form := &widget.Form{

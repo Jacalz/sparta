@@ -46,6 +46,7 @@ func (u *user) exerciseDisplayer(label *widget.Label) {
 func (u *user) exercisesView(w fyne.Window, a fyne.App) fyne.CanvasObject {
 	// Create a label for displaing some info for the user. Default to showing nothing.
 	dataLabel := widget.NewLabel("")
+	dataLabel.Wrapping = fyne.TextWrapWord
 
 	// Start up the function to handle adding exercises in the background.
 	go u.exerciseDisplayer(dataLabel)

@@ -17,7 +17,9 @@ import (
 func (u *user) syncView(w fyne.Window) fyne.CanvasObject {
 
 	// aboutGroup is a small group to display information about file sharing.
-	aboutGroup := widget.NewGroup("About Exercise Synchronization", widget.NewLabelWithStyle("The share support in Sparta enables the user to syncronize their exercises.\nThe file is served encrypted and will be automatically decrypted on a second device using the same login credentials.\nIt is as simple as starting the share on one device and then starting receiving on another device on the same network.\nThe receiving computer will then get all the new activities added locally.", fyne.TextAlignCenter, fyne.TextStyle{}))
+	aboutLabel := widget.NewLabelWithStyle("The share support in Sparta enables the user to syncronize their exercises. The file is served encrypted and will be automatically decrypted on a second device using the same login credentials. It is as simple as starting the share on one device and then starting receiving on another device on the same network. The receiving computer will then get all the new activities added locally.", fyne.TextAlignCenter, fyne.TextStyle{})
+	aboutLabel.Wrapping = fyne.TextWrapWord
+	aboutGroup := widget.NewGroup("About Exercise Synchronization", aboutLabel)
 
 	// sendDataButton starts the network server and shares the file over the local internet.
 	startSendingDataButton := widget.NewButtonWithIcon("Start Syncing Exercises", theme.ViewRefreshIcon(), nil)

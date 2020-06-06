@@ -13,7 +13,7 @@ Sparta is a Sport and Rehearsal Tracking Application. It lets the user write dow
 
 Sparta is built using the following Go packages:
 
-- [fyne](https://github.com/fyne-io/fyne) (version 1.2.4 or later)
+- [fyne](https://github.com/fyne-io/fyne) (version 1.3.0 or later)
 - [wormhole-william](https://github.com/psanford/wormhole-william) (version 1.0.1 or later)
 - [x/crypto](https://golang.org/x/crypto)
 
