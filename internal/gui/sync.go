@@ -13,6 +13,9 @@ import (
 	"fyne.io/fyne/widget"
 )
 
+// Regular expression for verifying sync code.
+var validCode = regexp.MustCompile(`^\d\d?-\w{2,12}-\w{2,12}$`)
+
 // SyncView displays the tab page for syncing data between devices.
 func (u *user) syncView(w fyne.Window) fyne.CanvasObject {
 
@@ -56,9 +59,6 @@ func (u *user) syncView(w fyne.Window) fyne.CanvasObject {
 		// Add the sync code to the recieveCodeEntry.
 		recieveCodeEntry.SetText(<-u.SyncCode)
 	}
-
-	// Regular expression for verifying sync code.
-	validCode := regexp.MustCompile(`^\d\d?-\w{2,12}-\w{2,12}$`)
 
 	recieveDataButton.OnTapped = func() {
 		if validCode.MatchString(recieveCodeEntry.Entry.Text) {
