@@ -9,16 +9,11 @@ import (
 type AdvancedEntry struct {
 	widget.Entry
 
-	// PressAction for pressing a button on return.
-	*PressAction
+	// PressFuncfor running a function on return.
+	PressFunc func()
 
 	// Fields related to switching entry with button.
 	*MoveAction
-}
-
-// PressAction handles the Button press action.
-type PressAction struct {
-	Button widget.Button
 }
 
 // MoveAction handles focusing a different entry on a specific arrow key press.
@@ -38,7 +33,9 @@ type MoveAction struct {
 func (a *AdvancedEntry) TypedKey(ev *fyne.KeyEvent) {
 	switch ev.Name {
 	case fyne.KeyReturn:
-		a.PressAction.Button.OnTapped()
+		if a.PressFunc != nil {
+			a.PressFunc()
+		}
 	case fyne.KeyUp:
 		if a.Up {
 			a.Window.Canvas().Focus(a.MoveAction.UpEntry)
@@ -71,8 +68,8 @@ func NewAdvancedEntry(placeholder string, password bool) *AdvancedEntry {
 }
 
 // InitExtend adds extra data to the extended entry.
-func (a *AdvancedEntry) InitExtend(press widget.Button, move MoveAction) {
-	a.PressAction = &PressAction{Button: press}
+func (a *AdvancedEntry) InitExtend(pressFunc func(), move MoveAction) {
+	a.PressFunc = pressFunc
 	a.MoveAction = &move
 }
 

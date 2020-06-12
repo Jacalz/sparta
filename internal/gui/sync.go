@@ -86,7 +86,7 @@ func (u *user) syncView(w fyne.Window) fyne.CanvasObject {
 	shareGroup := widget.NewGroup("Syncronizing Data", startSendingDataButton)
 
 	// Extend the recieveCodeEntry to add the option for receiving on pressing enter.
-	recieveCodeEntry.InitExtend(*recieveDataButton, widgets.MoveAction{})
+	recieveCodeEntry.InitExtend(recieveDataButton.OnTapped, widgets.MoveAction{})
 
 	// recieveGroup is a group containing all options related to receiving.
 	recieveGroup := widget.NewGroup("Receiving Data", fyne.NewContainerWithLayout(layout.NewGridLayout(2), recieveCodeEntry, recieveDataButton))

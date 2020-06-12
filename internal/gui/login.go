@@ -94,8 +94,8 @@ func (u *user) loginTabContainer(a fyne.App, w fyne.Window, t *widget.TabContain
 	}
 
 	// Extend the AdvancedEntry widgets with extra key press supports.
-	usernameEntry.InitExtend(*loginButton, widgets.MoveAction{Down: true, DownEntry: passwordEntry, Window: w})
-	passwordEntry.InitExtend(*loginButton, widgets.MoveAction{Up: true, UpEntry: usernameEntry, Window: w})
+	usernameEntry.InitExtend(loginButton.OnTapped, widgets.MoveAction{Down: true, DownEntry: passwordEntry, Window: w})
+	passwordEntry.InitExtend(loginButton.OnTapped, widgets.MoveAction{Up: true, UpEntry: usernameEntry, Window: w})
 
 	if fyne.Device.IsMobile(fyne.CurrentDevice()) {
 		return widget.NewTabItem("Login", fyne.NewContainerWithLayout(layout.NewVBoxLayout(),

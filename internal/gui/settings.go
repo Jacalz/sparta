@@ -39,8 +39,8 @@ func (u *user) settingsView(w fyne.Window, a fyne.App) fyne.CanvasObject {
 	// An entry for typing the new username.
 	usernameEntry := widgets.NewAdvancedEntry("New Username", false)
 
-	// Create the button used for changing the username.
-	usernameButton := widget.NewButtonWithIcon("Change Username", theme.ConfirmIcon(), func() {
+	// The function to run on changing username
+	changeUsername := func() {
 		// Check that the username is valid.
 		if validate.Input(usernameEntry.Text, u.password, w) {
 			// Ask the user to confirm what we are about to do.
@@ -62,7 +62,10 @@ func (u *user) settingsView(w fyne.Window, a fyne.App) fyne.CanvasObject {
 			}, w)
 		}
 
-	})
+	}
+
+	// Create the button used for changing the username.
+	usernameButton := widget.NewButtonWithIcon("Change Username", theme.ConfirmIcon(), changeUsername)
 
 	// Create the entry for updating the password.
 	passwordEntry := widgets.NewAdvancedEntry("New Password", true)
@@ -98,8 +101,8 @@ func (u *user) settingsView(w fyne.Window, a fyne.App) fyne.CanvasObject {
 	})
 
 	// Extend our extended buttons with array entry switching and enter to change.
-	usernameEntry.InitExtend(*usernameButton, widgets.MoveAction{Down: true, DownEntry: passwordEntry, Window: w})
-	passwordEntry.InitExtend(*passwordButton, widgets.MoveAction{Up: true, UpEntry: usernameEntry, Window: w})
+	usernameEntry.InitExtend(usernameButton.OnTapped, widgets.MoveAction{Down: true, DownEntry: passwordEntry, Window: w})
+	passwordEntry.InitExtend(passwordButton.OnTapped, widgets.MoveAction{Up: true, UpEntry: usernameEntry, Window: w})
 
 	// revertToDefaultSettings reverts all settings to their default values.
 	revertToDefaultSettings := widget.NewButtonWithIcon("Reset settings to default values", theme.ViewRefreshIcon(), func() {
