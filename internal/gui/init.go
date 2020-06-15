@@ -49,6 +49,7 @@ func Init() {
 
 	// Create the window for our user interface.
 	w := a.NewWindow("Sparta")
+	w.SetMaster()
 
 	// Create the user struct type for later use.
 	u := newUser()
@@ -65,14 +66,14 @@ func Init() {
 	t := &widget.TabContainer{}
 	t.Append(u.loginTabContainer(a, w, t))
 
-	// Defer creation and storage of a new password hash with random salt.
-	defer func() {
+	// Create and store of a new password hash with random salt on window close.
+	w.SetOnClosed(func() {
 		if key, err := crypto.SaveNewPasswordHash(u.password, u.username, a); err != nil {
 			fyne.LogError("Error on generating password hash", err)
 		} else {
 			u.data.Write(&key, u.username)
 		}
-	}()
+	})
 
 	// Set the window to a good size, add the content and lastly run the application.
 	w.SetContent(t)
