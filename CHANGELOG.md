@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.7.1 - Fixes for the fifth beta
+- Fix some spelling mistakes.
+
 ## 0.7.0 - Fifth beta
 
 - Big refraction of the gui code.
