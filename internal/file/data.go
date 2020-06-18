@@ -125,7 +125,7 @@ func ReadData(key *[]byte, username string) (exercises Data, err error) {
 	return exercises, nil
 }
 
-// Write writes new exercieses to the data file.
+// Write writes new exercises to the data file.
 func (d *Data) Write(key *[]byte, username string) {
 	//Marchal the xml content in to a file variable.
 	file, err := json.Marshal(d)

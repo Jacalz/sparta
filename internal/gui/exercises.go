@@ -20,7 +20,7 @@ func (u *user) exerciseDisplayer(label *widget.Label) {
 	// Handle an empty data file.
 	if len(u.data.Exercise) == 0 {
 		// Start by informing  the user that no data is available.
-		label.SetText("No exercieses have been created yet.")
+		label.SetText("No exercises have been created yet.")
 	} else {
 		// Refresh the widget to show the updated text.
 		label.SetText(u.initialDisplay())
@@ -36,7 +36,7 @@ func (u *user) exerciseDisplayer(label *widget.Label) {
 		case <-u.reorderExercises:
 			label.SetText(u.initialDisplay())
 		case <-u.emptyExercises:
-			label.SetText("No exercieses have been created yet.")
+			label.SetText("No exercises have been created yet.")
 		}
 
 	}
