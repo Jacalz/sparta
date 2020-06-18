@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.7.0 - Fifth beta
+
+- Big refraction of the gui code.
+- Reworked and refactored back-end code.
+  - Added multi user support.
+  - Better security by dropping SHA-256 for Argon2 key derivation.
+- A new login screen that works great on mobile and desktop.
+- Disable share button when receiving in synchronization.
+- Omit json fields that are empty.
+  - Should make loading and parsing json a bit faster.
+- Use regular expression checks for sync code.
+- Update the regular expression checks to be much stricter.
+- Improved password and username checks.
+- improved error handling and printing errors to the ui.
+- Rework the code for the extended entry widget.
+- Add an about page with logo and release link.
+- Upgrade `wormhole-william` to [v1.0.3](https://github.com/psanford/wormhole-william/releases/tag/v1.0.3).
+- Update the Makefile to better work with fyne-cross v2.0.0.
+- Use `fyne-cross` [v2.0.0](https://github.com/lucor/fyne-cross/releases/tag/v2.0.0) for building release binaries.
+  - This means that binaries are built using Go 1.13.11.
+  - Opens up the possibility of Android and OpenBSD releases in the future.
+- Upgrade fyne to [v1.3.0](https://github.com/fyne-io/fyne/releases/tag/v1.3.0).
+  - We are now using text wrapping where it makes sense.
+
 ## 0.6.0 - Forth beta
 - Improve the experience when logging in with the wrong account.
 - Changed share wording to sync instead.
