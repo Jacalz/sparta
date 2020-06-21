@@ -23,6 +23,9 @@ check:
 	# Check the whole program for security issues.
 	${GOBIN}gosec ./...
 
+	# Run staticcheck on the codebase.
+	${GOBIN}staticcheck ./...
+
 darwin:
 	${GOBIN}fyne-cross darwin -arch amd64 -app-id ${appID} -icon ${icon} -output ${name}
 

@@ -46,13 +46,13 @@ func encode(hash []byte, p Params) string {
 func decode(encoded string) (hashed []byte, p Params, err error) {
 	data := strings.Split(encoded, "$")
 	if len(data) != 5 {
-		return nil, p, errors.New("Invalid hash")
+		return nil, p, errors.New("invalid hash")
 	}
 
 	if version, err := strconv.ParseInt(data[1], 10, 0); err != nil {
 		return nil, p, err
 	} else if version != argon2.Version {
-		return nil, p, errors.New("Invalid argon2 version")
+		return nil, p, errors.New("invalid argon2 version")
 	}
 
 	_, err = fmt.Sscanf(data[2], "m=%d,t=%d,p=%d", &p.Memory, &p.Time, &p.Threads)
@@ -100,7 +100,7 @@ func CompareHashAndPasswordAES256(encoded string, password []byte) (key []byte, 
 	hash := argon2.IDKey(password, p.Salt, p.Time, p.Memory, p.Threads, p.KeyLen)
 
 	if subtle.ConstantTimeCompare(stored, hash[p.KeyLen/2:]) != 1 {
-		return nil, errors.New("The hashes are not equal")
+		return nil, errors.New("the hashes are not equal")
 	}
 
 	return hash[:p.KeyLen/2], nil

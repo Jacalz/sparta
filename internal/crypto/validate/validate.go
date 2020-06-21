@@ -34,7 +34,7 @@ func Input(username, password string, w fyne.Window) bool {
 // CorrectCredentials returns if the username and password is correct or not.
 func CorrectCredentials(username, password string, a fyne.App, w fyne.Window) (key []byte, err error) {
 	if !Input(username, password, w) {
-		return nil, errors.New("Username or password is invalid")
+		return nil, errors.New("username or password is invalid")
 	}
 
 	// Grab the password hash of the user.

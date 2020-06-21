@@ -19,11 +19,8 @@ func NoExistingUsers() bool {
 	defer f.Close() // #nosec - We are not writing to the file.
 
 	_, err = f.Readdirnames(1)
-	if err == io.EOF {
-		return true
-	}
 
-	return false
+	return err == io.EOF
 }
 
 // CreateNewUser creates our new user.

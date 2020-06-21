@@ -54,7 +54,7 @@ func Decrypt(key *[]byte, encrypted []byte) ([]byte, error) {
 	// Make sure that the nonceSize is bigger than the content.
 	nonceSize := gcm.NonceSize()
 	if len(encrypted) < nonceSize {
-		return nil, errors.New("The length of the encrypted content is longer than the nonceSize")
+		return nil, errors.New("the length of the encrypted content is longer than the nonceSize")
 	}
 
 	// Unencrypt the content into plaintext.
