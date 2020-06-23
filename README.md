@@ -19,7 +19,7 @@ Sparta is built using the following Go packages:
 
 ## Downloads
 
-Please visit the [release page](https://github.com/Jacalz/sparta/releases) for the downloading the latest release.
+Please visit the [release page](https://github.com/Jacalz/sparta/releases) for downloading the latest release.
 Versions for Linux, MacOS and Windows are available, with an Android version possibly coming in the future.
 
 Systems that have [Go](https://golang.org) and the [required prequsites for Fyne](https://fyne.io/develop/) installed can alternatively install using `go get`:
