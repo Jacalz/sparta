@@ -168,7 +168,7 @@ func (d *Data) Delete(username string) {
 	*d = *zeroData
 
 	// Remove the file to clear it.
-	err := os.Remove(filepath.Join(ConfigDir(), username+"exercises.json"))
+	err := os.Remove(filepath.Join(ConfigDir(), username+"-exercises.json"))
 	if err != nil {
 		fyne.LogError("Error on removing the json file", err)
 	}
