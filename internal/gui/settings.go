@@ -39,8 +39,8 @@ func (u *user) settingsView(w fyne.Window, a fyne.App) fyne.CanvasObject {
 	// An entry for typing the new username.
 	usernameEntry := widgets.NewAdvancedEntry("New Username", false)
 
-	// The function to run on changing username
-	changeUsername := func() {
+	// Create the button used for changing the username.
+	usernameButton := widget.NewButton("Change Username", func() {
 		// Check that the username is valid.
 		if validate.Input(usernameEntry.Text, u.password, w) {
 			// Ask the user to confirm what we are about to do.
@@ -62,16 +62,13 @@ func (u *user) settingsView(w fyne.Window, a fyne.App) fyne.CanvasObject {
 			}, w)
 		}
 
-	}
-
-	// Create the button used for changing the username.
-	usernameButton := widget.NewButtonWithIcon("Change Username", theme.ConfirmIcon(), changeUsername)
+	})
 
 	// Create the entry for updating the password.
 	passwordEntry := widgets.NewAdvancedEntry("New Password", true)
 
 	// Create the button used for changing the password.
-	passwordButton := widget.NewButtonWithIcon("Change Password", theme.ConfirmIcon(), func() {
+	passwordButton := widget.NewButton("Change Password", func() {
 		// Check that the password is valid.
 		if validate.Input(u.username, passwordEntry.Text, w) {
 			// Ask the user to confirm what we are about to do.
@@ -118,7 +115,7 @@ func (u *user) settingsView(w fyne.Window, a fyne.App) fyne.CanvasObject {
 		}
 	})
 	// Create a button for clearing the data of a given profile.
-	deleteButton := widget.NewButtonWithIcon("Delete all saved activities", theme.DeleteIcon(), func() {
+	deleteButton := widget.NewButtonWithIcon("Delete all saved exercises", theme.DeleteIcon(), func() {
 
 		// Ask the user to confirm what we are about to do.
 		dialog.ShowConfirm("Are you sure that you want to continue?", "Deleting your data will remove all of your exercises and activities.", func(remove bool) {
