@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.8.0 - The first stable release
+- Fixed wording of "Delete all saved activities" that should have been "Delete all saved exercises".
+- Fixed a bug that caused the "Delete all saved exercises" to not work.
+- Cleaned up the assets inside `internal/assets`.
+  - Dropped icons that were unused for a long time.
+- Stopped bundling 256px and 512px icons in the application binaries.
+  - This reduces the size of the compiled application.
+- Apply a couple fixes and cleanups suggested by staticcheck.
+- Cleaned up the Makefile to work better.
+
 ## 0.7.1 - Fixes for the fifth beta
 - Fix some spelling mistakes.
 
