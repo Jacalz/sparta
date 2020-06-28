@@ -14,7 +14,7 @@ const version string = "v0.7.1"
 
 // AboutView displays the logo and a version link for application information.
 func aboutView() fyne.CanvasObject {
-	logo := canvas.NewImageFromResource(assets.AppIcon512)
+	logo := canvas.NewImageFromResource(assets.AppIcon)
 	logo.SetMinSize(fyne.NewSize(300, 300))
 
 	return fyne.NewContainerWithLayout(layout.NewVBoxLayout(),

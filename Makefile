@@ -8,7 +8,7 @@ GOBIN ?= ~/go/bin/
 
 bundle:
 	# Bundle the correct logo into sparta/src/bundled/bundled.go
-	${GOBIN}fyne bundle -package assets -name AppIcon internal/assets/icon-256.png > internal/assets/bundled.go
+	${GOBIN}fyne bundle -package assets -name AppIcon ${icon} > internal/assets/bundled.go
 
 check:
 	# Check the whole codebase for misspellings.
