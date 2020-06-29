@@ -10,7 +10,7 @@ import (
 	"fyne.io/fyne/widget"
 )
 
-const version string = "v0.7.1"
+const version string = "v0.8.0"
 
 // AboutView displays the logo and a version link for application information.
 func aboutView() fyne.CanvasObject {
