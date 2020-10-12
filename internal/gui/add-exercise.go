@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"fmt"
 	"regexp"
 	"sort"
 	"time"
@@ -11,136 +10,89 @@ import (
 	"github.com/Jacalz/sparta/internal/gui/widgets"
 
 	"fyne.io/fyne"
-	"fyne.io/fyne/dialog"
 	"fyne.io/fyne/widget"
 )
 
-// Compile regular expressions for checking numeric input with optional decimals.
-var validFloat = regexp.MustCompile(`^$|(\d+\.)?\d+$`)
-
-// Compile regular expressions for checking numeric input without decimals.
-var validUint = regexp.MustCompile(`^$|^\d*$`)
-
-// Compile regular expressions for checking date input.
-var validDate = regexp.MustCompile(`^([12]\d{3})-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[0-1])$`)
-
-// Compile regular expressions for checking clock input.
-var validClock = regexp.MustCompile(`^([0-1][0-9]|2[0-3]):[0-5][0-9]$`)
+var (
+	floatValidation    = regexp.MustCompile(`^$|(\d+\.)?\d+$`)
+	uintValidation     = regexp.MustCompile(`^$|^\d*$`)
+	dateValidation     = regexp.MustCompile(`^([12]\d{3})-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[0-1])$`)
+	clockValidation    = regexp.MustCompile(`^([0-1][0-9]|2[0-3]):[0-5][0-9]$`)
+	notEmptyValidation = regexp.MustCompile(`(.|\s)*\S(.|\s)*`)
+)
 
 // AddExerciseView shows the opoup for adding a new activity.
 func (u *user) addExerciseView(w fyne.Window) fyne.CanvasObject {
 	// Variables for the entry variables used in the form.
-	dateEntry := widgets.NewEntryWithPlaceholder("YYYY-MM-DD")
-	clockEntry := widgets.NewEntryWithPlaceholder("HH:MM")
-	activityEntry := widgets.NewEntryWithPlaceholder("Name of exercise")
-	distanceEntry := widgets.NewEntryWithPlaceholder("Kilometers")
-	durationEntry := widgets.NewEntryWithPlaceholder("Minutes")
-	setsEntry := widgets.NewEntryWithPlaceholder("Number of sets")
-	repsEntry := widgets.NewEntryWithPlaceholder("Number of reps")
+	var (
+		dateEntry     = widgets.NewFormEntry("YYYY-MM-DD", "Incorrect clock format", dateValidation, false)
+		clockEntry    = widgets.NewFormEntry("HH:MM", "Incorrect clock format", clockValidation, false)
+		activityEntry = widgets.NewFormEntry("Name of exercise", "Empty", notEmptyValidation, false)
+		distanceEntry = widgets.NewFormEntry("Kilometers", "Not a valid number", floatValidation, false)
+		durationEntry = widgets.NewFormEntry("Minutes", "Not a valid number", floatValidation, false)
+		setsEntry     = widgets.NewFormEntry("Number of sets", "Not a valid integer number", uintValidation, false)
+		repsEntry     = widgets.NewFormEntry("Number of reps", "Not a valid integer number", uintValidation, false)
+		commentEntry  = widgets.NewFormEntry("Type your comment here...", "", nil, true)
+	)
 
-	commentEntry := widget.NewMultiLineEntry()
-	commentEntry.SetPlaceHolder("Type your comment here...")
-	commentEntry.Wrapping = fyne.TextWrapWord
+	form := widget.NewForm(
+		widget.NewFormItem("Date", dateEntry),
+		widget.NewFormItem("Start Time", clockEntry),
+		widget.NewFormItem("Activity", activityEntry),
+		widget.NewFormItem("Distance", distanceEntry),
+		widget.NewFormItem("Duration", durationEntry),
+		widget.NewFormItem("Sets", setsEntry),
+		widget.NewFormItem("Reps", repsEntry),
+		widget.NewFormItem("Comment", commentEntry),
+	)
 
-	// Create the initial form with a cancel button so it can be used last on submit.
-	form := &widget.Form{
-		OnCancel: func() {
-			// Make sure to clean out the text for all the entry widgets.
-			dateEntry.SetText("")
-			clockEntry.SetText("")
-			activityEntry.SetText("")
-			distanceEntry.SetText("")
-			durationEntry.SetText("")
-			setsEntry.SetText("")
-			repsEntry.SetText("")
-			commentEntry.SetText("")
-		},
+	form.OnCancel = func() {
+		for _, item := range form.Items {
+			item.Widget.(*widget.Entry).SetText("")
+		}
 	}
 
-	// Create the form for displaying.
 	form.OnSubmit = func() {
-		// Bool variable for checking non numeric inputs (default to false).
-		nonNumericInput := false
+		go func() {
+			// Defer the entry fields to be cleaned out last.
+			defer form.OnCancel()
 
-		// Check that input is numeric in given fields.
-		switch {
-		case !validFloat.MatchString(distanceEntry.Text):
-			nonNumericInput = true
-		case !validFloat.MatchString(durationEntry.Text):
-			nonNumericInput = true
-		case !validUint.MatchString(setsEntry.Text):
-			nonNumericInput = true
-		case !validUint.MatchString(repsEntry.Text):
-			nonNumericInput = true
-		}
+			timeOfExercise, err := time.Parse("2006-01-02|15:04", dateEntry.Text+"|"+clockEntry.Text)
+			if err != nil {
+				fyne.LogError("Error on parsing exercise time", err)
+				return
+			}
 
-		// Show and error if any fields does not match the correct input patterns.
-		if nonNumericInput || activityEntry.Text == "" || !validClock.MatchString(clockEntry.Text) || !validDate.MatchString(dateEntry.Text) {
-			dialog.ShowInformation("Non numeric input or invald formats in fields", "The date and the start time need correct data formating and the exercise can not be empty.\nDistance, time, sets and reps can all be empty, however they do need to contain numeric data if non empty.", w)
-		} else {
-			go func() {
-				// Defer the entry fields to be cleaned out last.
-				defer form.OnCancel()
+			// Append new values to a new index.
+			u.data.Exercise = append(u.data.Exercise, file.Exercise{Time: timeOfExercise, Clock: clockEntry.Text, Date: dateEntry.Text, Activity: activityEntry.Text, Distance: parse.Float(distanceEntry.Text), Duration: parse.Float(durationEntry.Text), Reps: parse.Uint(repsEntry.Text), Sets: parse.Uint(setsEntry.Text), Comment: commentEntry.Text})
 
-				// Create variables for parsing time from date and clock.
-				var year, month, day, hour, min int
+			// Encrypt and write the data to the configuration file. Do it on another goroutine.
+			go u.data.Write(&u.encryptionKey, u.username)
 
-				// Parse the date and time from strings.
-				_, err := fmt.Sscanf(dateEntry.Text, "%v-%v-%v", &year, &month, &day)
-				if err != nil {
-					fmt.Println("Parsing date: ", err)
-					return
-				}
+			// Check if the length before appending was zero. If it was, the file is empy and sees its first exercise added.
+			if len(u.data.Exercise)-1 == 0 {
+				u.firstExercise <- u.data.Format(len(u.data.Exercise) - 1)
+			} else {
+				// Check the length of the newly appended slice.
+				length := len(u.data.Exercise)
 
-				_, err = fmt.Sscanf(clockEntry.Text, "%v:%v", &hour, &min)
-				if err != nil {
-					fmt.Println("Parsing time: ", err)
-					return
-				}
-
-				// Create the time.Time value for the imputed data.
-				timeOfExercise := time.Date(year, time.Month(month), day, hour, min, 0, 0, time.Local)
-
-				// Append new values to a new index.
-				u.data.Exercise = append(u.data.Exercise, file.Exercise{Time: timeOfExercise, Clock: clockEntry.Text, Date: dateEntry.Text, Activity: activityEntry.Text, Distance: parse.Float(distanceEntry.Text), Duration: parse.Float(durationEntry.Text), Reps: parse.Uint(repsEntry.Text), Sets: parse.Uint(setsEntry.Text), Comment: commentEntry.Text})
-
-				// Encrypt and write the data to the configuration file. Do it on another goroutine.
-				go u.data.Write(&u.encryptionKey, u.username)
-
-				// Check if the length before appending was zero. If it was, the file is empy and sees its first exercise added.
-				if len(u.data.Exercise)-1 == 0 {
-					u.firstExercise <- u.data.Format(len(u.data.Exercise) - 1)
+				// Check if the newest added exercise was after the exercise before that. It means that we won't have to sort the slice.
+				if u.data.Exercise[length-2].Time.Before(u.data.Exercise[length-1].Time) {
+					// Send the formated string from the highest index of the Exercise slice.
+					u.newExercise <- u.data.Format(len(u.data.Exercise) - 1)
 				} else {
-					// Check the length of the newly appended slice.
-					length := len(u.data.Exercise)
+					// Sort all old and new data to make sure that new exercises come first.
+					sort.Slice(u.data.Exercise, func(i, j int) bool {
+						return u.data.Exercise[i].Time.Before(u.data.Exercise[j].Time)
+					})
 
-					// Check if the newest added exercise was after the exercise before that. It means that we won't have to sort the slice.
-					if u.data.Exercise[length-2].Time.Before(u.data.Exercise[length-1].Time) {
-						// Send the formated string from the highest index of the Exercise slice.
-						u.newExercise <- u.data.Format(len(u.data.Exercise) - 1)
-					} else {
-						// Sort all old and new data to make sure that new exercises come first.
-						sort.Slice(u.data.Exercise, func(i, j int) bool {
-							return u.data.Exercise[i].Time.Before(u.data.Exercise[j].Time)
-						})
-
-						// Indicate that the whole slice needs to be redisplayed.
-						u.reorderExercises <- true
-					}
+					// Indicate that the whole slice needs to be redisplayed.
+					u.reorderExercises <- true
 				}
-			}()
-		}
-	}
+			}
+		}()
 
-	// Append all the rows separately in to the form.
-	form.Append("Date", dateEntry)
-	form.Append("Start Time", clockEntry)
-	form.Append("Activity", activityEntry)
-	form.Append("Distance", distanceEntry)
-	form.Append("Duration", durationEntry)
-	form.Append("Sets", setsEntry)
-	form.Append("Reps", repsEntry)
-	form.Append("Comment", commentEntry)
+	}
 
 	return form
 }

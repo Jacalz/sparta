@@ -1,6 +1,9 @@
 package widgets
 
 import (
+	"errors"
+	"regexp"
+
 	"fyne.io/fyne"
 	"fyne.io/fyne/widget"
 )
@@ -77,6 +80,26 @@ func (a *AdvancedEntry) InitExtend(pressFunc func(), move MoveAction) {
 func NewEntryWithPlaceholder(text string) *widget.Entry {
 	entry := widget.NewEntry()
 	entry.SetPlaceHolder(text)
+
+	return entry
+}
+
+// NewFormEntry returns a new validated entry with placeholder
+func NewFormEntry(placeholder, reason string, validation *regexp.Regexp, multiline bool) *widget.Entry {
+	entry := widget.NewEntry()
+	entry.SetPlaceHolder(placeholder)
+	entry.Validator = func(input string) error {
+		if validation != nil && !validation.MatchString(input) {
+			return errors.New(reason)
+		}
+
+		return nil // Nothing to validate with, same as having no validator.
+	}
+
+	entry.MultiLine = multiline
+	if multiline == true {
+		entry.Wrapping = fyne.TextWrapWord
+	}
 
 	return entry
 }
