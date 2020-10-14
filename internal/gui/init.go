@@ -7,7 +7,6 @@ import (
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/app"
-	"fyne.io/fyne/theme"
 	"fyne.io/fyne/widget"
 )
 
@@ -55,12 +54,7 @@ func Init() {
 	u := newUser()
 
 	// Check that we are using the right theme.
-	switch a.Preferences().StringWithFallback("Theme", "Light") {
-	case "Dark":
-		a.Settings().SetTheme(theme.DarkTheme())
-	case "Light":
-		a.Settings().SetTheme(theme.LightTheme())
-	}
+	checkTheme(a.Preferences().StringWithFallback("Theme", "Adaptive (requires restart)"), a)
 
 	// Create the tab handler for the user interface and set up the login view.
 	t := &widget.TabContainer{}

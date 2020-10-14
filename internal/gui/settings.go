@@ -12,26 +12,26 @@ import (
 	"fyne.io/fyne/widget"
 )
 
+func checkTheme(themec string, a fyne.App) string {
+	switch themec {
+	case "Dark":
+		a.Settings().SetTheme(theme.DarkTheme())
+	case "Light":
+		a.Settings().SetTheme(theme.LightTheme())
+	}
+
+	return themec
+}
+
 // SettingsView contains the gui information for the settings screen.
 func (u *user) settingsView(w fyne.Window, a fyne.App) fyne.CanvasObject {
-
-	// TODO: Add setting for changing language.
-
 	// Make it possible for the user to switch themes.
-	themeSwitcher := widget.NewSelect([]string{"Dark", "Light"}, func(selected string) {
-		switch selected {
-		case "Dark":
-			a.Settings().SetTheme(theme.DarkTheme())
-		case "Light":
-			a.Settings().SetTheme(theme.LightTheme())
-		}
-
-		// Set the theme to the selected one and save it using the preferences api in fyne.
-		a.Preferences().SetString("Theme", selected)
+	themeSwitcher := widget.NewSelect([]string{"Adaptive (requires restart)", "Dark", "Light"}, func(selected string) {
+		a.Preferences().SetString("Theme", checkTheme(selected, a))
 	})
 
 	// Default theme is light and thus we set the placeholder to that and then refresh it (without a refresh, it doesn't show until hovering on to widget).
-	themeSwitcher.SetSelected(a.Preferences().StringWithFallback("Theme", "Light"))
+	themeSwitcher.SetSelected(a.Preferences().StringWithFallback("Theme", "Adaptive (requires restart)"))
 
 	// Add the theme switcher next to a label.
 	themeChanger := fyne.NewContainerWithLayout(layout.NewGridLayout(2), widget.NewLabel("Application Theme"), themeSwitcher)
