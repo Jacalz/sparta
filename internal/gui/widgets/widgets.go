@@ -1,11 +1,11 @@
 package widgets
 
 import (
-	"errors"
 	"regexp"
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/widget"
+	"github.com/Jacalz/sparta/internal/crypto/validate"
 )
 
 // AdvancedEntry is used to make an entry that reacts to key presses.
@@ -88,13 +88,7 @@ func NewEntryWithPlaceholder(text string) *widget.Entry {
 func NewFormEntry(placeholder, reason string, validation *regexp.Regexp, multiline bool) *widget.Entry {
 	entry := widget.NewEntry()
 	entry.SetPlaceHolder(placeholder)
-	entry.Validator = func(input string) error {
-		if validation != nil && !validation.MatchString(input) {
-			return errors.New(reason)
-		}
-
-		return nil // Nothing to validate with, same as having no validator.
-	}
+	entry.Validator = validate.NewRegexp(validation, reason)
 
 	entry.MultiLine = multiline
 	if entry.MultiLine {

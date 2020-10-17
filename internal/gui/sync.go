@@ -3,6 +3,7 @@ package gui
 import (
 	"regexp"
 
+	"github.com/Jacalz/sparta/internal/crypto/validate"
 	"github.com/Jacalz/sparta/internal/gui/widgets"
 	"github.com/Jacalz/sparta/internal/sync"
 
@@ -14,7 +15,7 @@ import (
 )
 
 // Regular expression for verifying sync code.
-var validCode = regexp.MustCompile(`^\d\d?-\w{2,12}-\w{2,12}$`)
+var codeValidation = regexp.MustCompile(`^\d\d?-\w{2,12}-\w{2,12}$`)
 
 // SyncView displays the tab page for syncing data between devices.
 func (u *user) syncView(w fyne.Window) fyne.CanvasObject {
@@ -29,6 +30,7 @@ func (u *user) syncView(w fyne.Window) fyne.CanvasObject {
 
 	// recieveCode makes it possible to type in receive code.
 	recieveCodeEntry := widgets.NewAdvancedEntry("Receive Code", false)
+	recieveCodeEntry.Validator = validate.NewRegexp(codeValidation, "Code is invalid. Plase try again.")
 
 	// recieveDataButton starts looking for shared data on the local network.
 	recieveDataButton := widget.NewButtonWithIcon("Start Receiving Exercises", theme.MailComposeIcon(), nil)
@@ -61,25 +63,28 @@ func (u *user) syncView(w fyne.Window) fyne.CanvasObject {
 	}
 
 	recieveDataButton.OnTapped = func() {
-		if validCode.MatchString(recieveCodeEntry.Entry.Text) {
-			// Disable the button to make sure that users can't do anything bad.
-			startSendingDataButton.Disable()
-
-			code := recieveCodeEntry.Entry.Text
-
-			go func() {
-				err := sync.Receive(&u.data, u.reorderExercises, u.firstExercise, &u.encryptionKey, code, u.username)
-				if err != nil {
-					dialog.ShowError(err, w)
-				} else {
-					dialog.ShowInformation("Synchronization successful", "The synchronization of exercises finsished successfully.", w)
-				}
-			}()
-
-			// Clean up and make buttons usable again.
-			recieveCodeEntry.SetText("")
-			startSendingDataButton.Enable()
+		if err := recieveCodeEntry.Validate(); err != nil {
+			dialog.ShowError(err, w)
+			return
 		}
+
+		// Disable the button to make sure that users can't do anything bad.
+		startSendingDataButton.Disable()
+
+		code := recieveCodeEntry.Entry.Text
+
+		go func() {
+			err := sync.Receive(&u.data, u.reorderExercises, u.firstExercise, &u.encryptionKey, code, u.username)
+			if err != nil {
+				dialog.ShowError(err, w)
+			} else {
+				dialog.ShowInformation("Synchronization successful", "The synchronization of exercises finsished successfully.", w)
+			}
+		}()
+
+		// Clean up and make buttons usable again.
+		recieveCodeEntry.SetText("")
+		startSendingDataButton.Enable()
 	}
 
 	// shareGroup is a group containing all the options for sharing data.

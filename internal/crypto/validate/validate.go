@@ -45,3 +45,14 @@ func Credentials(username, password string, a fyne.App, w fyne.Window) (key []by
 
 	return key, nil
 }
+
+// NewRegexp returns a new regexp validator
+func NewRegexp(regex *regexp.Regexp, reason string) fyne.StringValidator {
+	return func(input string) error {
+		if regex != nil && !regex.MatchString(input) {
+			return errors.New(reason)
+		}
+
+		return nil // Nothing to validate with, same as having no validator.
+	}
+}
