@@ -38,63 +38,68 @@ func (u *user) settingsView(w fyne.Window, a fyne.App) fyne.CanvasObject {
 
 	// An entry for typing the new username.
 	usernameEntry := widgets.NewAdvancedEntry("New Username", false)
+	usernameEntry.Validator = validate.Username
 
 	// Create the button used for changing the username.
 	usernameButton := widget.NewButton("Change Username", func() {
-		// Check that the username is valid.
-		if validate.Input(usernameEntry.Text, u.password, w) {
-			// Ask the user to confirm what we are about to do.
-			dialog.ShowConfirm("Are you sure that you want to continue?", "The action will permanently change your username.", func(change bool) {
-				if change {
-					// Replace the password hash in a new storage location.
-					a.Preferences().RemoveValue("Username:" + u.username)
-					a.Preferences().SetString("Username:"+usernameEntry.Text, u.passwordHash)
-
-					// Set the username  to the updated username.
-					u.username = usernameEntry.Text
-
-					// Clear out the text inside the entry.
-					usernameEntry.SetText("")
-
-					// Write the data encrypted using the new key and do so concurrently.
-					go u.data.Write(&u.encryptionKey, u.username)
-				}
-			}, w)
+		if err := usernameEntry.Validate(); err != nil {
+			dialog.NewError(err, w)
+			return
 		}
 
+		// Ask the user to confirm what we are about to do.
+		dialog.ShowConfirm("Are you sure that you want to continue?", "The action will permanently change your username.", func(change bool) {
+			if change {
+				// Replace the password hash in a new storage location.
+				a.Preferences().RemoveValue("Username:" + u.username)
+				a.Preferences().SetString("Username:"+usernameEntry.Text, u.passwordHash)
+
+				// Set the username  to the updated username.
+				u.username = usernameEntry.Text
+
+				// Clear out the text inside the entry.
+				usernameEntry.SetText("")
+
+				// Write the data encrypted using the new key and do so concurrently.
+				go u.data.Write(&u.encryptionKey, u.username)
+			}
+		}, w)
 	})
 
 	// Create the entry for updating the password.
 	passwordEntry := widgets.NewAdvancedEntry("New Password", true)
+	passwordEntry.Validator = validate.Password
 
 	// Create the button used for changing the password.
 	passwordButton := widget.NewButton("Change Password", func() {
-		// Check that the password is valid.
-		if validate.Input(u.username, passwordEntry.Text, w) {
-			// Ask the user to confirm what we are about to do.
-			dialog.ShowConfirm("Are you sure that you want to continue?", "The action will permanently change your password.", func(change bool) {
-				if change {
-					// Define the error so we can store directly to the user.
-					var err error
-
-					// Calculate and store the new hashes.
-					u.encryptionKey, u.passwordHash, err = crypto.GeneratePasswordHash(passwordEntry.Text)
-					if err != nil {
-						dialog.ShowError(err, w)
-						return
-					}
-
-					// Update the password hash in storage.
-					a.Preferences().SetString("Username:"+u.username, u.passwordHash)
-
-					// Clear out the text inside the entry.
-					passwordEntry.SetText("")
-
-					// Write the data encrypted using the new key and do so concurrently.
-					go u.data.Write(&u.encryptionKey, u.username)
-				}
-			}, w)
+		if err := passwordEntry.Validate(); err != nil {
+			dialog.NewError(err, w)
+			return
 		}
+
+		// Ask the user to confirm what we are about to do.
+		dialog.ShowConfirm("Are you sure that you want to continue?", "The action will permanently change your password.", func(change bool) {
+			if change {
+				// Define the error so we can store directly to the user.
+				var err error
+
+				// Calculate and store the new hashes.
+				u.encryptionKey, u.passwordHash, err = crypto.GeneratePasswordHash(passwordEntry.Text)
+				if err != nil {
+					dialog.ShowError(err, w)
+					return
+				}
+
+				// Update the password hash in storage.
+				a.Preferences().SetString("Username:"+u.username, u.passwordHash)
+
+				// Clear out the text inside the entry.
+				passwordEntry.SetText("")
+
+				// Write the data encrypted using the new key and do so concurrently.
+				go u.data.Write(&u.encryptionKey, u.username)
+			}
+		}, w)
 	})
 
 	// Extend our extended buttons with array entry switching and enter to change.

@@ -16,16 +16,22 @@ import (
 func (u *user) loginTabContainer(a fyne.App, w fyne.Window, t *widget.TabContainer) *widget.TabItem {
 	// Create the username entry.
 	usernameEntry := widgets.NewAdvancedEntry("Username", false)
+	usernameEntry.Validator = validate.Username
 
 	// Create the password entry.
 	passwordEntry := widgets.NewAdvancedEntry("Password", true)
+	passwordEntry.Validator = validate.Password
 
 	// Create the login button that will login the user.
 	loginButton := widget.NewButtonWithIcon("Login", theme.ConfirmIcon(), nil)
 
 	// newUserButton holds the button widget for creating a new user.
 	newUserButton := widget.NewButtonWithIcon("Create New User", theme.ContentAddIcon(), func() {
-		if !validate.Input(usernameEntry.Text, passwordEntry.Text, w) {
+		if err := passwordEntry.Validate(); err != nil {
+			dialog.ShowError(err, w)
+			return
+		} else if err := usernameEntry.Validate(); err != nil {
+			dialog.ShowError(err, w)
 			return
 		}
 
@@ -50,13 +56,17 @@ func (u *user) loginTabContainer(a fyne.App, w fyne.Window, t *widget.TabContain
 		if loginButton.Hidden {
 			newUserButton.OnTapped()
 			return
+		} else if err := passwordEntry.Validate(); err != nil {
+			dialog.ShowError(err, w)
+			return
 		}
 
 		// Define err here so we can add to u.encryptionKey and u.Data directly.
 		var err error
 
-		u.encryptionKey, err = validate.CorrectCredentials(usernameEntry.Text, passwordEntry.Text, a, w)
+		u.encryptionKey, err = validate.Credentials(usernameEntry.Text, passwordEntry.Text, a, w)
 		if err != nil {
+			dialog.ShowError(err, w)
 			return
 		}
 
