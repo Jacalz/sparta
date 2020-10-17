@@ -1,14 +1,24 @@
 # Constants for cross compilation and packaging.
-appID = com.github.jacalz.sparta
-icon = internal/assets/icon-512.png
-name = Sparta
+APPID = com.github.jacalz.sparta
+ICON = internal/assets/icon/icon-512.png
+NAME = sparta
 
 # Default path to the go binary directory.
 GOBIN ?= ~/go/bin/
 
-bundle:
-	# Bundle the correct logo into sparta/src/bundled/bundled.go
-	${GOBIN}fyne bundle -package assets -name AppIcon ${icon} > internal/assets/bundled.go
+# If PREFIX isn't provided, we check for $(DESTDIR)/usr/local and use that if it exists.
+# Otherwice we fall back to using /usr.
+LOCAL != test -d $(DESTDIR)/usr/local && echo -n "/local" || echo -n ""
+LOCAL ?= $(shell test -d $(DESTDIR)/usr/local && echo "/local" || echo "")
+PREFIX ?= /usr$(LOCAL)
+
+build:
+	go build -o $(NAME)
+
+install:
+	install -Dm00755 $(NAME) $(DESTDIR)$(PREFIX)/bin/$(NAME)
+	install -Dm00644 $(ICON) $(DESTDIR)$(PREFIX)/share/pixmaps/$(NAME).png
+	install -Dm00644 internal/assets/$(NAME).desktop $(DESTDIR)$(PREFIX)/share/applications/$(NAME).desktop
 
 check:
 	# Check the whole codebase for misspellings.
@@ -24,12 +34,12 @@ check:
 	${GOBIN}staticcheck -f stylish ./...
 
 darwin:
-	${GOBIN}fyne-cross darwin -arch amd64 -app-id ${appID} -icon ${icon} -output ${name}
+	${GOBIN}fyne-cross darwin -arch amd64 -app-id ${APPID} -icon ${ICON} -output ${NAME}
 
 linux:
-	${GOBIN}fyne-cross linux -arch amd64 -app-id ${appID} -icon ${icon}
+	${GOBIN}fyne-cross linux -arch amd64 -app-id ${APPID} -icon ${ICON}
 
 windows:
-	${GOBIN}fyne-cross windows -arch amd64 -app-id ${appID} -icon ${icon}
+	${GOBIN}fyne-cross windows -arch amd64 -app-id ${APPID} -icon ${ICON}
 
 cross-compile: darwin linux windows
