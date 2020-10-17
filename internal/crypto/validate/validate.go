@@ -15,7 +15,7 @@ var usermatch = regexp.MustCompile(`^\w+$`)
 
 const passwordEntropy = 60
 
-// Username validates the recieved username
+// Username validates the received username
 func Username(username string) error {
 	if !usermatch.MatchString(username) {
 		return errors.New("username contains invalid characters")
@@ -24,7 +24,7 @@ func Username(username string) error {
 	return nil
 }
 
-// Password validates the recieved password
+// Password validates the received password
 func Password(password string) error {
 	if err := passwordvalidator.Validate(password, passwordEntropy); err != nil {
 		return err

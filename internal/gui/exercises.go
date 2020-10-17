@@ -2,6 +2,7 @@ package gui
 
 import (
 	"fyne.io/fyne"
+	"fyne.io/fyne/container"
 	"fyne.io/fyne/widget"
 )
 
@@ -51,5 +52,5 @@ func (u *user) exercisesView(w fyne.Window, a fyne.App) fyne.CanvasObject {
 	// Start up the function to handle adding exercises in the background.
 	go u.exerciseDisplayer(dataLabel)
 
-	return widget.NewScrollContainer(dataLabel)
+	return container.NewScroll(dataLabel)
 }

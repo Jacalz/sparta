@@ -7,13 +7,14 @@ import (
 	"github.com/Jacalz/sparta/internal/gui/widgets"
 
 	"fyne.io/fyne"
+	"fyne.io/fyne/container"
 	"fyne.io/fyne/dialog"
 	"fyne.io/fyne/layout"
 	"fyne.io/fyne/theme"
 	"fyne.io/fyne/widget"
 )
 
-func (u *user) loginTabContainer(a fyne.App, w fyne.Window, t *widget.TabContainer) *widget.TabItem {
+func (u *user) loginTabContainer(a fyne.App, w fyne.Window, t *container.AppTabs) *container.TabItem {
 	// Create the username entry.
 	usernameEntry := widgets.NewAdvancedEntry("Username", false)
 	usernameEntry.Validator = validate.Username

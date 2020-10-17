@@ -97,7 +97,7 @@ func NewFormEntry(placeholder, reason string, validation *regexp.Regexp, multili
 	}
 
 	entry.MultiLine = multiline
-	if multiline == true {
+	if entry.MultiLine {
 		entry.Wrapping = fyne.TextWrapWord
 	}
 

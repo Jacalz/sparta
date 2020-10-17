@@ -6,6 +6,7 @@ import (
 	"github.com/Jacalz/sparta/internal/gui/widgets"
 
 	"fyne.io/fyne"
+	"fyne.io/fyne/container"
 	"fyne.io/fyne/dialog"
 	"fyne.io/fyne/layout"
 	"fyne.io/fyne/theme"
@@ -146,5 +147,5 @@ func (u *user) settingsView(w fyne.Window, a fyne.App) fyne.CanvasObject {
 	// settingsContentView holds all widget groups and content for the settings page.
 	settingsContentView := fyne.NewContainerWithLayout(layout.NewVBoxLayout(), userInterfaceSettings, layout.NewSpacer(), credentialSettings, layout.NewSpacer(), advancedSettings)
 
-	return widget.NewScrollContainer(settingsContentView)
+	return container.NewScroll(settingsContentView)
 }

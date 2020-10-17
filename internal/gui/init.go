@@ -7,7 +7,7 @@ import (
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/app"
-	"fyne.io/fyne/widget"
+	"fyne.io/fyne/container"
 )
 
 // User holds the data about the user that is currently logged in.
@@ -57,7 +57,7 @@ func Init() {
 	checkTheme(a.Preferences().StringWithFallback("Theme", "Adaptive (requires restart)"), a)
 
 	// Create the tab handler for the user interface and set up the login view.
-	t := &widget.TabContainer{}
+	t := &container.AppTabs{}
 	t.Append(u.loginTabContainer(a, w, t))
 
 	// Create and store of a new password hash with random salt on window close.
