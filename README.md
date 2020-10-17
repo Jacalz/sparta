@@ -15,8 +15,9 @@ Sparta is a Sport and Rehearsal Tracking Application. It lets the user write dow
 
 Sparta is built using the following Go packages:
 
-- [fyne](https://github.com/fyne-io/fyne) (version 1.3.0 or later)
-- [wormhole-william](https://github.com/psanford/wormhole-william) (version 1.0.1 or later)
+- [fyne](https://github.com/fyne-io/fyne) (version 1.4.0 or later)
+- [wormhole-william](https://github.com/psanford/wormhole-william) (version 1.0.4 or later)
+- [go-password-validator](https://github.com/lane-c-wagner/go-password-validator) (version 0.1.0 or later)
 - [x/crypto](https://golang.org/x/crypto)
 
 ## Requirements
@@ -26,7 +27,7 @@ Sparta compiles into a statically linked binary with no runtime dependencies.
 ## Downloads
 
 Please visit the [release page](https://github.com/Jacalz/sparta/releases) for downloading the latest release.
-Versions for Linux, MacOS and Windows are available, with an Android version possibly coming in the future.
+Versions for Linux, MacOS, Windows and FreeBSD on `x86-64` and `arm64` architectures are available. An Android version might come in the future.
 
 Systems that have [Go](https://golang.org) and the [required prequsites for Fyne](https://fyne.io/develop/) installed can alternatively install using `go get`:
 ```bash
