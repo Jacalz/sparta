@@ -36,6 +36,11 @@ func (u *user) loginTabContainer(a fyne.App, w fyne.Window, t *container.AppTabs
 			return
 		}
 
+		if file.ExistingUser(usernameEntry.Text) {
+			dialog.ShowInformation("User already exists", "The requested user already exists. Try a different username.", w)
+			return
+		}
+
 		// Create the file for the user and the directory if it doesn't exist.
 		if err := file.CreateNewUser(usernameEntry.Text); err != nil {
 			dialog.ShowError(err, w)
