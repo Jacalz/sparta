@@ -20,6 +20,11 @@ install:
 	install -Dm00644 $(ICON) $(DESTDIR)$(PREFIX)/share/pixmaps/$(NAME).png
 	install -Dm00644 internal/assets/$(NAME).desktop $(DESTDIR)$(PREFIX)/share/applications/$(NAME).desktop
 
+uninstall:
+	-rm $(DESTDIR)$(PREFIX)/share/applications/$(NAME).desktop
+	-rm $(DESTDIR)$(PREFIX)/bin/$(NAME)
+	-rm $(DESTDIR)$(PREFIX)/share/pixmaps/$(NAME).png
+
 check:
 	# Check the whole codebase for misspellings.
 	${GOBIN}misspell -w .
