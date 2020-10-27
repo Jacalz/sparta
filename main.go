@@ -1,7 +1,20 @@
 package main
 
-import "github.com/Jacalz/sparta/internal/gui"
+import (
+	"fyne.io/fyne"
+	"fyne.io/fyne/app"
+	"github.com/Jacalz/sparta/internal/assets"
+	"github.com/Jacalz/sparta/internal/gui"
+)
+
+const appID = "com.github.jacalz.sparta"
 
 func main() {
-	gui.Init()
+	a := app.NewWithID(appID)
+	a.SetIcon(assets.AppIcon)
+	w := a.NewWindow("Sparta")
+
+	w.SetContent(gui.Create(a, w))
+	w.Resize(fyne.NewSize(800, 550))
+	w.ShowAndRun()
 }

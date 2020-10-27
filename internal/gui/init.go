@@ -1,12 +1,10 @@
 package gui
 
 import (
-	"github.com/Jacalz/sparta/internal/assets"
 	"github.com/Jacalz/sparta/internal/crypto"
 	"github.com/Jacalz/sparta/internal/file"
 
 	"fyne.io/fyne"
-	"fyne.io/fyne/app"
 	"fyne.io/fyne/container"
 )
 
@@ -18,6 +16,9 @@ type user struct {
 	passwordHash  string
 	encryptionKey []byte
 	data          file.Data
+
+	// Preferences
+	theme string
 
 	// Data channels for exercises.
 	newExercise      chan string
@@ -38,23 +39,13 @@ func newUser() *user {
 	}
 }
 
-// Init will start up our graphical user interface.
-func Init() {
-	// Initialize our new fyne interface application.
-	a := app.NewWithID("com.github.jacalz.sparta")
-
-	// Set the application icon for our program.
-	a.SetIcon(assets.AppIcon)
-
-	// Create the window for our user interface.
-	w := a.NewWindow("Sparta")
-	w.SetMaster()
-
+// Create will create our graphical user interface.
+func Create(a fyne.App, w fyne.Window) *container.AppTabs {
 	// Create the user struct type for later use.
 	u := newUser()
 
 	// Check that we are using the right theme.
-	checkTheme(a.Preferences().StringWithFallback("Theme", "Adaptive (requires restart)"), a)
+	u.theme = checkTheme(a.Preferences().StringWithFallback("Theme", "Adaptive (requires restart)"), a)
 
 	// Create the tab handler for the user interface and set up the login view.
 	t := &container.AppTabs{}
@@ -69,8 +60,5 @@ func Init() {
 		}
 	})
 
-	// Set the window to a good size, add the content and lastly run the application.
-	w.SetContent(t)
-	w.Resize(fyne.NewSize(800, 550))
-	w.ShowAndRun()
+	return t
 }

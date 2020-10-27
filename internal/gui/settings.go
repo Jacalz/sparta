@@ -27,12 +27,9 @@ func checkTheme(themec string, a fyne.App) string {
 // SettingsView contains the gui information for the settings screen.
 func (u *user) settingsView(w fyne.Window, a fyne.App) fyne.CanvasObject {
 	// Make it possible for the user to switch themes.
-	themeSwitcher := widget.NewSelect([]string{"Adaptive (requires restart)", "Dark", "Light"}, func(selected string) {
+	themeSwitcher := &widget.Select{Options: []string{"Adaptive (requires restart)", "Dark", "Light"}, OnChanged: func(selected string) {
 		a.Preferences().SetString("Theme", checkTheme(selected, a))
-	})
-
-	// Default theme is light and thus we set the placeholder to that and then refresh it (without a refresh, it doesn't show until hovering on to widget).
-	themeSwitcher.SetSelected(a.Preferences().StringWithFallback("Theme", "Adaptive (requires restart)"))
+	}, Selected: u.theme}
 
 	// Add the theme switcher next to a label.
 	themeChanger := fyne.NewContainerWithLayout(layout.NewGridLayout(2), widget.NewLabel("Application Theme"), themeSwitcher)

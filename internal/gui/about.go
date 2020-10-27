@@ -10,7 +10,8 @@ import (
 	"fyne.io/fyne/widget"
 )
 
-const version string = "v0.8.0"
+const version = "v0.9.0"
+const url = "https://github.com/Jacalz/sparta/releases/tag/" + version
 
 // AboutView displays the logo and a version link for application information.
 func aboutView() fyne.CanvasObject {
@@ -24,7 +25,7 @@ func aboutView() fyne.CanvasObject {
 			layout.NewSpacer(),
 			widget.NewLabelWithStyle("Sparta", fyne.TextAlignLeading, fyne.TextStyle{Bold: true}),
 			widget.NewLabelWithStyle("-", fyne.TextAlignLeading, fyne.TextStyle{Bold: true}),
-			widget.NewHyperlinkWithStyle(version, parse.URL("https://github.com/Jacalz/sparta/releases/tag/"+version), fyne.TextAlignLeading, fyne.TextStyle{Bold: true}),
+			widget.NewHyperlinkWithStyle(version, parse.URL(url), fyne.TextAlignLeading, fyne.TextStyle{Bold: true}),
 			layout.NewSpacer(),
 		),
 		layout.NewSpacer(),
