@@ -69,26 +69,25 @@ func (u *user) addExerciseView(w fyne.Window) fyne.CanvasObject {
 			// Encrypt and write the data to the configuration file. Do it on another goroutine.
 			go u.data.Write(&u.encryptionKey, u.username)
 
-			// Check if the length before appending was zero. If it was, the file is empy and sees its first exercise added.
-			if len(u.data.Exercise)-1 == 0 {
-				u.firstExercise <- u.data.Format(len(u.data.Exercise) - 1)
+			dlen := len(u.data.Exercise)
+
+			if dlen-1 == 0 { // First exercise to be added
+				u.firstExercise <- u.data.Format(dlen - 1)
+				return
+			}
+
+			// Check if the newest exercise is later than the exercise before. It means that we won't have to sort the slice.
+			if u.data.Exercise[dlen-2].Time.Before(u.data.Exercise[dlen-1].Time) {
+				u.newExercise <- u.data.Format(dlen - 1)
 			} else {
-				// Check the length of the newly appended slice.
-				length := len(u.data.Exercise)
+				// Sort all old and new data to make sure that new exercises come first.
+				sort.Slice(u.data.Exercise, func(i, j int) bool {
+					return u.data.Exercise[i].Time.Before(u.data.Exercise[j].Time)
+				})
 
-				// Check if the newest added exercise was after the exercise before that. It means that we won't have to sort the slice.
-				if u.data.Exercise[length-2].Time.Before(u.data.Exercise[length-1].Time) {
-					// Send the formated string from the highest index of the Exercise slice.
-					u.newExercise <- u.data.Format(len(u.data.Exercise) - 1)
-				} else {
-					// Sort all old and new data to make sure that new exercises come first.
-					sort.Slice(u.data.Exercise, func(i, j int) bool {
-						return u.data.Exercise[i].Time.Before(u.data.Exercise[j].Time)
-					})
+				// Indicate that the whole slice needs to be redisplayed.
+				u.reorderExercises <- true
 
-					// Indicate that the whole slice needs to be redisplayed.
-					u.reorderExercises <- true
-				}
 			}
 		}()
 
