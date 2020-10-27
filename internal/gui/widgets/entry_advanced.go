@@ -1,11 +1,8 @@
 package widgets
 
 import (
-	"regexp"
-
 	"fyne.io/fyne"
 	"fyne.io/fyne/widget"
-	"github.com/Jacalz/sparta/internal/crypto/validate"
 )
 
 // AdvancedEntry is used to make an entry that reacts to key presses.
@@ -74,26 +71,4 @@ func NewAdvancedEntry(placeholder string, password bool) *AdvancedEntry {
 func (a *AdvancedEntry) InitExtend(pressFunc func(), move MoveAction) {
 	a.PressFunc = pressFunc
 	a.MoveAction = &move
-}
-
-// NewEntryWithPlaceholder makes it easy to create entry widgets with placeholders.
-func NewEntryWithPlaceholder(text string) *widget.Entry {
-	entry := widget.NewEntry()
-	entry.SetPlaceHolder(text)
-
-	return entry
-}
-
-// NewFormEntry returns a new validated entry with placeholder
-func NewFormEntry(placeholder, reason string, validation *regexp.Regexp, multiline bool) *widget.Entry {
-	entry := widget.NewEntry()
-	entry.SetPlaceHolder(placeholder)
-	entry.Validator = validate.NewRegexp(validation, reason)
-
-	entry.MultiLine = multiline
-	if entry.MultiLine {
-		entry.Wrapping = fyne.TextWrapWord
-	}
-
-	return entry
 }
