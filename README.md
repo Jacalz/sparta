@@ -26,8 +26,8 @@ Sparta compiles into a statically linked binary with no runtime dependencies.
 
 ## Downloads
 
-Please visit the [release page](https://github.com/Jacalz/sparta/releases) for downloading the latest release.
-Versions for Linux, MacOS, Windows and FreeBSD on `x86-64` and `arm64` architectures are available. An Android version might come in the future.
+Please visit the [release page](https://github.com/Jacalz/sparta/releases) for downloading the latest releases.
+Versions for Linux (`x86-64` and `arm64`), MacOS and Windows (`x86-64`) are avaliable. Support for FreeBSD is coming soon.
 
 Systems that have [Go](https://golang.org) and the [required prequsites for Fyne](https://fyne.io/develop/) installed can alternatively install using `go get`:
 ```bash
