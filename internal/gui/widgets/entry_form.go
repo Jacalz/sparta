@@ -3,8 +3,8 @@ package widgets
 import (
 	"regexp"
 
-	"fyne.io/fyne"
-	"fyne.io/fyne/widget"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/widget"
 	"github.com/Jacalz/sparta/internal/crypto/validate"
 )
 

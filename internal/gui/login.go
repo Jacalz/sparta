@@ -6,12 +6,12 @@ import (
 	"github.com/Jacalz/sparta/internal/file"
 	"github.com/Jacalz/sparta/internal/gui/widgets"
 
-	"fyne.io/fyne"
-	"fyne.io/fyne/container"
-	"fyne.io/fyne/dialog"
-	"fyne.io/fyne/layout"
-	"fyne.io/fyne/theme"
-	"fyne.io/fyne/widget"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/dialog"
+	"fyne.io/fyne/v2/layout"
+	"fyne.io/fyne/v2/theme"
+	"fyne.io/fyne/v2/widget"
 )
 
 func (u *user) loginTabContainer(a fyne.App, w fyne.Window, t *container.AppTabs) *container.TabItem {
@@ -88,11 +88,11 @@ func (u *user) loginTabContainer(a fyne.App, w fyne.Window, t *container.AppTabs
 			// Run it all in a new goroutine to avoid stalling the main one.
 			go func() {
 				// Add all the content tabs to the interface.
-				t.Append(widget.NewTabItemWithIcon("Exercises", theme.HomeIcon(), u.exercisesView(w, a)))
-				t.Append(widget.NewTabItemWithIcon("Add Exercise", theme.ContentAddIcon(), u.addExerciseView(w)))
-				t.Append(widget.NewTabItemWithIcon("Sync", theme.MailSendIcon(), u.syncView(w)))
-				t.Append(widget.NewTabItemWithIcon("Settings", theme.SettingsIcon(), u.settingsView(w, a)))
-				t.Append(widget.NewTabItemWithIcon("About", theme.InfoIcon(), aboutView()))
+				t.Append(container.NewTabItemWithIcon("Exercises", theme.HomeIcon(), u.exercisesView(w, a)))
+				t.Append(container.NewTabItemWithIcon("Add Exercise", theme.ContentAddIcon(), u.addExerciseView(w)))
+				t.Append(container.NewTabItemWithIcon("Sync", theme.MailSendIcon(), u.syncView(w)))
+				t.Append(container.NewTabItemWithIcon("Settings", theme.SettingsIcon(), u.settingsView(w, a)))
+				t.Append(container.NewTabItemWithIcon("About", theme.InfoIcon(), aboutView()))
 
 				// Remove the login tab now that we are logged in.
 				t.RemoveIndex(0)
@@ -110,20 +110,19 @@ func (u *user) loginTabContainer(a fyne.App, w fyne.Window, t *container.AppTabs
 	}
 
 	// Extend the AdvancedEntry widgets with extra key press supports.
-	usernameEntry.InitExtend(loginButton.OnTapped, widgets.MoveAction{Down: true, DownEntry: passwordEntry, Window: w})
-	passwordEntry.InitExtend(loginButton.OnTapped, widgets.MoveAction{Up: true, UpEntry: usernameEntry, Window: w})
+	usernameEntry.OnReturn, passwordEntry.OnReturn = loginButton.OnTapped, loginButton.OnTapped
 
 	if fyne.Device.IsMobile(fyne.CurrentDevice()) {
-		return widget.NewTabItem("Login", fyne.NewContainerWithLayout(layout.NewVBoxLayout(),
+		return container.NewTabItem("Login", container.NewVBox(
 			layout.NewSpacer(),
-			fyne.NewContainerWithLayout(layout.NewVBoxLayout(), usernameEntry, passwordEntry, loginButton, newUserButton),
+			container.NewVBox(usernameEntry, passwordEntry, loginButton, newUserButton),
 			layout.NewSpacer(),
 		))
 	}
 
-	return widget.NewTabItem("Login", fyne.NewContainerWithLayout(layout.NewGridLayout(1),
+	return container.NewTabItem("Login", container.NewGridWithColumns(1,
 		layout.NewSpacer(),
-		fyne.NewContainerWithLayout(layout.NewGridLayout(3), layout.NewSpacer(), widget.NewVBox(usernameEntry, passwordEntry, loginButton, newUserButton), layout.NewSpacer()),
+		container.NewGridWithColumns(3, layout.NewSpacer(), container.NewVBox(usernameEntry, passwordEntry, loginButton, newUserButton), layout.NewSpacer()),
 		layout.NewSpacer(),
 	))
 }

@@ -4,7 +4,7 @@ import (
 	"net/url"
 	"strconv"
 
-	"fyne.io/fyne"
+	"fyne.io/fyne/v2"
 )
 
 // Float is a wrapper around strconv.ParseFloat that handles the error to make the function usable inline.

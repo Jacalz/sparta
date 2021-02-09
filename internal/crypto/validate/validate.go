@@ -7,7 +7,7 @@ import (
 	"github.com/Jacalz/sparta/internal/crypto/argon2"
 	passwordvalidator "github.com/lane-c-wagner/go-password-validator"
 
-	"fyne.io/fyne"
+	"fyne.io/fyne/v2"
 )
 
 // usermatch holds a precompiled regex rule for verifying usernames

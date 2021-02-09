@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"fyne.io/fyne"
+	"fyne.io/fyne/v2"
 	"golang.org/x/crypto/argon2"
 )
 

@@ -9,8 +9,8 @@ import (
 	"github.com/Jacalz/sparta/internal/file/parse"
 	"github.com/Jacalz/sparta/internal/gui/widgets"
 
-	"fyne.io/fyne"
-	"fyne.io/fyne/widget"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/widget"
 )
 
 var (

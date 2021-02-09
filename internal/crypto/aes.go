@@ -7,7 +7,7 @@ import (
 	"errors"
 	"io"
 
-	"fyne.io/fyne"
+	"fyne.io/fyne/v2"
 )
 
 // commonCipther holds common cipther code between encryption and decryption.

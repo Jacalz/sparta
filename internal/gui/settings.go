@@ -5,12 +5,12 @@ import (
 	"github.com/Jacalz/sparta/internal/crypto/validate"
 	"github.com/Jacalz/sparta/internal/gui/widgets"
 
-	"fyne.io/fyne"
-	"fyne.io/fyne/container"
-	"fyne.io/fyne/dialog"
-	"fyne.io/fyne/layout"
-	"fyne.io/fyne/theme"
-	"fyne.io/fyne/widget"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/dialog"
+	"fyne.io/fyne/v2/layout"
+	"fyne.io/fyne/v2/theme"
+	"fyne.io/fyne/v2/widget"
 )
 
 func checkTheme(themec string, a fyne.App) string {
@@ -32,7 +32,7 @@ func (u *user) settingsView(w fyne.Window, a fyne.App) fyne.CanvasObject {
 	}, Selected: u.theme}
 
 	// Add the theme switcher next to a label.
-	themeChanger := fyne.NewContainerWithLayout(layout.NewGridLayout(2), widget.NewLabel("Application Theme"), themeSwitcher)
+	themeChanger := container.NewGridWithColumns(2, widget.NewLabel("Application Theme"), themeSwitcher)
 
 	// An entry for typing the new username.
 	usernameEntry := widgets.NewAdvancedEntry("New Username", false)
@@ -101,8 +101,7 @@ func (u *user) settingsView(w fyne.Window, a fyne.App) fyne.CanvasObject {
 	})
 
 	// Extend our extended buttons with array entry switching and enter to change.
-	usernameEntry.InitExtend(usernameButton.OnTapped, widgets.MoveAction{Down: true, DownEntry: passwordEntry, Window: w})
-	passwordEntry.InitExtend(passwordButton.OnTapped, widgets.MoveAction{Up: true, UpEntry: usernameEntry, Window: w})
+	usernameEntry.OnReturn, passwordEntry.OnReturn = usernameButton.OnTapped, passwordButton.OnTapped
 
 	// revertToDefaultSettings reverts all settings to their default values.
 	revertToDefaultSettings := widget.NewButtonWithIcon("Reset settings to default values", theme.ViewRefreshIcon(), func() {
@@ -133,16 +132,16 @@ func (u *user) settingsView(w fyne.Window, a fyne.App) fyne.CanvasObject {
 	})
 
 	// userInterfaceSettings is a group holding widgets related to user interface settings such as theme.
-	userInterfaceSettings := widget.NewGroup("User Interface Settings", themeChanger)
+	userInterfaceSettings := widget.NewCard("User Interface", "", themeChanger)
 
 	// credentialSettings groups together all settings related to usernames and passwords.
-	credentialSettings := widget.NewGroup("Login Credential Settings", fyne.NewContainerWithLayout(layout.NewGridLayout(2), usernameEntry, usernameButton, passwordEntry, passwordButton))
+	credentialSettings := widget.NewCard("Login Credentials", "", container.NewGridWithColumns(2, usernameEntry, usernameButton, passwordEntry, passwordButton))
 
 	// advancedSettings is a group holding widgets related to advanced settings.
-	advancedSettings := widget.NewGroup("Advanced Settings", revertToDefaultSettings, widget.NewLabel(""), deleteButton)
+	advancedSettings := widget.NewCard("Advanced", "", container.NewVBox(revertToDefaultSettings, widget.NewLabel(""), deleteButton))
 
 	// settingsContentView holds all widget groups and content for the settings page.
-	settingsContentView := fyne.NewContainerWithLayout(layout.NewVBoxLayout(), userInterfaceSettings, layout.NewSpacer(), credentialSettings, layout.NewSpacer(), advancedSettings)
+	settingsContentView := container.NewVBox(userInterfaceSettings, layout.NewSpacer(), credentialSettings, layout.NewSpacer(), advancedSettings)
 
 	return container.NewScroll(settingsContentView)
 }

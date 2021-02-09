@@ -4,10 +4,11 @@ import (
 	"github.com/Jacalz/sparta/internal/assets"
 	"github.com/Jacalz/sparta/internal/file/parse"
 
-	"fyne.io/fyne"
-	"fyne.io/fyne/canvas"
-	"fyne.io/fyne/layout"
-	"fyne.io/fyne/widget"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/canvas"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/layout"
+	"fyne.io/fyne/v2/widget"
 )
 
 const version = "v0.9.0"
@@ -16,12 +17,12 @@ const url = "https://github.com/Jacalz/sparta/releases/tag/" + version
 // AboutView displays the logo and a version link for application information.
 func aboutView() fyne.CanvasObject {
 	logo := canvas.NewImageFromResource(assets.AppIcon)
-	logo.SetMinSize(fyne.NewSize(300, 300))
+	logo.SetMinSize(fyne.NewSize(256, 256))
 
-	return fyne.NewContainerWithLayout(layout.NewVBoxLayout(),
+	return container.NewVBox(
 		layout.NewSpacer(),
-		widget.NewHBox(layout.NewSpacer(), logo, layout.NewSpacer()),
-		widget.NewHBox(
+		container.NewHBox(layout.NewSpacer(), logo, layout.NewSpacer()),
+		container.NewHBox(
 			layout.NewSpacer(),
 			widget.NewLabelWithStyle("Sparta", fyne.TextAlignLeading, fyne.TextStyle{Bold: true}),
 			widget.NewLabelWithStyle("-", fyne.TextAlignLeading, fyne.TextStyle{Bold: true}),

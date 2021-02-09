@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fyne.io/fyne"
-	"fyne.io/fyne/app"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/app"
 	"github.com/Jacalz/sparta/internal/assets"
 	"github.com/Jacalz/sparta/internal/gui"
 )

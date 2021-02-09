@@ -4,7 +4,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"fyne.io/fyne"
+	"fyne.io/fyne/v2"
 )
 
 // ConfigDir returns the config directory where files are being stored.

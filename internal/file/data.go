@@ -11,7 +11,7 @@ import (
 
 	"github.com/Jacalz/sparta/internal/crypto"
 
-	"fyne.io/fyne"
+	"fyne.io/fyne/v2"
 )
 
 // Data has the xml data for the initial data tag and then incorporates the Exercise struct.

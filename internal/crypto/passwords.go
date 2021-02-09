@@ -5,7 +5,7 @@ import (
 
 	"github.com/Jacalz/sparta/internal/crypto/argon2"
 
-	"fyne.io/fyne"
+	"fyne.io/fyne/v2"
 )
 
 // SpartaDefaults holds the default argon2 values. Based on official recommendations and suggestions.
