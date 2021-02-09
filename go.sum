@@ -45,8 +45,8 @@ github.com/josephspurrier/goversioninfo v0.0.0-20200309025242-14b0ab84c6ca/go.mo
 github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
 github.com/kr/text v0.1.0 h1:45sCR5RtlFHMR4UwH9sdQ5TC8v0qDQCHnXt+kaKSTVE=
 github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
-github.com/lane-c-wagner/go-password-validator v0.1.0 h1:URcgm0OLHOl22PLHla9tUgrvtzWJvNZQ0fUkiTNMDV0=
-github.com/lane-c-wagner/go-password-validator v0.1.0/go.mod h1:+ffeYvV/jNEIJDYTTujyJ/sfdarIIsv01xD+JA4hkDI=
+github.com/lane-c-wagner/go-password-validator v0.2.0 h1:+uWyKekwEgcE02yKjwHV8lrJAFlHx6TQdtCWbS+3Uyw=
+github.com/lane-c-wagner/go-password-validator v0.2.0/go.mod h1:+ffeYvV/jNEIJDYTTujyJ/sfdarIIsv01xD+JA4hkDI=
 github.com/lucor/goinfo v0.0.0-20200401173949-526b5363a13a/go.mod h1:ORP3/rB5IsulLEBwQZCJyyV6niqmI7P4EWSmkug+1Ng=
 github.com/magiconair/properties v1.8.0/go.mod h1:PppfXfuXeibc/6YijjN8zIbojt8czPbwD3XqdrwzmxQ=
 github.com/mattn/go-colorable v0.1.2 h1:/bC9yWikZXAL9uJdulbSfyVNIR3n3trXl+v8+1sx8mU=
