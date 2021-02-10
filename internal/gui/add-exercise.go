@@ -10,6 +10,7 @@ import (
 	"github.com/Jacalz/sparta/internal/gui/widgets"
 
 	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
 )
 
@@ -25,25 +26,25 @@ var (
 func (u *user) addExerciseView(w fyne.Window) fyne.CanvasObject {
 	// Variables for the entry variables used in the form.
 	var (
-		dateEntry     = widgets.NewFormEntry("YYYY-MM-DD", "Incorrect clock format", dateValidation, false)
-		clockEntry    = widgets.NewFormEntry("HH:MM", "Incorrect clock format", clockValidation, false)
-		activityEntry = widgets.NewFormEntry("Name of exercise", "Empty", notEmptyValidation, false)
-		distanceEntry = widgets.NewFormEntry("Kilometers", "Not a valid number", floatValidation, false)
-		durationEntry = widgets.NewFormEntry("Minutes", "Not a valid number", floatValidation, false)
-		setsEntry     = widgets.NewFormEntry("Number of sets", "Not a valid integer number", uintValidation, false)
-		repsEntry     = widgets.NewFormEntry("Number of reps", "Not a valid integer number", uintValidation, false)
-		commentEntry  = widgets.NewFormEntry("Type your comment here...", "", nil, true)
+		dateEntry     = widgets.NewFormEntry("YYYY-MM-DD", "Incorrect date formatting.", dateValidation, false)
+		clockEntry    = widgets.NewFormEntry("HH:MM", "Incorrect clock formatting.", clockValidation, false)
+		activityEntry = widgets.NewFormEntry("Name of exercise", "The field must be filled in.", notEmptyValidation, false)
+		distanceEntry = widgets.NewFormEntry("Kilometers", "Not a valid number.", floatValidation, false)
+		durationEntry = widgets.NewFormEntry("Minutes", "Not a valid number.", floatValidation, false)
+		setsEntry     = widgets.NewFormEntry("Number of sets", "Not a valid integer number.", uintValidation, false)
+		repsEntry     = widgets.NewFormEntry("Number of reps", "Not a valid integer number.", uintValidation, false)
+		commentEntry  = widgets.NewFormEntry("A comment about the exercise...", "", nil, true)
 	)
 
 	form := widget.NewForm(
-		widget.NewFormItem("Date", dateEntry),
-		widget.NewFormItem("Start Time", clockEntry),
-		widget.NewFormItem("Activity", activityEntry),
-		widget.NewFormItem("Distance", distanceEntry),
-		widget.NewFormItem("Duration", durationEntry),
-		widget.NewFormItem("Sets", setsEntry),
-		widget.NewFormItem("Reps", repsEntry),
-		widget.NewFormItem("Comment", commentEntry),
+		&widget.FormItem{Text: "Date", HintText: "The date of the exercise.", Widget: dateEntry},
+		&widget.FormItem{Text: "Start Time", HintText: "The start time.", Widget: clockEntry},
+		&widget.FormItem{Text: "Activity", HintText: "The activity name.", Widget: activityEntry},
+		&widget.FormItem{Text: "Distance", HintText: "The travelled distance, can be empty.", Widget: distanceEntry},
+		&widget.FormItem{Text: "Duration", HintText: "The elapsed duration, can be empty.", Widget: durationEntry},
+		&widget.FormItem{Text: "Sets", HintText: "The amount of sets performed, can be empty.", Widget: setsEntry},
+		&widget.FormItem{Text: "Reps", HintText: "The amount of reps performed per set, can be empty.", Widget: repsEntry},
+		&widget.FormItem{Text: "Comment", Widget: commentEntry},
 	)
 
 	form.OnCancel = func() {
@@ -93,5 +94,5 @@ func (u *user) addExerciseView(w fyne.Window) fyne.CanvasObject {
 
 	}
 
-	return form
+	return container.NewScroll(container.NewPadded(form))
 }
