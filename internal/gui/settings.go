@@ -101,7 +101,7 @@ func (u *user) settingsView(w fyne.Window, a fyne.App) fyne.CanvasObject {
 	})
 
 	// Extend our extended buttons with array entry switching and enter to change.
-	usernameEntry.OnReturn, passwordEntry.OnReturn = usernameButton.OnTapped, passwordButton.OnTapped
+	usernameEntry.OnSubmitted, passwordEntry.OnSubmitted = func(_ string) { usernameButton.OnTapped() }, func(_ string) { passwordButton.OnTapped() }
 
 	// revertToDefaultSettings reverts all settings to their default values.
 	revertToDefaultSettings := widget.NewButtonWithIcon("Reset settings to default values", theme.ViewRefreshIcon(), func() {

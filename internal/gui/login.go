@@ -110,7 +110,7 @@ func (u *user) loginTabContainer(a fyne.App, w fyne.Window, t *container.AppTabs
 	}
 
 	// Extend the AdvancedEntry widgets with extra key press supports.
-	usernameEntry.OnReturn, passwordEntry.OnReturn = loginButton.OnTapped, loginButton.OnTapped
+	usernameEntry.OnSubmitted, passwordEntry.OnSubmitted = func(_ string) { loginButton.OnTapped() }, func(_ string) { loginButton.OnTapped() }
 
 	if fyne.Device.IsMobile(fyne.CurrentDevice()) {
 		return container.NewTabItem("Login", container.NewVBox(
