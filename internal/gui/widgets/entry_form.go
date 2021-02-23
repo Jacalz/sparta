@@ -17,6 +17,8 @@ func NewFormEntry(placeholder, reason string, validation *regexp.Regexp, multili
 	entry.MultiLine = multiline
 	if entry.MultiLine {
 		entry.Wrapping = fyne.TextWrapWord
+	} else {
+		entry.Wrapping = fyne.TextWrapOff
 	}
 
 	return entry
