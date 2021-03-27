@@ -5,7 +5,7 @@ import (
 	"regexp"
 
 	"github.com/Jacalz/sparta/internal/crypto/argon2"
-	passwordvalidator "github.com/lane-c-wagner/go-password-validator"
+	passwordvalidator "github.com/wagslane/go-password-validator"
 
 	"fyne.io/fyne/v2"
 )
