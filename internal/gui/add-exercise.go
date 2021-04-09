@@ -17,8 +17,6 @@ import (
 var (
 	floatValidation    = regexp.MustCompile(`^$|(\d+\.)?\d+$`)
 	uintValidation     = regexp.MustCompile(`^$|^\d*$`)
-	dateValidation     = regexp.MustCompile(`^([12]\d{3})-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[0-1])$`)
-	clockValidation    = regexp.MustCompile(`^([0-1][0-9]|2[0-3]):[0-5][0-9]$`)
 	notEmptyValidation = regexp.MustCompile(`(.|\s)*\S(.|\s)*`)
 )
 
@@ -26,8 +24,8 @@ var (
 func (u *user) addExerciseView(w fyne.Window) fyne.CanvasObject {
 	// Variables for the entry variables used in the form.
 	var (
-		dateEntry     = widgets.NewFormEntry("YYYY-MM-DD", "Incorrect date formatting.", dateValidation, false)
-		clockEntry    = widgets.NewFormEntry("HH:MM", "Incorrect clock formatting.", clockValidation, false)
+		dateEntry     = widgets.NewFormEntry("YYYY-MM-DD", "Incorrect date formatting.", nil, false)
+		clockEntry    = widgets.NewFormEntry("HH:MM", "Incorrect clock formatting.", nil, false)
 		activityEntry = widgets.NewFormEntry("Name of exercise", "The field must be filled in.", notEmptyValidation, false)
 		distanceEntry = widgets.NewFormEntry("Kilometers", "Not a valid number.", floatValidation, false)
 		durationEntry = widgets.NewFormEntry("Minutes", "Not a valid number.", floatValidation, false)
