@@ -1,6 +1,7 @@
 package file
 
 import (
+	"errors"
 	"io"
 	"os"
 	"path/filepath"
@@ -25,7 +26,7 @@ func NoExistingUsers() bool {
 
 // CreateNewUser creates our new user.
 func CreateNewUser(username string) error {
-	if _, err := os.Stat(ConfigDir()); os.IsNotExist(err) {
+	if _, err := os.Stat(ConfigDir()); errors.Is(err, os.ErrNotExist) {
 		if err := os.Mkdir(ConfigDir(), os.ModePerm); err != nil {
 			fyne.LogError("Error on creating config directory", err)
 			return err
@@ -47,7 +48,7 @@ func CreateNewUser(username string) error {
 func ExistingUser(username string) bool {
 	if _, err := os.Stat(filepath.Join(ConfigDir(), username+"-exercises.json")); err == nil {
 		return true
-	} else if os.IsNotExist(err) {
+	} else if errors.Is(err, os.ErrNotExist) {
 		return false
 	}
 
